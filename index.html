@@ -114,6 +114,39 @@
         .dataTables_wrapper {
             padding: 0 10px;
         }
+        
+        .copy-btn {
+            padding: 2px 6px;
+            font-size: 0.7rem;
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+        
+        .mobile-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .mobile-text {
+            flex-grow: 1;
+        }
+        
+        .copy-number-btn {
+            background-color: transparent;
+            border: 1px solid #6c757d;
+            color: #6c757d;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .copy-number-btn:hover {
+            background-color: #6c757d;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -284,19 +317,46 @@
                     { 
                         data: 'student_mobile',
                         render: function(data) {
-                            return `<i class="fas fa-phone text-success me-1"></i>${data}`;
+                            return `
+                                <div class="mobile-container">
+                                    <div class="mobile-text">
+                                        <i class="fas fa-phone text-success me-1"></i>${data}
+                                    </div>
+                                    <button class="copy-number-btn" onclick="copyToClipboard('${data}')" title="Copy Number">
+                                        <i class="far fa-copy"></i> Copy
+                                    </button>
+                                </div>
+                            `;
                         }
                     },
                     { 
                         data: 'parent_mobile',
                         render: function(data) {
-                            return `<i class="fas fa-user-friends text-primary me-1"></i>${data}`;
+                            return `
+                                <div class="mobile-container">
+                                    <div class="mobile-text">
+                                        <i class="fas fa-user-friends text-primary me-1"></i>${data}
+                                    </div>
+                                    <button class="copy-number-btn" onclick="copyToClipboard('${data}')" title="Copy Number">
+                                        <i class="far fa-copy"></i> Copy
+                                    </button>
+                                </div>
+                            `;
                         }
                     },
                     { 
                         data: 'email',
                         render: function(data) {
-                            return `<i class="fas fa-envelope text-danger me-1"></i>${data}`;
+                            return `
+                                <div class="mobile-container">
+                                    <div class="mobile-text">
+                                        <i class="fas fa-envelope text-danger me-1"></i>${data}
+                                    </div>
+                                    <button class="copy-number-btn" onclick="copyToClipboard('${data}')" title="Copy Email">
+                                        <i class="far fa-copy"></i> Copy
+                                    </button>
+                                </div>
+                            `;
                         }
                     },
                     {
@@ -319,11 +379,15 @@
                     info: "Showing _START_ to _END_ of _TOTAL_ entries",
                     infoEmpty: "No entries found",
                     infoFiltered: "(filtered from _MAX_ total entries)"
+                },
+                drawCallback: function() {
+                    // Update total count after each draw
+                    updateTotalCount();
                 }
             });
 
             // Update statistics
-            updateStats();
+            updateTotalCount();
         }
 
         // Load CSV from GitHub
@@ -375,24 +439,41 @@
         function processCSVData(data) {
             allStudents = [];
             
+            // Check if data is empty
+            if (!data || data.length === 0) {
+                console.error('No data found in CSV');
+                alert('No data found in CSV file');
+                document.getElementById('loading').style.display = 'none';
+                return;
+            }
+            
+            console.log('Total records found in CSV:', data.length);
+            
             data.forEach((row, index) => {
                 // Map CSV columns to our data structure
                 // Adjust these keys based on your actual CSV headers
                 const student = {
-                    sr_no: row['Sr. No.'] || row['sr_no'] || index + 1,
-                    prn: row['PRN'] || row['prn'] || '',
-                    name: row['Student Name'] || row['name'] || row['Student Name'] || '',
-                    student_mobile: row['Student Mobile Number'] || row['student_mobile'] || row['Student Mobile'] || '',
-                    parent_mobile: row['Parent Mobile Number'] || row['parent_mobile'] || row['Parent Mobile'] || '',
-                    email: row['Student Email ID'] || row['email'] || row['Student Email'] || ''
+                    sr_no: row['Sr. No.'] || row['sr_no'] || row['Sr No'] || index + 1,
+                    prn: row['PRN'] || row['prn'] || row['PRN Number'] || '',
+                    name: row['Student Name'] || row['name'] || row['Student_Name'] || row['Name'] || '',
+                    student_mobile: row['Student Mobile Number'] || row['student_mobile'] || row['Student Mobile'] || row['Student_Mobile'] || row['Mobile'] || '',
+                    parent_mobile: row['Parent Mobile Number'] || row['parent_mobile'] || row['Parent Mobile'] || row['Parent_Mobile'] || row['Parent Phone'] || '',
+                    email: row['Student Email ID'] || row['email'] || row['Student Email'] || row['Student_Email'] || row['Email'] || ''
                 };
                 
-                allStudents.push(student);
+                // Only add student if they have at least a PRN or Name
+                if (student.prn || student.name) {
+                    allStudents.push(student);
+                }
             });
+            
+            console.log('Processed students:', allStudents.length);
             
             // Initialize DataTable with the data
             initDataTable(allStudents);
-            updateStats();
+            
+            // Force update of total count
+            updateTotalCount();
         }
 
         // Search function
@@ -409,7 +490,7 @@
             if (!prnSearch && !nameSearch) {
                 // No search terms, show all data
                 dataTable.search('').draw();
-                updateStats();
+                updateTotalCount();
                 return;
             }
             
@@ -458,8 +539,7 @@
             $.fn.dataTable.ext.search.pop();
             
             // Update search results count
-            const filteredCount = dataTable.rows({ search: 'applied' }).count();
-            updateSearchResults(filteredCount);
+            updateSearchResults();
         }
 
         // Clear search
@@ -470,31 +550,86 @@
             
             if (dataTable) {
                 dataTable.search('').draw();
-                updateStats();
+                updateTotalCount();
             }
         }
 
-        // Update statistics
-        function updateStats() {
-            // Update total students count based on actual data
-            document.getElementById('totalStudents').textContent = allStudents.length;
-            document.getElementById('searchResults').textContent = allStudents.length;
+        // Update total count
+        function updateTotalCount() {
+            const totalCount = allStudents.length;
+            document.getElementById('totalStudents').textContent = totalCount;
+            document.getElementById('searchResults').textContent = totalCount;
+            console.log('Updated total count to:', totalCount);
         }
 
-        // Update search results only
-        function updateSearchResults(filteredCount) {
-            document.getElementById('totalStudents').textContent = allStudents.length;
-            document.getElementById('searchResults').textContent = filteredCount;
+        // Update search results
+        function updateSearchResults() {
+            if (dataTable) {
+                const filteredCount = dataTable.rows({ search: 'applied' }).count();
+                document.getElementById('totalStudents').textContent = allStudents.length;
+                document.getElementById('searchResults').textContent = filteredCount;
+            }
         }
 
-        // Action function
-        function copyEmail(email) {
-            navigator.clipboard.writeText(email).then(() => {
-                alert(`Email copied: ${email}`);
+        // Generic copy to clipboard function
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showCopySuccess('Copied: ' + text);
             }).catch(err => {
                 console.error('Failed to copy:', err);
-                prompt('Copy this email:', email);
+                // Fallback method
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showCopySuccess('Copied: ' + text);
             });
+        }
+
+        // Show copy success message
+        function showCopySuccess(message) {
+            // Create a temporary notification
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #28a745;
+                color: white;
+                padding: 10px 20px;
+                border-radius: 5px;
+                z-index: 10000;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                animation: fadeInOut 2s ease-in-out;
+            `;
+            
+            // Add CSS for animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fadeInOut {
+                    0% { opacity: 0; transform: translateY(-20px); }
+                    10% { opacity: 1; transform: translateY(0); }
+                    90% { opacity: 1; transform: translateY(0); }
+                    100% { opacity: 0; transform: translateY(-20px); }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // Remove after 2 seconds
+            setTimeout(() => {
+                document.body.removeChild(notification);
+                document.head.removeChild(style);
+            }, 2000);
+        }
+
+        // Email copy function (kept for backward compatibility)
+        function copyEmail(email) {
+            copyToClipboard(email);
         }
 
         // Initialize on page load
