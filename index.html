@@ -16,271 +16,227 @@
         body {
             background-color: #f5f7fa;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding-top: 20px;
         }
         
         .header {
             background: linear-gradient(135deg, var(--pccoe-blue) 0%, #283593 100%);
             color: white;
-            padding: 2rem 0;
+            padding: 1.5rem 0;
             margin-bottom: 2rem;
-            border-radius: 0 0 20px 20px;
+            border-radius: 10px;
             box-shadow: 0 4px 12px rgba(26, 35, 126, 0.2);
-        }
-        
-        .logo-container {
-            background: white;
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        
-        .logo {
-            font-size: 2.5rem;
-            color: var(--pccoe-blue);
         }
         
         .search-box {
             background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
         }
         
         .search-btn {
             background: var(--pccoe-blue);
             border: none;
-            padding: 10px 25px;
+            padding: 8px 20px;
             transition: all 0.3s;
         }
         
         .search-btn:hover {
             background: #283593;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(26, 35, 126, 0.3);
+            transform: translateY(-1px);
         }
         
         .data-table {
             background: white;
-            border-radius: 15px;
+            border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
         }
         
         .table th {
             background-color: var(--pccoe-blue);
             color: white;
             border: none;
-            padding: 15px;
+            padding: 12px 15px;
         }
         
         .table td {
-            padding: 12px 15px;
+            padding: 10px 15px;
             vertical-align: middle;
-        }
-        
-        .table-striped tbody tr:nth-of-type(odd) {
-            background-color: rgba(232, 234, 246, 0.3);
         }
         
         .highlight {
             background-color: #fff9c4 !important;
-            animation: highlight 1.5s;
-        }
-        
-        @keyframes highlight {
-            0% { background-color: #fff9c4; }
-            100% { background-color: inherit; }
         }
         
         .stats-card {
             background: white;
-            border-radius: 10px;
-            padding: 1.5rem;
+            border-radius: 8px;
+            padding: 1rem;
             text-align: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             border-left: 4px solid var(--pccoe-blue);
-        }
-        
-        .stats-card i {
-            font-size: 2rem;
-            color: var(--pccoe-blue);
-            margin-bottom: 0.5rem;
+            margin-bottom: 1rem;
         }
         
         .footer {
-            margin-top: 3rem;
-            padding: 1.5rem;
+            margin-top: 2rem;
+            padding: 1rem;
             background-color: var(--pccoe-blue);
             color: white;
             text-align: center;
-            border-radius: 15px 15px 0 0;
+            border-radius: 8px;
         }
         
         .badge-prn {
             background-color: #5c6bc0;
             color: white;
-            padding: 4px 8px;
+            padding: 3px 8px;
             border-radius: 4px;
             font-family: monospace;
-        }
-        
-        .action-btns button {
-            margin: 0 3px;
-            padding: 5px 10px;
             font-size: 0.85rem;
         }
         
         #loading {
-            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .action-btn {
+            padding: 4px 8px;
+            margin: 0 2px;
+            font-size: 0.8rem;
+        }
+        
+        .dataTables_wrapper {
+            padding: 0 10px;
         }
     </style>
 </head>
 <body>
-    <div class="container-fluid px-4">
+    <div class="container">
         <!-- Header -->
-        <div class="header">
-            <div class="container">
-                <div class="logo-container">
-                    <i class="fas fa-university logo"></i>
-                </div>
-                <h1 class="text-center"><i class="fas fa-graduation-cap"></i> PCCOE Student Contact Directory</h1>
-                <p class="text-center mb-0">FY Computer Engineering 2023-24</p>
-            </div>
+        <div class="header text-center">
+            <h2><i class="fas fa-graduation-cap"></i> PCCOE Student Directory</h2>
+            <p class="mb-0">First Year Computer Engineering 2023-24</p>
         </div>
 
         <!-- Search Section -->
-        <div class="container">
-            <div class="search-box">
-                <h3 class="mb-4"><i class="fas fa-search"></i> Search Student</h3>
-                <div class="row">
-                    <div class="col-md-5 mb-3">
-                        <label for="searchPRN" class="form-label"><i class="fas fa-id-card"></i> Search by PRN</label>
-                        <input type="text" class="form-control" id="searchPRN" 
-                               placeholder="Enter PRN (e.g., 123B1G035)" 
-                               onkeyup="searchTable()">
-                    </div>
-                    <div class="col-md-5 mb-3">
-                        <label for="searchName" class="form-label"><i class="fas fa-user"></i> Search by Name</label>
-                        <input type="text" class="form-control" id="searchName" 
-                               placeholder="Enter student name" 
-                               onkeyup="searchTable()">
-                    </div>
-                    <div class="col-md-2 mb-3 d-flex align-items-end">
-                        <button class="btn btn-primary search-btn w-100" onclick="searchTable()">
-                            <i class="fas fa-search me-2"></i>Search
-                        </button>
-                    </div>
+        <div class="search-box">
+            <div class="row g-3">
+                <div class="col-md-5">
+                    <label for="searchPRN" class="form-label">
+                        <i class="fas fa-id-card"></i> Search by PRN
+                    </label>
+                    <input type="text" class="form-control" id="searchPRN" 
+                           placeholder="e.g., 123B1G035">
                 </div>
-                <div class="row">
-                    <div class="col-md-3">
-                        <button class="btn btn-outline-secondary w-100 mb-2" onclick="clearSearch()">
-                            <i class="fas fa-times"></i> Clear Search
-                        </button>
-                    </div>
-                    <div class="col-md-3">
-                        <button class="btn btn-outline-info w-100 mb-2" onclick="loadSampleData()">
-                            <i class="fas fa-download"></i> Load Sample Data
-                        </button>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="input-group mb-2">
-                            <span class="input-group-text"><i class="fas fa-filter"></i></span>
-                            <select class="form-select" id="filterColumn" onchange="searchTable()">
-                                <option value="all">Search in All Columns</option>
-                                <option value="1">PRN</option>
-                                <option value="2">Student Name</option>
-                                <option value="3">Student Mobile</option>
-                                <option value="4">Parent Mobile</option>
-                                <option value="5">Email</option>
-                            </select>
-                        </div>
-                    </div>
+                <div class="col-md-5">
+                    <label for="searchName" class="form-label">
+                        <i class="fas fa-user"></i> Search by Name
+                    </label>
+                    <input type="text" class="form-control" id="searchName" 
+                           placeholder="Enter student name">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button class="btn btn-primary search-btn w-100" onclick="searchTable()">
+                        <i class="fas fa-search"></i> Search
+                    </button>
                 </div>
             </div>
+            <div class="row g-2 mt-2">
+                <div class="col-md-4">
+                    <button class="btn btn-outline-secondary w-100" onclick="clearSearch()">
+                        <i class="fas fa-times"></i> Clear Search
+                    </button>
+                </div>
+                <div class="col-md-4">
+                    <button class="btn btn-outline-info w-100" onclick="loadCSVData()">
+                        <i class="fas fa-sync"></i> Reload Data
+                    </button>
+                </div>
+                <div class="col-md-4">
+                    <select class="form-select" id="filterColumn" onchange="searchTable()">
+                        <option value="all">Search in All Columns</option>
+                        <option value="1">PRN</option>
+                        <option value="2">Student Name</option>
+                        <option value="3">Student Mobile</option>
+                        <option value="4">Parent Mobile</option>
+                        <option value="5">Email</option>
+                    </select>
+                </div>
+            </div>
+        </div>
 
-            <!-- Stats -->
-            <div class="row mb-4">
-                <div class="col-md-3">
-                    <div class="stats-card">
-                        <i class="fas fa-users"></i>
-                        <h4 id="totalStudents">0</h4>
-                        <p>Total Students</p>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stats-card">
-                        <i class="fas fa-phone"></i>
-                        <h4 id="dataLoaded">No</h4>
-                        <p>Data Status</p>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stats-card">
-                        <i class="fas fa-search"></i>
-                        <h4 id="searchResults">0</h4>
-                        <p>Search Results</p>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stats-card">
-                        <i class="fas fa-database"></i>
-                        <h4>CSV</h4>
-                        <p>Data Format</p>
-                    </div>
+        <!-- Stats -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <i class="fas fa-users"></i>
+                    <h5 id="totalStudents">0</h5>
+                    <small>Total Students</small>
                 </div>
             </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <i class="fas fa-database"></i>
+                    <h5 id="dataStatus">Loading...</h5>
+                    <small>Data Status</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <i class="fas fa-search"></i>
+                    <h5 id="searchResults">0</h5>
+                    <small>Search Results</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <i class="fas fa-file-csv"></i>
+                    <h5>CSV</h5>
+                    <small>Data Format</small>
+                </div>
+            </div>
+        </div>
 
-            <!-- Loading Indicator -->
-            <div id="loading" class="text-center mb-3">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-                <p class="mt-2">Loading student data...</p>
+        <!-- Loading Indicator -->
+        <div id="loading" class="text-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
             </div>
+            <p class="mt-2">Loading student data from CSV...</p>
+        </div>
 
-            <!-- Data Table -->
-            <div class="data-table">
-                <div class="table-responsive">
-                    <table id="studentTable" class="table table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th>Sr. No.</th>
-                                <th>PRN</th>
-                                <th>Student Name</th>
-                                <th>Student Mobile</th>
-                                <th>Parent Mobile</th>
-                                <th>Email ID</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody">
-                            <!-- Data will be inserted here -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+        <!-- Data Table -->
+        <div class="data-table">
+            <table id="studentTable" class="table table-striped" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Sr. No.</th>
+                        <th>PRN</th>
+                        <th>Student Name</th>
+                        <th>Student Mobile</th>
+                        <th>Parent Mobile</th>
+                        <th>Email ID</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data will be loaded by DataTable -->
+                </tbody>
+            </table>
+        </div>
 
-            <!-- No Results Message -->
-            <div id="noResults" class="text-center mt-4" style="display: none;">
-                <i class="fas fa-search fa-3x text-muted mb-3"></i>
-                <h4>No students found</h4>
-                <p>Try a different search term</p>
-            </div>
-
-            <!-- Footer -->
-            <div class="footer">
-                <p class="mb-0">
-                    <i class="fas fa-laptop-code"></i> PCCOE FY Contact Directory System | 
-                    Data Source: contact_testing_csv.csv
-                </p>
-                <small>Last updated: <span id="currentDate"></span></small>
-            </div>
+        <!-- Footer -->
+        <div class="footer">
+            <p class="mb-1">
+                <i class="fas fa-laptop-code"></i> PCCOE FY Contact Directory
+            </p>
+            <small>CSV File: contact_testing_csv.csv | Updated: <span id="currentDate"></span></small>
         </div>
     </div>
 
@@ -292,179 +248,221 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 
     <script>
-        // Sample data (fallback if CSV fails)
-        const sampleData = [
-            ["1", "123B1G035", "GADEKAR SARVESH VITTHAL", "9834517264", "9226772753", "sarvesh.gadekar23@pccoepune.org"],
-            ["2", "123B1G002", "Aditya Sambhaji Birajdar", "8263977506", "9167080904", "aditya.birajdar23@pccoepune.org"],
-            ["3", "123B1G003", "ADITYA SAMPAT SABALE", "8605299945", "9596806705", "aditya.sabale23@pccoepune.org"],
-            ["4", "123B1G004", "ADITYA SANTOSH YELWANDE", "8669961291", "9822871291", "aditya.yelwande23@pccoepune.org"],
-            ["5", "123B1G005", "AGRE TANUSHRI RAJENDRA", "7385498207", "9130475311", "tanushri.agre23@pccoepune.org"],
-            ["6", "123B1G006", "AHIREKAR ADWAIT MAHESH", "7219484577", "9225673145", "adwait.ahirekar23@pccoepune.org"]
-        ];
-
+        let dataTable = null;
         let allStudents = [];
-        let filteredStudents = [];
 
         // Set current date
-        document.getElementById('currentDate').textContent = new Date().toLocaleDateString();
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric'
+        });
 
-        // Load data from CSV file on GitHub
-        async function loadDataFromCSV() {
+        // Initialize DataTable
+        function initDataTable(data) {
+            if (dataTable) {
+                dataTable.destroy();
+                $('#studentTable').empty();
+            }
+
+            dataTable = $('#studentTable').DataTable({
+                data: data,
+                columns: [
+                    { 
+                        data: null,
+                        render: function(data, type, row, meta) {
+                            return meta.row + 1;
+                        }
+                    },
+                    { 
+                        data: 'prn',
+                        render: function(data) {
+                            return `<span class="badge-prn">${data}</span>`;
+                        }
+                    },
+                    { data: 'name' },
+                    { 
+                        data: 'student_mobile',
+                        render: function(data) {
+                            return `<i class="fas fa-phone text-success me-1"></i>${data}`;
+                        }
+                    },
+                    { 
+                        data: 'parent_mobile',
+                        render: function(data) {
+                            return `<i class="fas fa-user-friends text-primary me-1"></i>${data}`;
+                        }
+                    },
+                    { 
+                        data: 'email',
+                        render: function(data) {
+                            return `<i class="fas fa-envelope text-danger me-1"></i>${data}`;
+                        }
+                    },
+                    {
+                        data: null,
+                        orderable: false,
+                        render: function(data, type, row) {
+                            return `
+                                <button class="btn btn-sm btn-outline-primary action-btn" onclick="copyEmail('${row.email}')" title="Copy Email">
+                                    <i class="far fa-copy"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-success action-btn" onclick="callNumber('${row.student_mobile}')" title="Call Student">
+                                    <i class="fas fa-phone"></i>
+                                </button>
+                            `;
+                        }
+                    }
+                ],
+                pageLength: 10,
+                lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+                language: {
+                    search: "Search:",
+                    lengthMenu: "Show _MENU_ entries",
+                    info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                    infoEmpty: "No entries found",
+                    infoFiltered: "(filtered from _MAX_ total entries)"
+                }
+            });
+
+            // Update statistics
+            updateStats(data.length);
+        }
+
+        // Load CSV from GitHub
+        async function loadCSVData() {
             document.getElementById('loading').style.display = 'block';
+            document.getElementById('dataStatus').textContent = 'Loading...';
             
             try {
-                // Replace with your actual CSV file URL on GitHub
+                // Your CSV file URL on GitHub
                 const csvUrl = 'https://raw.githubusercontent.com/dineshkute90/pccoe_fy_contact_details/main/contact_testing_csv.csv';
                 
                 const response = await fetch(csvUrl);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
                 const csvText = await response.text();
                 
                 Papa.parse(csvText, {
-                    header: false, // No headers in your data
+                    header: true, // Assuming first row has headers
                     skipEmptyLines: true,
+                    dynamicTyping: false,
                     complete: function(results) {
-                        processData(results.data);
+                        if (results.errors.length > 0) {
+                            console.warn('CSV parsing errors:', results.errors);
+                        }
+                        
+                        processCSVData(results.data);
+                        document.getElementById('loading').style.display = 'none';
+                        document.getElementById('dataStatus').textContent = 'Loaded';
                     },
                     error: function(error) {
-                        console.warn('CSV load failed, using sample data:', error);
-                        loadSampleData();
+                        console.error('CSV parsing error:', error);
+                        document.getElementById('dataStatus').textContent = 'Error';
+                        document.getElementById('loading').style.display = 'none';
+                        alert('Error loading CSV file. Please check console for details.');
                     }
                 });
             } catch (error) {
-                console.warn('Failed to fetch CSV, using sample data:', error);
-                loadSampleData();
+                console.error('Failed to fetch CSV:', error);
+                document.getElementById('dataStatus').textContent = 'Failed';
+                document.getElementById('loading').style.display = 'none';
+                alert('Failed to load CSV file. Please check if the file exists at: ' + csvUrl);
             }
         }
 
-        // Process and display data
-        function processData(data) {
-            allStudents = data;
+        // Process CSV data
+        function processCSVData(data) {
+            allStudents = [];
             
-            // Remove header row if it exists
-            if (allStudents.length > 0) {
-                const firstRow = allStudents[0];
-                // Check if first row contains headers
-                if (firstRow[0] === 'Sr. No.' || firstRow[1] === 'PRN') {
-                    allStudents.shift(); // Remove header row
-                }
-            }
-            
-            displayStudents(allStudents);
-            updateStats(allStudents.length, allStudents.length);
-            document.getElementById('dataLoaded').textContent = 'Yes';
-            document.getElementById('loading').style.display = 'none';
-        }
-
-        // Display students in table
-        function displayStudents(students) {
-            const tableBody = document.getElementById('tableBody');
-            tableBody.innerHTML = '';
-            
-            if (students.length === 0) {
-                document.getElementById('noResults').style.display = 'block';
-                return;
-            }
-            
-            document.getElementById('noResults').style.display = 'none';
-            
-            students.forEach((row, index) => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${row[0] || index + 1}</td>
-                    <td><span class="badge-prn">${row[1] || ''}</span></td>
-                    <td><strong>${row[2] || ''}</strong></td>
-                    <td><i class="fas fa-phone text-success me-1"></i> ${row[3] || ''}</td>
-                    <td><i class="fas fa-user-friends text-primary me-1"></i> ${row[4] || ''}</td>
-                    <td><i class="fas fa-envelope text-danger me-1"></i> ${row[5] || ''}</td>
-                    <td class="action-btns">
-                        <button class="btn btn-sm btn-outline-primary" onclick="copyToClipboard('${row[5] || ''}')" title="Copy Email">
-                            <i class="far fa-copy"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-success" onclick="callStudent('${row[3] || ''}')" title="Call Student">
-                            <i class="fas fa-phone"></i>
-                        </button>
-                    </td>
-                `;
-                tableBody.appendChild(tr);
+            data.forEach((row, index) => {
+                // Map CSV columns to our data structure
+                // Adjust these keys based on your actual CSV headers
+                const student = {
+                    sr_no: row['Sr. No.'] || row['sr_no'] || index + 1,
+                    prn: row['PRN'] || row['prn'] || '',
+                    name: row['Student Name'] || row['name'] || row['Student Name'] || '',
+                    student_mobile: row['Student Mobile Number'] || row['student_mobile'] || row['Student Mobile'] || '',
+                    parent_mobile: row['Parent Mobile Number'] || row['parent_mobile'] || row['Parent Mobile'] || '',
+                    email: row['Student Email ID'] || row['email'] || row['Student Email'] || ''
+                };
+                
+                allStudents.push(student);
             });
             
-            // Initialize DataTable
-            $('#studentTable').DataTable({
-                "paging": true,
-                "pageLength": 10,
-                "searching": false, // We handle our own search
-                "info": true,
-                "lengthChange": true,
-                "order": [[2, 'asc']] // Sort by name by default
-            });
+            // Initialize DataTable with the data
+            initDataTable(allStudents);
+            updateStats(allStudents.length);
         }
 
         // Search function
         function searchTable() {
-            const prnSearch = document.getElementById('searchPRN').value.toLowerCase();
-            const nameSearch = document.getElementById('searchName').value.toLowerCase();
+            const prnSearch = document.getElementById('searchPRN').value.toLowerCase().trim();
+            const nameSearch = document.getElementById('searchName').value.toLowerCase().trim();
             const filterColumn = document.getElementById('filterColumn').value;
             
-            filteredStudents = allStudents.filter(student => {
-                const studentPRN = (student[1] || '').toLowerCase();
-                const studentName = (student[2] || '').toLowerCase();
-                const studentMobile = (student[3] || '').toLowerCase();
-                const parentMobile = (student[4] || '').toLowerCase();
-                const studentEmail = (student[5] || '').toLowerCase();
+            if (!dataTable) return;
+            
+            // Combine DataTable search with our custom filtering
+            dataTable.search('').draw();
+            
+            if (!prnSearch && !nameSearch) {
+                // No search terms, show all data
+                dataTable.search('').draw();
+                updateStats(allStudents.length);
+                return;
+            }
+            
+            // Custom filtering
+            $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+                if (settings.nTable.id !== 'studentTable') return true;
+                
+                const student = allStudents[dataIndex];
+                if (!student) return false;
+                
+                const studentPRN = (student.prn || '').toLowerCase();
+                const studentName = (student.name || '').toLowerCase();
+                const studentMobile = (student.student_mobile || '').toLowerCase();
+                const parentMobile = (student.parent_mobile || '').toLowerCase();
+                const studentEmail = (student.email || '').toLowerCase();
                 
                 if (filterColumn === 'all') {
                     // Search in all columns
+                    const searchTerm = prnSearch || nameSearch;
                     return (
-                        studentPRN.includes(prnSearch) &&
-                        studentName.includes(nameSearch) &&
-                        (
-                            studentPRN.includes(prnSearch) ||
-                            studentName.includes(prnSearch) ||
-                            studentMobile.includes(prnSearch) ||
-                            parentMobile.includes(prnSearch) ||
-                            studentEmail.includes(prnSearch) ||
-                            studentPRN.includes(nameSearch) ||
-                            studentName.includes(nameSearch) ||
-                            studentMobile.includes(nameSearch) ||
-                            parentMobile.includes(nameSearch) ||
-                            studentEmail.includes(nameSearch)
-                        )
+                        studentPRN.includes(searchTerm) ||
+                        studentName.includes(searchTerm) ||
+                        studentMobile.includes(searchTerm) ||
+                        parentMobile.includes(searchTerm) ||
+                        studentEmail.includes(searchTerm)
                     );
                 } else {
                     // Search in specific column
-                    const columnIndex = parseInt(filterColumn) - 1;
-                    const searchTerm = columnIndex === 1 ? prnSearch : nameSearch;
-                    const columnValue = (student[columnIndex] || '').toLowerCase();
+                    const searchTerm = (filterColumn === '1' ? prnSearch : nameSearch);
+                    if (!searchTerm) return true;
                     
-                    return columnValue.includes(searchTerm);
+                    switch(filterColumn) {
+                        case '1': return studentPRN.includes(searchTerm);
+                        case '2': return studentName.includes(searchTerm);
+                        case '3': return studentMobile.includes(searchTerm);
+                        case '4': return parentMobile.includes(searchTerm);
+                        case '5': return studentEmail.includes(searchTerm);
+                        default: return true;
+                    }
                 }
             });
             
-            displayStudents(filteredStudents);
-            updateStats(allStudents.length, filteredStudents.length);
+            dataTable.draw();
             
-            // Highlight search terms
-            if (prnSearch || nameSearch) {
-                highlightSearchTerms(prnSearch || nameSearch);
-            }
-        }
-
-        // Highlight search terms
-        function highlightSearchTerms(searchTerm) {
-            const cells = document.querySelectorAll('#tableBody td');
-            const term = searchTerm.toLowerCase();
+            // Remove the custom filter function
+            $.fn.dataTable.ext.search.pop();
             
-            cells.forEach(cell => {
-                const text = cell.textContent.toLowerCase();
-                if (text.includes(term) && term.length > 0) {
-                    cell.classList.add('highlight');
-                    
-                    // Remove highlight after animation
-                    setTimeout(() => {
-                        cell.classList.remove('highlight');
-                    }, 1500);
-                }
-            });
+            // Update search results count
+            const filteredCount = dataTable.rows({ search: 'applied' }).count();
+            updateStats(allStudents.length, filteredCount);
         }
 
         // Clear search
@@ -472,47 +470,55 @@
             document.getElementById('searchPRN').value = '';
             document.getElementById('searchName').value = '';
             document.getElementById('filterColumn').value = 'all';
-            displayStudents(allStudents);
-            updateStats(allStudents.length, allStudents.length);
-        }
-
-        // Load sample data
-        function loadSampleData() {
-            processData(sampleData);
-            document.getElementById('dataLoaded').textContent = 'Sample';
-            document.getElementById('loading').style.display = 'none';
+            
+            if (dataTable) {
+                dataTable.search('').draw();
+                updateStats(allStudents.length);
+            }
         }
 
         // Update statistics
-        function updateStats(total, found) {
+        function updateStats(total, found = null) {
             document.getElementById('totalStudents').textContent = total;
-            document.getElementById('searchResults').textContent = found;
+            if (found !== null) {
+                document.getElementById('searchResults').textContent = found;
+            } else {
+                document.getElementById('searchResults').textContent = total;
+            }
         }
 
         // Action functions
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                alert(`Copied to clipboard: ${text}`);
+        function copyEmail(email) {
+            navigator.clipboard.writeText(email).then(() => {
+                alert(`Email copied: ${email}`);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                prompt('Copy this email:', email);
             });
         }
 
-        function callStudent(number) {
-            if (confirm(`Call student at ${number}?`)) {
-                window.location.href = `tel:${number}`;
+        function callNumber(number) {
+            if (confirm(`Call ${number}?`)) {
+                window.open(`tel:${number}`);
             }
         }
 
         // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            loadDataFromCSV();
+        $(document).ready(function() {
+            loadCSVData();
             
-            // Add enter key support for search
-            document.getElementById('searchPRN').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') searchTable();
+            // Add enter key support
+            $('#searchPRN, #searchName').keypress(function(e) {
+                if (e.which === 13) {
+                    searchTable();
+                }
             });
             
-            document.getElementById('searchName').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') searchTable();
+            // Auto-search after typing
+            let searchTimer;
+            $('#searchPRN, #searchName').keyup(function() {
+                clearTimeout(searchTimer);
+                searchTimer = setTimeout(searchTable, 300);
             });
         });
     </script>
