@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCCOE Student Contact Search</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --pccoe-blue: #1a237e;
+            --pccoe-light: #e8eaf6;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--pccoe-blue) 0%, #283593 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 12px rgba(26, 35, 126, 0.2);
+        }
+        
+        .logo-container {
+            background: white;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            font-size: 2.5rem;
+            color: var(--pccoe-blue);
+        }
+        
+        .search-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+        
+        .search-btn {
+            background: var(--pccoe-blue);
+            border: none;
+            padding: 10px 25px;
+            transition: all 0.3s;
+        }
+        
+        .search-btn:hover {
+            background: #283593;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(26, 35, 126, 0.3);
+        }
+        
+        .data-table {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        }
+        
+        .table th {
+            background-color: var(--pccoe-blue);
+            color: white;
+            border: none;
+            padding: 15px;
+        }
+        
+        .table td {
+            padding: 12px 15px;
+            vertical-align: middle;
+        }
+        
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(232, 234, 246, 0.3);
+        }
+        
+        .highlight {
+            background-color: #fff9c4 !important;
+            animation: highlight 1.5s;
+        }
+        
+        @keyframes highlight {
+            0% { background-color: #fff9c4; }
+            100% { background-color: inherit; }
+        }
+        
+        .stats-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--pccoe-blue);
+        }
+        
+        .stats-card i {
+            font-size: 2rem;
+            color: var(--pccoe-blue);
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer {
+            margin-top: 3rem;
+            padding: 1.5rem;
+            background-color: var(--pccoe-blue);
+            color: white;
+            text-align: center;
+            border-radius: 15px 15px 0 0;
+        }
+        
+        .badge-prn {
+            background-color: #5c6bc0;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        
+        .action-btns button {
+            margin: 0 3px;
+            padding: 5px 10px;
+            font-size: 0.85rem;
+        }
+        
+        #loading {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid px-4">
+        <!-- Header -->
+        <div class="header">
+            <div class="container">
+                <div class="logo-container">
+                    <i class="fas fa-university logo"></i>
+                </div>
+                <h1 class="text-center"><i class="fas fa-graduation-cap"></i> PCCOE Student Contact Directory</h1>
+                <p class="text-center mb-0">FY Computer Engineering 2023-24</p>
+            </div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="container">
+            <div class="search-box">
+                <h3 class="mb-4"><i class="fas fa-search"></i> Search Student</h3>
+                <div class="row">
+                    <div class="col-md-5 mb-3">
+                        <label for="searchPRN" class="form-label"><i class="fas fa-id-card"></i> Search by PRN</label>
+                        <input type="text" class="form-control" id="searchPRN" 
+                               placeholder="Enter PRN (e.g., 123B1G035)" 
+                               onkeyup="searchTable()">
+                    </div>
+                    <div class="col-md-5 mb-3">
+                        <label for="searchName" class="form-label"><i class="fas fa-user"></i> Search by Name</label>
+                        <input type="text" class="form-control" id="searchName" 
+                               placeholder="Enter student name" 
+                               onkeyup="searchTable()">
+                    </div>
+                    <div class="col-md-2 mb-3 d-flex align-items-end">
+                        <button class="btn btn-primary search-btn w-100" onclick="searchTable()">
+                            <i class="fas fa-search me-2"></i>Search
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <button class="btn btn-outline-secondary w-100 mb-2" onclick="clearSearch()">
+                            <i class="fas fa-times"></i> Clear Search
+                        </button>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-outline-info w-100 mb-2" onclick="loadSampleData()">
+                            <i class="fas fa-download"></i> Load Sample Data
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group mb-2">
+                            <span class="input-group-text"><i class="fas fa-filter"></i></span>
+                            <select class="form-select" id="filterColumn" onchange="searchTable()">
+                                <option value="all">Search in All Columns</option>
+                                <option value="1">PRN</option>
+                                <option value="2">Student Name</option>
+                                <option value="3">Student Mobile</option>
+                                <option value="4">Parent Mobile</option>
+                                <option value="5">Email</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <i class="fas fa-users"></i>
+                        <h4 id="totalStudents">0</h4>
+                        <p>Total Students</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <i class="fas fa-phone"></i>
+                        <h4 id="dataLoaded">No</h4>
+                        <p>Data Status</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <i class="fas fa-search"></i>
+                        <h4 id="searchResults">0</h4>
+                        <p>Search Results</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <i class="fas fa-database"></i>
+                        <h4>CSV</h4>
+                        <p>Data Format</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading Indicator -->
+            <div id="loading" class="text-center mb-3">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Loading student data...</p>
+            </div>
+
+            <!-- Data Table -->
+            <div class="data-table">
+                <div class="table-responsive">
+                    <table id="studentTable" class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Sr. No.</th>
+                                <th>PRN</th>
+                                <th>Student Name</th>
+                                <th>Student Mobile</th>
+                                <th>Parent Mobile</th>
+                                <th>Email ID</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <!-- Data will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- No Results Message -->
+            <div id="noResults" class="text-center mt-4" style="display: none;">
+                <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                <h4>No students found</h4>
+                <p>Try a different search term</p>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <p class="mb-0">
+                    <i class="fas fa-laptop-code"></i> PCCOE FY Contact Directory System | 
+                    Data Source: contact_testing_csv.csv
+                </p>
+                <small>Last updated: <span id="currentDate"></span></small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
+    <script>
+        // Sample data (fallback if CSV fails)
+        const sampleData = [
+            ["1", "123B1G035", "GADEKAR SARVESH VITTHAL", "9834517264", "9226772753", "sarvesh.gadekar23@pccoepune.org"],
+            ["2", "123B1G002", "Aditya Sambhaji Birajdar", "8263977506", "9167080904", "aditya.birajdar23@pccoepune.org"],
+            ["3", "123B1G003", "ADITYA SAMPAT SABALE", "8605299945", "9596806705", "aditya.sabale23@pccoepune.org"],
+            ["4", "123B1G004", "ADITYA SANTOSH YELWANDE", "8669961291", "9822871291", "aditya.yelwande23@pccoepune.org"],
+            ["5", "123B1G005", "AGRE TANUSHRI RAJENDRA", "7385498207", "9130475311", "tanushri.agre23@pccoepune.org"],
+            ["6", "123B1G006", "AHIREKAR ADWAIT MAHESH", "7219484577", "9225673145", "adwait.ahirekar23@pccoepune.org"]
+        ];
+
+        let allStudents = [];
+        let filteredStudents = [];
+
+        // Set current date
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString();
+
+        // Load data from CSV file on GitHub
+        async function loadDataFromCSV() {
+            document.getElementById('loading').style.display = 'block';
+            
+            try {
+                // Replace with your actual CSV file URL on GitHub
+                const csvUrl = 'https://raw.githubusercontent.com/dineshkute90/pccoe_fy_contact_details/main/contact_testing_csv.csv';
+                
+                const response = await fetch(csvUrl);
+                const csvText = await response.text();
+                
+                Papa.parse(csvText, {
+                    header: false, // No headers in your data
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        processData(results.data);
+                    },
+                    error: function(error) {
+                        console.warn('CSV load failed, using sample data:', error);
+                        loadSampleData();
+                    }
+                });
+            } catch (error) {
+                console.warn('Failed to fetch CSV, using sample data:', error);
+                loadSampleData();
+            }
+        }
+
+        // Process and display data
+        function processData(data) {
+            allStudents = data;
+            
+            // Remove header row if it exists
+            if (allStudents.length > 0) {
+                const firstRow = allStudents[0];
+                // Check if first row contains headers
+                if (firstRow[0] === 'Sr. No.' || firstRow[1] === 'PRN') {
+                    allStudents.shift(); // Remove header row
+                }
+            }
+            
+            displayStudents(allStudents);
+            updateStats(allStudents.length, allStudents.length);
+            document.getElementById('dataLoaded').textContent = 'Yes';
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        // Display students in table
+        function displayStudents(students) {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
+            
+            if (students.length === 0) {
+                document.getElementById('noResults').style.display = 'block';
+                return;
+            }
+            
+            document.getElementById('noResults').style.display = 'none';
+            
+            students.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row[0] || index + 1}</td>
+                    <td><span class="badge-prn">${row[1] || ''}</span></td>
+                    <td><strong>${row[2] || ''}</strong></td>
+                    <td><i class="fas fa-phone text-success me-1"></i> ${row[3] || ''}</td>
+                    <td><i class="fas fa-user-friends text-primary me-1"></i> ${row[4] || ''}</td>
+                    <td><i class="fas fa-envelope text-danger me-1"></i> ${row[5] || ''}</td>
+                    <td class="action-btns">
+                        <button class="btn btn-sm btn-outline-primary" onclick="copyToClipboard('${row[5] || ''}')" title="Copy Email">
+                            <i class="far fa-copy"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-success" onclick="callStudent('${row[3] || ''}')" title="Call Student">
+                            <i class="fas fa-phone"></i>
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+            
+            // Initialize DataTable
+            $('#studentTable').DataTable({
+                "paging": true,
+                "pageLength": 10,
+                "searching": false, // We handle our own search
+                "info": true,
+                "lengthChange": true,
+                "order": [[2, 'asc']] // Sort by name by default
+            });
+        }
+
+        // Search function
+        function searchTable() {
+            const prnSearch = document.getElementById('searchPRN').value.toLowerCase();
+            const nameSearch = document.getElementById('searchName').value.toLowerCase();
+            const filterColumn = document.getElementById('filterColumn').value;
+            
+            filteredStudents = allStudents.filter(student => {
+                const studentPRN = (student[1] || '').toLowerCase();
+                const studentName = (student[2] || '').toLowerCase();
+                const studentMobile = (student[3] || '').toLowerCase();
+                const parentMobile = (student[4] || '').toLowerCase();
+                const studentEmail = (student[5] || '').toLowerCase();
+                
+                if (filterColumn === 'all') {
+                    // Search in all columns
+                    return (
+                        studentPRN.includes(prnSearch) &&
+                        studentName.includes(nameSearch) &&
+                        (
+                            studentPRN.includes(prnSearch) ||
+                            studentName.includes(prnSearch) ||
+                            studentMobile.includes(prnSearch) ||
+                            parentMobile.includes(prnSearch) ||
+                            studentEmail.includes(prnSearch) ||
+                            studentPRN.includes(nameSearch) ||
+                            studentName.includes(nameSearch) ||
+                            studentMobile.includes(nameSearch) ||
+                            parentMobile.includes(nameSearch) ||
+                            studentEmail.includes(nameSearch)
+                        )
+                    );
+                } else {
+                    // Search in specific column
+                    const columnIndex = parseInt(filterColumn) - 1;
+                    const searchTerm = columnIndex === 1 ? prnSearch : nameSearch;
+                    const columnValue = (student[columnIndex] || '').toLowerCase();
+                    
+                    return columnValue.includes(searchTerm);
+                }
+            });
+            
+            displayStudents(filteredStudents);
+            updateStats(allStudents.length, filteredStudents.length);
+            
+            // Highlight search terms
+            if (prnSearch || nameSearch) {
+                highlightSearchTerms(prnSearch || nameSearch);
+            }
+        }
+
+        // Highlight search terms
+        function highlightSearchTerms(searchTerm) {
+            const cells = document.querySelectorAll('#tableBody td');
+            const term = searchTerm.toLowerCase();
+            
+            cells.forEach(cell => {
+                const text = cell.textContent.toLowerCase();
+                if (text.includes(term) && term.length > 0) {
+                    cell.classList.add('highlight');
+                    
+                    // Remove highlight after animation
+                    setTimeout(() => {
+                        cell.classList.remove('highlight');
+                    }, 1500);
+                }
+            });
+        }
+
+        // Clear search
+        function clearSearch() {
+            document.getElementById('searchPRN').value = '';
+            document.getElementById('searchName').value = '';
+            document.getElementById('filterColumn').value = 'all';
+            displayStudents(allStudents);
+            updateStats(allStudents.length, allStudents.length);
+        }
+
+        // Load sample data
+        function loadSampleData() {
+            processData(sampleData);
+            document.getElementById('dataLoaded').textContent = 'Sample';
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        // Update statistics
+        function updateStats(total, found) {
+            document.getElementById('totalStudents').textContent = total;
+            document.getElementById('searchResults').textContent = found;
+        }
+
+        // Action functions
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert(`Copied to clipboard: ${text}`);
+            });
+        }
+
+        function callStudent(number) {
+            if (confirm(`Call student at ${number}?`)) {
+                window.location.href = `tel:${number}`;
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDataFromCSV();
+            
+            // Add enter key support for search
+            document.getElementById('searchPRN').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') searchTable();
+            });
+            
+            document.getElementById('searchName').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') searchTable();
+            });
+        });
+    </script>
+</body>
+</html>
