@@ -44,17 +44,19 @@
         }
         
         .login-btn {
-            background: var(--pccoe-blue);
+            background: #2e7d32;
             border: none;
             padding: 10px;
             font-weight: 500;
             transition: all 0.3s;
             width: 100%;
+            color: white;
         }
         
         .login-btn:hover {
-            background: #283593;
+            background: #1b5e20;
             transform: translateY(-2px);
+            color: white;
         }
         
         .main-container {
@@ -62,30 +64,75 @@
             width: 100%;
         }
         
+        /* Updated Header to match the template */
         .header {
-            background: linear-gradient(135deg, var(--pccoe-blue) 0%, #283593 100%);
-            color: white;
-            padding: 1.5rem 0;
+            background-color: #fff;
+            padding: 1rem 0;
             margin-bottom: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(26, 35, 126, 0.2);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             position: relative;
+            border-left: 8px solid var(--pccoe-blue);
+            border-right: 8px solid var(--pccoe-blue);
+        }
+        
+        .header-content {
+            text-align: center;
+            padding: 0.5rem;
+        }
+        
+        .trust-name {
+            color: #d32f2f;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0;
+            letter-spacing: 0.5px;
+        }
+        
+        .college-name {
+            color: var(--pccoe-blue);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 0.2rem 0;
+            text-transform: uppercase;
+        }
+        
+        .directory-title {
+            color: #1a237e;
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin: 0.5rem 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .academic-year {
+            color: #2e7d32;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 0.2rem 0;
+            background-color: #e8f5e9;
+            padding: 0.2rem 1rem;
+            border-radius: 4px;
+            display: inline-block;
         }
         
         .logout-btn {
             position: absolute;
             top: 15px;
             right: 15px;
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: var(--pccoe-blue);
+            border: none;
             color: white;
-            padding: 5px 15px;
-            border-radius: 5px;
+            padding: 6px 15px;
+            border-radius: 4px;
             transition: all 0.3s;
+            font-weight: 500;
         }
         
         .logout-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: #283593;
+            transform: translateY(-1px);
         }
         
         .search-box {
@@ -292,13 +339,17 @@
 
     <!-- Main Application Section -->
     <div class="container main-container" id="mainSection">
-        <!-- Header -->
-        <div class="header text-center">
+        <!-- Updated Header to match template -->
+        <div class="header">
             <button class="logout-btn" onclick="logout()">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </button>
-            <h2><i class="fas fa-graduation-cap"></i> PCCOE Student Directory</h2>
-            <p class="mb-0">First Year Computer Engineering 2023-24</p>
+            <div class="header-content">
+                <p class="trust-name">Pimpri Chinchwad Education Trust's</p>
+                <h2 class="college-name">Pimpri Chinchwad College of Engineering</h2>
+                <h1 class="directory-title">PCCOE Student Directory</h1>
+                <p class="academic-year">AY2022-2025</p>
+            </div>
         </div>
 
         <!-- Search Section -->
@@ -394,12 +445,12 @@
                 <thead>
                     <tr>
                         <th>Sr. No.</th>
+                        <th>Offering Year</th>
                         <th>PRN</th>
                         <th>Student Name</th>
                         <th>Student Mobile</th>
                         <th>Parent Mobile</th>
                         <th>Email ID</th>
-                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -530,6 +581,12 @@
                         }
                     },
                     { 
+                        data: 'offering_year',
+                        render: function(data) {
+                            return data || '2022-2025';
+                        }
+                    },
+                    { 
                         data: 'prn',
                         render: function(data) {
                             return `<span class="badge-prn">${data}</span>`;
@@ -578,17 +635,6 @@
                                         <i class="far fa-copy"></i>
                                     </button>
                                 </div>
-                            `;
-                        }
-                    },
-                    {
-                        data: null,
-                        orderable: false,
-                        render: function(data, type, row) {
-                            return `
-                                <button class="btn btn-sm btn-outline-primary action-btn" onclick="copyToClipboard('${row.email}', 'Email address')" title="Copy Email">
-                                    <i class="far fa-copy"></i>
-                                </button>
                             `;
                         }
                     }
@@ -675,9 +721,9 @@
             
             data.forEach((row, index) => {
                 // Map CSV columns to our data structure
-                // Adjust these keys based on your actual CSV headers
                 const student = {
                     sr_no: row['Sr. No.'] || row['sr_no'] || row['Sr No'] || index + 1,
+                    offering_year: row['Offering Year'] || row['offering_year'] || row['Offering_Year'] || '2022-2025',
                     prn: row['PRN'] || row['prn'] || row['PRN Number'] || '',
                     name: row['Student Name'] || row['name'] || row['Student_Name'] || row['Name'] || '',
                     student_mobile: row['Student Mobile Number'] || row['student_mobile'] || row['Student Mobile'] || row['Student_Mobile'] || row['Mobile'] || '',
