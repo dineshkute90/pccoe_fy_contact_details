@@ -17,6 +17,49 @@
             background-color: #f5f7fa;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             padding-top: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-container {
+            max-width: 400px;
+            width: 100%;
+            padding: 20px;
+        }
+        
+        .login-box {
+            background: white;
+            border-radius: 15px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(26, 35, 126, 0.2);
+            border-top: 5px solid var(--pccoe-blue);
+        }
+        
+        .login-logo {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--pccoe-blue);
+        }
+        
+        .login-btn {
+            background: var(--pccoe-blue);
+            border: none;
+            padding: 10px;
+            font-weight: 500;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        
+        .login-btn:hover {
+            background: #283593;
+            transform: translateY(-2px);
+        }
+        
+        .main-container {
+            display: none;
+            width: 100%;
         }
         
         .header {
@@ -26,6 +69,23 @@
             margin-bottom: 2rem;
             border-radius: 10px;
             box-shadow: 0 4px 12px rgba(26, 35, 126, 0.2);
+            position: relative;
+        }
+        
+        .logout-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
         
         .search-box {
@@ -115,44 +175,128 @@
             padding: 0 10px;
         }
         
-        .copy-btn {
-            padding: 2px 6px;
-            font-size: 0.7rem;
-            margin-left: 5px;
-            vertical-align: middle;
-        }
-        
         .mobile-container {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 8px;
         }
         
         .mobile-text {
             flex-grow: 1;
         }
         
-        .copy-number-btn {
+        .copy-icon-btn {
             background-color: transparent;
             border: 1px solid #6c757d;
             color: #6c757d;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-size: 0.7rem;
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
             transition: all 0.2s;
+            flex-shrink: 0;
         }
         
-        .copy-number-btn:hover {
+        .copy-icon-btn:hover {
             background-color: #6c757d;
             color: white;
+            transform: scale(1.05);
+        }
+        
+        .copy-icon-btn i {
+            font-size: 0.8rem;
+        }
+        
+        .email-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+        
+        .email-text {
+            flex-grow: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .error-message {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .login-error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 15px;
+            display: none;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- Login Section -->
+    <div class="login-container" id="loginSection">
+        <div class="login-box">
+            <div class="login-logo">
+                <i class="fas fa-graduation-cap fa-3x mb-3"></i>
+                <h2>PCCOE Student Directory</h2>
+                <p class="text-muted mb-0">First Year Computer Engineering</p>
+            </div>
+            
+            <div class="login-error" id="loginError">
+                <i class="fas fa-exclamation-circle"></i> Invalid username or password
+            </div>
+            
+            <form id="loginForm">
+                <div class="mb-3">
+                    <label for="username" class="form-label">
+                        <i class="fas fa-user"></i> Username
+                    </label>
+                    <input type="text" class="form-control" id="username" 
+                           placeholder="Enter username" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="password" class="form-label">
+                        <i class="fas fa-lock"></i> Password
+                    </label>
+                    <input type="password" class="form-control" id="password" 
+                           placeholder="Enter password" required>
+                </div>
+                
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="rememberMe">
+                    <label class="form-check-label" for="rememberMe">Remember me</label>
+                </div>
+                
+                <button type="submit" class="btn login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                
+                <div class="text-center mt-3">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle"></i> Contact admin for credentials
+                    </small>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Application Section -->
+    <div class="container main-container" id="mainSection">
         <!-- Header -->
         <div class="header text-center">
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
             <h2><i class="fas fa-graduation-cap"></i> PCCOE Student Directory</h2>
             <p class="mb-0">First Year Computer Engineering 2023-24</p>
         </div>
@@ -281,15 +425,93 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 
     <script>
+        // Login credentials
+        const VALID_USERNAME = "pccoeash";
+        const VALID_PASSWORD = "ash2025-26";
+        
         let dataTable = null;
         let allStudents = [];
+        let isLoggedIn = false;
 
-        // Set current date
-        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-IN', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric'
-        });
+        // Check if user is already logged in
+        function checkLoginStatus() {
+            const savedLogin = localStorage.getItem('pccoeLogin');
+            if (savedLogin) {
+                const loginData = JSON.parse(savedLogin);
+                if (loginData.loggedIn && loginData.expiry > Date.now()) {
+                    isLoggedIn = true;
+                    showMainApp();
+                }
+            }
+        }
+
+        // Handle login
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+            const loginError = document.getElementById('loginError');
+            
+            // Clear previous error
+            loginError.style.display = 'none';
+            
+            // Validate credentials
+            if (username === VALID_USERNAME && password === VALID_PASSWORD) {
+                isLoggedIn = true;
+                
+                // Save login if "Remember me" is checked
+                if (rememberMe) {
+                    const loginData = {
+                        loggedIn: true,
+                        expiry: Date.now() + (7 * 24 * 60 * 60 * 1000) // 7 days
+                    };
+                    localStorage.setItem('pccoeLogin', JSON.stringify(loginData));
+                } else {
+                    // Session only (cleared when browser closes)
+                    sessionStorage.setItem('pccoeSession', 'true');
+                }
+                
+                showMainApp();
+            } else {
+                loginError.style.display = 'block';
+                document.getElementById('password').value = '';
+            }
+        }
+
+        // Logout function
+        function logout() {
+            isLoggedIn = false;
+            localStorage.removeItem('pccoeLogin');
+            sessionStorage.removeItem('pccoeSession');
+            showLogin();
+        }
+
+        // Show login screen
+        function showLogin() {
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('mainSection').style.display = 'none';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('loginError').style.display = 'none';
+        }
+
+        // Show main application
+        function showMainApp() {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('mainSection').style.display = 'block';
+            
+            // Set current date
+            document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-IN', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
+            
+            // Load CSV data
+            loadCSVData();
+        }
 
         // Initialize DataTable
         function initDataTable(data) {
@@ -322,8 +544,8 @@
                                     <div class="mobile-text">
                                         <i class="fas fa-phone text-success me-1"></i>${data}
                                     </div>
-                                    <button class="copy-number-btn" onclick="copyToClipboard('${data}')" title="Copy Number">
-                                        <i class="far fa-copy"></i> Copy
+                                    <button class="copy-icon-btn" onclick="copyToClipboard('${data}', 'Student mobile number')" title="Copy Student Mobile">
+                                        <i class="far fa-copy"></i>
                                     </button>
                                 </div>
                             `;
@@ -337,8 +559,8 @@
                                     <div class="mobile-text">
                                         <i class="fas fa-user-friends text-primary me-1"></i>${data}
                                     </div>
-                                    <button class="copy-number-btn" onclick="copyToClipboard('${data}')" title="Copy Number">
-                                        <i class="far fa-copy"></i> Copy
+                                    <button class="copy-icon-btn" onclick="copyToClipboard('${data}', 'Parent mobile number')" title="Copy Parent Mobile">
+                                        <i class="far fa-copy"></i>
                                     </button>
                                 </div>
                             `;
@@ -348,12 +570,12 @@
                         data: 'email',
                         render: function(data) {
                             return `
-                                <div class="mobile-container">
-                                    <div class="mobile-text">
+                                <div class="email-container">
+                                    <div class="email-text">
                                         <i class="fas fa-envelope text-danger me-1"></i>${data}
                                     </div>
-                                    <button class="copy-number-btn" onclick="copyToClipboard('${data}')" title="Copy Email">
-                                        <i class="far fa-copy"></i> Copy
+                                    <button class="copy-icon-btn" onclick="copyToClipboard('${data}', 'Email address')" title="Copy Email">
+                                        <i class="far fa-copy"></i>
                                     </button>
                                 </div>
                             `;
@@ -364,8 +586,8 @@
                         orderable: false,
                         render: function(data, type, row) {
                             return `
-                                <button class="btn btn-sm btn-outline-primary action-btn" onclick="copyEmail('${row.email}')" title="Copy Email">
-                                    <i class="far fa-copy"></i> Copy Email
+                                <button class="btn btn-sm btn-outline-primary action-btn" onclick="copyToClipboard('${row.email}', 'Email address')" title="Copy Email">
+                                    <i class="far fa-copy"></i>
                                 </button>
                             `;
                         }
@@ -392,6 +614,8 @@
 
         // Load CSV from GitHub
         async function loadCSVData() {
+            if (!isLoggedIn) return;
+            
             document.getElementById('loading').style.display = 'block';
             document.getElementById('dataStatus').textContent = 'Loading...';
             
@@ -424,14 +648,14 @@
                         console.error('CSV parsing error:', error);
                         document.getElementById('dataStatus').textContent = 'Error';
                         document.getElementById('loading').style.display = 'none';
-                        alert('Error loading CSV file. Please check console for details.');
+                        showCopySuccess('Error loading CSV file. Please check console for details.', 'error');
                     }
                 });
             } catch (error) {
                 console.error('Failed to fetch CSV:', error);
                 document.getElementById('dataStatus').textContent = 'Failed';
                 document.getElementById('loading').style.display = 'none';
-                alert('Failed to load CSV file. Please check if the file exists at: ' + csvUrl);
+                showCopySuccess('Failed to load CSV file. Please check if the file exists.', 'error');
             }
         }
 
@@ -442,7 +666,7 @@
             // Check if data is empty
             if (!data || data.length === 0) {
                 console.error('No data found in CSV');
-                alert('No data found in CSV file');
+                showCopySuccess('No data found in CSV file', 'error');
                 document.getElementById('loading').style.display = 'none';
                 return;
             }
@@ -559,7 +783,6 @@
             const totalCount = allStudents.length;
             document.getElementById('totalStudents').textContent = totalCount;
             document.getElementById('searchResults').textContent = totalCount;
-            console.log('Updated total count to:', totalCount);
         }
 
         // Update search results
@@ -572,9 +795,14 @@
         }
 
         // Generic copy to clipboard function
-        function copyToClipboard(text) {
+        function copyToClipboard(text, label) {
+            if (!isLoggedIn) {
+                showLogin();
+                return;
+            }
+            
             navigator.clipboard.writeText(text).then(() => {
-                showCopySuccess('Copied: ' + text);
+                showCopySuccess(`${label} copied to clipboard`);
             }).catch(err => {
                 console.error('Failed to copy:', err);
                 // Fallback method
@@ -584,25 +812,31 @@
                 textArea.select();
                 document.execCommand('copy');
                 document.body.removeChild(textArea);
-                showCopySuccess('Copied: ' + text);
+                showCopySuccess(`${label} copied to clipboard`);
             });
         }
 
         // Show copy success message
-        function showCopySuccess(message) {
+        function showCopySuccess(message, type = 'success') {
+            const bgColor = type === 'error' ? '#dc3545' : '#28a745';
+            
             // Create a temporary notification
             const notification = document.createElement('div');
             notification.style.cssText = `
                 position: fixed;
                 top: 20px;
                 right: 20px;
-                background: #28a745;
+                background: ${bgColor};
                 color: white;
                 padding: 10px 20px;
                 border-radius: 5px;
                 z-index: 10000;
                 box-shadow: 0 4px 6px rgba(0,0,0,0.1);
                 animation: fadeInOut 2s ease-in-out;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                max-width: 300px;
             `;
             
             // Add CSS for animation
@@ -617,38 +851,55 @@
             `;
             document.head.appendChild(style);
             
-            notification.textContent = message;
+            notification.innerHTML = `
+                <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i>
+                <span>${message}</span>
+            `;
             document.body.appendChild(notification);
             
             // Remove after 2 seconds
             setTimeout(() => {
-                document.body.removeChild(notification);
-                document.head.removeChild(style);
+                if (notification.parentNode) {
+                    document.body.removeChild(notification);
+                }
+                if (style.parentNode) {
+                    document.head.removeChild(style);
+                }
             }, 2000);
-        }
-
-        // Email copy function (kept for backward compatibility)
-        function copyEmail(email) {
-            copyToClipboard(email);
         }
 
         // Initialize on page load
         $(document).ready(function() {
-            loadCSVData();
+            // Setup login form
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
             
-            // Add enter key support
-            $('#searchPRN, #searchName').keypress(function(e) {
-                if (e.which === 13) {
+            // Check if user is already logged in
+            checkLoginStatus();
+            
+            if (!isLoggedIn) {
+                showLogin();
+            }
+            
+            // Add enter key support for search
+            $(document).on('keypress', '#searchPRN, #searchName', function(e) {
+                if (e.which === 13 && isLoggedIn) {
                     searchTable();
                 }
             });
             
             // Auto-search after typing
             let searchTimer;
-            $('#searchPRN, #searchName').keyup(function() {
-                clearTimeout(searchTimer);
-                searchTimer = setTimeout(searchTable, 300);
+            $(document).on('keyup', '#searchPRN, #searchName', function() {
+                if (isLoggedIn) {
+                    clearTimeout(searchTimer);
+                    searchTimer = setTimeout(searchTable, 300);
+                }
             });
+            
+            // Auto-focus username field on login page
+            if (!isLoggedIn) {
+                document.getElementById('username').focus();
+            }
         });
     </script>
 </body>
