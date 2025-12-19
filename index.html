@@ -22,106 +22,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-        }
-        
-        /* Professional Header Styles */
-        .pccoe-header {
-            background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
-            color: white;
-            padding: 0.8rem 0;
-            position: relative;
-            box-shadow: 0 4px 12px rgba(26, 35, 126, 0.3);
-            border-bottom: 4px solid #ff9800;
-        }
-        
-        .header-top-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            margin-bottom: 0.5rem;
-        }
-        
-        .accreditations {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            font-size: 0.8rem;
-            align-items: center;
-        }
-        
-        .accreditation-badge {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 3px 10px;
-            border-radius: 12px;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .accreditation-badge i {
-            color: #ff9800;
-        }
-        
-        .current-year {
-            font-weight: 600;
-            color: #ff9800;
-            font-size: 1rem;
-        }
-        
-        .institute-name {
-            text-align: center;
-            padding: 0.5rem 0;
-        }
-        
-        .trust-name {
-            color: #ffcc80;
-            font-size: 0.9rem;
-            font-weight: 500;
-            letter-spacing: 1px;
-            margin-bottom: 0.2rem;
-        }
-        
-        .college-name {
-            font-size: 1.4rem;
-            font-weight: 700;
-            margin: 0.2rem 0;
-            letter-spacing: 0.5px;
-            color: white;
-        }
-        
-        .college-name span {
-            color: #ff9800;
-        }
-        
-        .subtitle-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 0.5rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-            font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.9);
-        }
-        
-        .motto {
-            font-style: italic;
-            color: #ffcc80;
-        }
-        
-        .pc-logo {
-            width: 60px;
-            height: 60px;
-            background: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--pccoe-blue);
-            font-weight: 800;
-            font-size: 1.2rem;
-            border: 3px solid #ff9800;
+            padding-top: 20px;
         }
         
         .container {
@@ -135,7 +36,6 @@
             max-width: 450px;
             width: 100%;
             padding: 20px;
-            margin-top: 2rem;
         }
         
         .login-box {
@@ -144,7 +44,6 @@
             padding: 2.5rem;
             box-shadow: 0 10px 30px rgba(26, 35, 126, 0.2);
             border-top: 5px solid var(--pccoe-blue);
-            margin-top: 1rem;
         }
         
         .login-logo {
@@ -187,7 +86,6 @@
         .main-container {
             display: none;
             width: 100%;
-            padding-top: 1rem;
         }
         
         .directory-header {
@@ -400,145 +298,53 @@
             margin-top: 15px;
             display: none;
         }
-        
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .accreditations {
-                justify-content: center;
-                gap: 8px;
-                font-size: 0.7rem;
-            }
-            
-            .college-name {
-                font-size: 1.1rem;
-            }
-            
-            .subtitle-row {
-                flex-direction: column;
-                gap: 5px;
-                text-align: center;
-            }
-            
-            .pc-logo {
-                width: 45px;
-                height: 45px;
-                font-size: 1rem;
-            }
-            
-            .directory-header h2 {
-                font-size: 1.4rem;
-            }
-        }
     </style>
 </head>
 <body>
-    <!-- Professional Header (shown on both pages) -->
-    <div class="pccoe-header">
-        <div class="container">
-            <div class="header-top-row">
-                <div class="accreditations">
-                    <span class="accreditation-badge">
-                        <i class="fas fa-award"></i> NBA Accredited
-                    </span>
-                    <span class="accreditation-badge">
-                        <i class="fas fa-star"></i> NAAC 'A' Grade
-                    </span>
-                    <span class="accreditation-badge">
-                        <i class="fas fa-university"></i> Autonomous Institute
-                    </span>
-                    <span class="accreditation-badge">
-                        <i class="fas fa-check-circle"></i> AICTE Approved
-                    </span>
-                    <span class="accreditation-badge">
-                        <i class="fas fa-certificate"></i> ISO 21001:2018
-                    </span>
-                    <span class="accreditation-badge">
-                        <i class="fas fa-handshake"></i> SPPU, Pune
-                    </span>
-                </div>
-                <div class="current-year">
-                    2025-26
-                </div>
-            </div>
-            
-            <div class="institute-name">
-                <div class="trust-name">
-                    PIMPRI CHINCHWAD EDUCATION TRUST's
-                </div>
-                <h1 class="college-name">
-                    PIMPRI CHINCHWAD COLLEGE OF <span>ENGINEERING</span>
-                </h1>
-            </div>
-            
-            <div class="subtitle-row">
-                <div class="motto">
-                    <i class="fas fa-quote-left"></i> Striving for Excellence in Engineering Education <i class="fas fa-quote-right"></i>
-                </div>
-                <div class="pc-logo">
-                    PC
-                </div>
-                <div class="affiliation">
-                    Permanently Affiliated to Savitribai Phule Pune University
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Login Section -->
     <div class="container" id="loginSection">
         <div class="login-container">
-            <div class="app-title">
-                <i class="fas fa-graduation-cap"></i> <span>PCCOE</span> Student Directory System
-            </div>
-            
             <div class="login-box">
                 <div class="login-logo">
                     <i class="fas fa-user-lock fa-3x mb-3" style="color: var(--pccoe-blue);"></i>
-                    <h3>Secure Login Portal</h3>
+                    <h2>PCCOE Student Directory</h2>
                     <p class="text-muted mb-0">First Year Computer Engineering</p>
                 </div>
                 
                 <div class="login-error" id="loginError">
-                    <i class="fas fa-exclamation-circle"></i> Invalid username or password. Please try again.
+                    <i class="fas fa-exclamation-circle"></i> Invalid username or password
                 </div>
                 
                 <form id="loginForm">
                     <div class="mb-3">
                         <label for="username" class="form-label">
-                            <i class="fas fa-user-circle"></i> Username
+                            <i class="fas fa-user"></i> Username
                         </label>
                         <input type="text" class="form-control" id="username" 
-                               placeholder="Enter your username" required>
-                        <div class="form-text">Use provided credentials</div>
+                               placeholder="Enter username" required>
                     </div>
                     
                     <div class="mb-3">
                         <label for="password" class="form-label">
-                            <i class="fas fa-key"></i> Password
+                            <i class="fas fa-lock"></i> Password
                         </label>
                         <input type="password" class="form-control" id="password" 
-                               placeholder="Enter your password" required>
-                        <div class="form-text">Keep your credentials secure</div>
+                               placeholder="Enter password" required>
                     </div>
                     
                     <div class="mb-3 form-check">
                         <input type="checkbox" class="form-check-input" id="rememberMe">
-                        <label class="form-check-label" for="rememberMe">Remember me on this device</label>
+                        <label class="form-check-label" for="rememberMe">Remember me</label>
                     </div>
                     
                     <button type="submit" class="btn login-btn">
-                        <i class="fas fa-sign-in-alt"></i> Login to Student Directory
+                        <i class="fas fa-sign-in-alt"></i> Login
                     </button>
                     
                     <div class="text-center mt-3">
                         <small class="text-muted">
-                            <i class="fas fa-shield-alt"></i> Secure Access | Authorized Personnel Only
+                            <i class="fas fa-info-circle"></i> Contact admin for credentials
                         </small>
-                        <div class="mt-2">
-                            <small class="text-muted">
-                                <i class="fas fa-info-circle"></i> Contact Administration for credentials
-                            </small>
-                        </div>
                     </div>
                 </form>
             </div>
@@ -551,9 +357,8 @@
             <button class="logout-btn" onclick="logout()">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </button>
-            <h2><i class="fas fa-graduation-cap"></i> <span>PCCOE</span> STUDENT DIRECTORY</h2>
-            <p>First Year Computer Engineering</p>
-            <div class="academic-year">Academic Year 2023-24</div>
+            <h2><i class="fas fa-graduation-cap"></i> PCCOE Student Directory</h2>
+            <p>First Year Computer Engineering 2023-24</p>
         </div>
 
         <!-- Search Section -->
@@ -666,9 +471,9 @@
         <!-- Footer -->
         <div class="footer">
             <p class="mb-1">
-                <i class="fas fa-laptop-code"></i> PCCOE FY Computer Engineering Contact Directory
+                <i class="fas fa-laptop-code"></i> PCCOE FY Contact Directory
             </p>
-            <small>Data Source: CSV File | Last Updated: <span id="currentDate"></span> | Version 2.0</small>
+            <small>CSV File: contact_testing_csv.csv | Updated: <span id="currentDate"></span></small>
         </div>
     </div>
 
