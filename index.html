@@ -326,6 +326,31 @@
             display: none;
         }
         
+        .multi-search-container {
+            border-top: 1px dashed #dee2e6;
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .multi-prn-help {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+        
+        .prn-badge {
+            background-color: #e3f2fd;
+            color: #1976d2;
+            border: 1px solid #bbdefb;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            margin-right: 0.25rem;
+            margin-bottom: 0.25rem;
+            display: inline-block;
+        }
+        
         @media (max-width: 768px) {
             .directory-header {
                 flex-direction: column;
@@ -434,10 +459,11 @@
 
         <!-- Search Section -->
         <div class="search-box">
+            <!-- Single Search Section -->
             <div class="row g-3">
                 <div class="col-md-5">
                     <label for="searchPRN" class="form-label">
-                        <i class="fas fa-id-card"></i> Search by PRN
+                        <i class="fas fa-id-card"></i> Search by PRN (Single)
                     </label>
                     <input type="text" class="form-control" id="searchPRN" 
                            placeholder="e.g., 123B1G035">
@@ -455,10 +481,37 @@
                     </button>
                 </div>
             </div>
-            <div class="row g-2 mt-2">
+            
+            <!-- Multi-PRN Search Section -->
+            <div class="multi-search-container">
+                <div class="row g-3">
+                    <div class="col-md-10">
+                        <label for="multiPRNSearch" class="form-label">
+                            <i class="fas fa-list-check"></i> Search Multiple PRNs (Comma separated)
+                        </label>
+                        <input type="text" class="form-control" id="multiPRNSearch" 
+                               placeholder="e.g., 123B1G035, 123B1G036, 123B1G037">
+                        <div class="multi-prn-help">
+                            <i class="fas fa-info-circle"></i> Enter multiple PRNs separated by commas
+                        </div>
+                        <div id="prnBadgesContainer" class="mt-2" style="display: none;">
+                            <small>Searching for:</small>
+                            <div id="prnBadges"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn btn-success w-100" onclick="searchMultiplePRNs()">
+                            <i class="fas fa-magnifying-glass"></i> Search PRNs
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="row g-2 mt-3">
                 <div class="col-md-4">
                     <button class="btn btn-outline-secondary w-100" onclick="clearSearch()">
-                        <i class="fas fa-times"></i> Clear Search
+                        <i class="fas fa-times"></i> Clear All Search
                     </button>
                 </div>
                 <div class="col-md-4">
@@ -505,9 +558,9 @@
             </div>
             <div class="col-md-3">
                 <div class="stats-card">
-                    <i class="fas fa-file-csv"></i>
-                    <h5>CSV</h5>
-                    <small>Data Format</small>
+                    <i class="fas fa-list-check"></i>
+                    <h5 id="prnSearchCount">0</h5>
+                    <small>PRNs in Search</small>
                 </div>
             </div>
         </div>
@@ -828,20 +881,24 @@
             updateTotalCount();
         }
 
-        // Search function
+        // Search function for single PRN and name
         function searchTable() {
             const prnSearch = document.getElementById('searchPRN').value.toLowerCase().trim();
             const nameSearch = document.getElementById('searchName').value.toLowerCase().trim();
             const filterColumn = document.getElementById('filterColumn').value;
             
+            // Clear multi-PRN search
+            document.getElementById('multiPRNSearch').value = '';
+            document.getElementById('prnBadgesContainer').style.display = 'none';
+            document.getElementById('prnSearchCount').textContent = '0';
+            
             if (!dataTable) return;
             
-            // Combine DataTable search with our custom filtering
+            // Reset search
             dataTable.search('').draw();
             
             if (!prnSearch && !nameSearch) {
                 // No search terms, show all data
-                dataTable.search('').draw();
                 updateTotalCount();
                 return;
             }
@@ -894,12 +951,91 @@
             updateSearchResults();
         }
 
-        // Clear search
-        function clearSearch() {
+        // Search multiple PRNs
+        function searchMultiplePRNs() {
+            const multiPRNInput = document.getElementById('multiPRNSearch').value.trim();
+            
+            // Clear single search fields
             document.getElementById('searchPRN').value = '';
             document.getElementById('searchName').value = '';
             document.getElementById('filterColumn').value = 'all';
             
+            if (!dataTable) return;
+            
+            if (!multiPRNInput) {
+                // If no PRNs, show all data
+                dataTable.search('').draw();
+                document.getElementById('prnBadgesContainer').style.display = 'none';
+                document.getElementById('prnSearchCount').textContent = '0';
+                updateTotalCount();
+                return;
+            }
+            
+            // Parse PRNs (split by comma, trim whitespace, remove empty entries)
+            const prnList = multiPRNInput
+                .split(',')
+                .map(prn => prn.trim())
+                .filter(prn => prn.length > 0);
+            
+            // Display PRN badges
+            const badgesContainer = document.getElementById('prnBadges');
+            badgesContainer.innerHTML = '';
+            
+            prnList.forEach(prn => {
+                const badge = document.createElement('span');
+                badge.className = 'prn-badge';
+                badge.textContent = prn;
+                badgesContainer.appendChild(badge);
+            });
+            
+            document.getElementById('prnBadgesContainer').style.display = 'block';
+            document.getElementById('prnSearchCount').textContent = prnList.length;
+            
+            // Custom filtering for multiple PRNs
+            $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+                if (settings.nTable.id !== 'studentTable') return true;
+                
+                const student = allStudents[dataIndex];
+                if (!student) return false;
+                
+                const studentPRN = (student.prn || '').toLowerCase();
+                
+                // Check if this student's PRN matches any in our list
+                for (const searchPRN of prnList) {
+                    if (studentPRN.includes(searchPRN.toLowerCase())) {
+                        return true;
+                    }
+                }
+                
+                return false;
+            });
+            
+            dataTable.draw();
+            
+            // Remove the custom filter function
+            $.fn.dataTable.ext.search.pop();
+            
+            // Update search results count
+            updateSearchResults();
+            
+            // Show success message
+            const foundCount = dataTable.rows({ search: 'applied' }).count();
+            showCopySuccess(`Found ${foundCount} students matching ${prnList.length} PRN(s)`);
+        }
+
+        // Clear all search
+        function clearSearch() {
+            // Clear all search fields
+            document.getElementById('searchPRN').value = '';
+            document.getElementById('searchName').value = '';
+            document.getElementById('multiPRNSearch').value = '';
+            document.getElementById('filterColumn').value = 'all';
+            
+            // Hide PRN badges
+            document.getElementById('prnBadgesContainer').style.display = 'none';
+            document.getElementById('prnSearchCount').textContent = '0';
+            
+            // Reset table
             if (dataTable) {
                 dataTable.search('').draw();
                 updateTotalCount();
@@ -1009,9 +1145,13 @@
             }
             
             // Add enter key support for search
-            $(document).on('keypress', '#searchPRN, #searchName', function(e) {
+            $(document).on('keypress', '#searchPRN, #searchName, #multiPRNSearch', function(e) {
                 if (e.which === 13 && isLoggedIn) {
-                    searchTable();
+                    if ($(this).attr('id') === 'multiPRNSearch') {
+                        searchMultiplePRNs();
+                    } else {
+                        searchTable();
+                    }
                 }
             });
             
@@ -1021,6 +1161,20 @@
                 if (isLoggedIn) {
                     clearTimeout(searchTimer);
                     searchTimer = setTimeout(searchTable, 300);
+                }
+            });
+            
+            // Auto-search for multi-PRN
+            let multiPRNTimer;
+            $(document).on('keyup', '#multiPRNSearch', function() {
+                if (isLoggedIn) {
+                    clearTimeout(multiPRNTimer);
+                    multiPRNTimer = setTimeout(function() {
+                        const input = document.getElementById('multiPRNSearch').value.trim();
+                        if (input && input.includes(',')) {
+                            searchMultiplePRNs();
+                        }
+                    }, 500);
                 }
             });
         });
