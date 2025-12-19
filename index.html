@@ -10,23 +10,132 @@
     <style>
         :root {
             --pccoe-blue: #1a237e;
+            --pccoe-red: #d32f2f;
+            --pccoe-green: #2e7d32;
+            --pccoe-gold: #ff9800;
             --pccoe-light: #e8eaf6;
         }
         
         body {
             background-color: #f5f7fa;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            padding-top: 20px;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Professional Header Styles */
+        .pccoe-header {
+            background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+            color: white;
+            padding: 0.8rem 0;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(26, 35, 126, 0.3);
+            border-bottom: 4px solid #ff9800;
+        }
+        
+        .header-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 0.5rem;
+        }
+        
+        .accreditations {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            font-size: 0.8rem;
+            align-items: center;
+        }
+        
+        .accreditation-badge {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 3px 10px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .accreditation-badge i {
+            color: #ff9800;
+        }
+        
+        .current-year {
+            font-weight: 600;
+            color: #ff9800;
+            font-size: 1rem;
+        }
+        
+        .institute-name {
+            text-align: center;
+            padding: 0.5rem 0;
+        }
+        
+        .trust-name {
+            color: #ffcc80;
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            margin-bottom: 0.2rem;
+        }
+        
+        .college-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 0.2rem 0;
+            letter-spacing: 0.5px;
+            color: white;
+        }
+        
+        .college-name span {
+            color: #ff9800;
+        }
+        
+        .subtitle-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 0.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .motto {
+            font-style: italic;
+            color: #ffcc80;
+        }
+        
+        .pc-logo {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--pccoe-blue);
+            font-weight: 800;
+            font-size: 1.2rem;
+            border: 3px solid #ff9800;
+        }
+        
+        .container {
+            flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         
         .login-container {
-            max-width: 400px;
+            max-width: 450px;
             width: 100%;
             padding: 20px;
+            margin-top: 2rem;
         }
         
         .login-box {
@@ -35,103 +144,107 @@
             padding: 2.5rem;
             box-shadow: 0 10px 30px rgba(26, 35, 126, 0.2);
             border-top: 5px solid var(--pccoe-blue);
+            margin-top: 1rem;
         }
         
         .login-logo {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             color: var(--pccoe-blue);
         }
         
+        .app-title {
+            color: var(--pccoe-blue);
+            text-align: center;
+            margin: 1.5rem 0;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        .app-title span {
+            color: var(--pccoe-red);
+        }
+        
         .login-btn {
-            background: #2e7d32;
+            background: var(--pccoe-green);
             border: none;
-            padding: 10px;
-            font-weight: 500;
+            padding: 12px;
+            font-weight: 600;
             transition: all 0.3s;
             width: 100%;
             color: white;
+            letter-spacing: 0.5px;
+            border-radius: 8px;
         }
         
         .login-btn:hover {
             background: #1b5e20;
             transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 125, 50, 0.3);
             color: white;
         }
         
         .main-container {
             display: none;
             width: 100%;
+            padding-top: 1rem;
         }
         
-        /* Updated Header to match the template */
-        .header {
-            background-color: #fff;
-            padding: 1rem 0;
-            margin-bottom: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            position: relative;
-            border-left: 8px solid var(--pccoe-blue);
-            border-right: 8px solid var(--pccoe-blue);
-        }
-        
-        .header-content {
+        .directory-header {
+            background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+            color: white;
+            padding: 1.2rem;
+            border-radius: 10px;
+            margin: 1.5rem 0;
             text-align: center;
-            padding: 0.5rem;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(26, 35, 126, 0.2);
+            border-left: 6px solid #ff9800;
+            border-right: 6px solid #ff9800;
         }
         
-        .trust-name {
-            color: #d32f2f;
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin: 0;
-            letter-spacing: 0.5px;
-        }
-        
-        .college-name {
-            color: var(--pccoe-blue);
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin: 0.2rem 0;
-            text-transform: uppercase;
-        }
-        
-        .directory-title {
-            color: #1a237e;
+        .directory-header h2 {
             font-size: 1.8rem;
-            font-weight: 800;
+            font-weight: 700;
             margin: 0.5rem 0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            color: white;
+        }
+        
+        .directory-header h2 span {
+            color: #ffcc80;
+        }
+        
+        .directory-header p {
+            margin: 0.3rem 0;
+            font-size: 1rem;
         }
         
         .academic-year {
-            color: #2e7d32;
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin: 0.2rem 0;
-            background-color: #e8f5e9;
-            padding: 0.2rem 1rem;
-            border-radius: 4px;
+            background: rgba(255, 152, 0, 0.9);
+            color: #1a237e;
+            padding: 0.3rem 1.5rem;
+            border-radius: 20px;
+            font-weight: 700;
             display: inline-block;
+            margin-top: 0.5rem;
+            font-size: 1.1rem;
         }
         
         .logout-btn {
             position: absolute;
             top: 15px;
             right: 15px;
-            background: var(--pccoe-blue);
-            border: none;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             color: white;
             padding: 6px 15px;
-            border-radius: 4px;
+            border-radius: 5px;
             transition: all 0.3s;
             font-weight: 500;
         }
         
         .logout-btn:hover {
-            background: #283593;
+            background: rgba(255, 255, 255, 0.3);
             transform: translateY(-1px);
         }
         
@@ -190,12 +303,13 @@
         }
         
         .footer {
-            margin-top: 2rem;
+            margin-top: auto;
             padding: 1rem;
             background-color: var(--pccoe-blue);
             color: white;
             text-align: center;
             border-radius: 8px;
+            margin-top: 2rem;
         }
         
         .badge-prn {
@@ -286,70 +400,160 @@
             margin-top: 15px;
             display: none;
         }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .accreditations {
+                justify-content: center;
+                gap: 8px;
+                font-size: 0.7rem;
+            }
+            
+            .college-name {
+                font-size: 1.1rem;
+            }
+            
+            .subtitle-row {
+                flex-direction: column;
+                gap: 5px;
+                text-align: center;
+            }
+            
+            .pc-logo {
+                width: 45px;
+                height: 45px;
+                font-size: 1rem;
+            }
+            
+            .directory-header h2 {
+                font-size: 1.4rem;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Professional Header (shown on both pages) -->
+    <div class="pccoe-header">
+        <div class="container">
+            <div class="header-top-row">
+                <div class="accreditations">
+                    <span class="accreditation-badge">
+                        <i class="fas fa-award"></i> NBA Accredited
+                    </span>
+                    <span class="accreditation-badge">
+                        <i class="fas fa-star"></i> NAAC 'A' Grade
+                    </span>
+                    <span class="accreditation-badge">
+                        <i class="fas fa-university"></i> Autonomous Institute
+                    </span>
+                    <span class="accreditation-badge">
+                        <i class="fas fa-check-circle"></i> AICTE Approved
+                    </span>
+                    <span class="accreditation-badge">
+                        <i class="fas fa-certificate"></i> ISO 21001:2018
+                    </span>
+                    <span class="accreditation-badge">
+                        <i class="fas fa-handshake"></i> SPPU, Pune
+                    </span>
+                </div>
+                <div class="current-year">
+                    2025-26
+                </div>
+            </div>
+            
+            <div class="institute-name">
+                <div class="trust-name">
+                    PIMPRI CHINCHWAD EDUCATION TRUST's
+                </div>
+                <h1 class="college-name">
+                    PIMPRI CHINCHWAD COLLEGE OF <span>ENGINEERING</span>
+                </h1>
+            </div>
+            
+            <div class="subtitle-row">
+                <div class="motto">
+                    <i class="fas fa-quote-left"></i> Striving for Excellence in Engineering Education <i class="fas fa-quote-right"></i>
+                </div>
+                <div class="pc-logo">
+                    PC
+                </div>
+                <div class="affiliation">
+                    Permanently Affiliated to Savitribai Phule Pune University
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Login Section -->
-    <div class="login-container" id="loginSection">
-        <div class="login-box">
-            <div class="login-logo">
-                <i class="fas fa-graduation-cap fa-3x mb-3"></i>
-                <h2>PCCOE Student Directory</h2>
-                <p class="text-muted mb-0">First Year Computer Engineering</p>
+    <div class="container" id="loginSection">
+        <div class="login-container">
+            <div class="app-title">
+                <i class="fas fa-graduation-cap"></i> <span>PCCOE</span> Student Directory System
             </div>
             
-            <div class="login-error" id="loginError">
-                <i class="fas fa-exclamation-circle"></i> Invalid username or password
+            <div class="login-box">
+                <div class="login-logo">
+                    <i class="fas fa-user-lock fa-3x mb-3" style="color: var(--pccoe-blue);"></i>
+                    <h3>Secure Login Portal</h3>
+                    <p class="text-muted mb-0">First Year Computer Engineering</p>
+                </div>
+                
+                <div class="login-error" id="loginError">
+                    <i class="fas fa-exclamation-circle"></i> Invalid username or password. Please try again.
+                </div>
+                
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">
+                            <i class="fas fa-user-circle"></i> Username
+                        </label>
+                        <input type="text" class="form-control" id="username" 
+                               placeholder="Enter your username" required>
+                        <div class="form-text">Use provided credentials</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">
+                            <i class="fas fa-key"></i> Password
+                        </label>
+                        <input type="password" class="form-control" id="password" 
+                               placeholder="Enter your password" required>
+                        <div class="form-text">Keep your credentials secure</div>
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="rememberMe">
+                        <label class="form-check-label" for="rememberMe">Remember me on this device</label>
+                    </div>
+                    
+                    <button type="submit" class="btn login-btn">
+                        <i class="fas fa-sign-in-alt"></i> Login to Student Directory
+                    </button>
+                    
+                    <div class="text-center mt-3">
+                        <small class="text-muted">
+                            <i class="fas fa-shield-alt"></i> Secure Access | Authorized Personnel Only
+                        </small>
+                        <div class="mt-2">
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle"></i> Contact Administration for credentials
+                            </small>
+                        </div>
+                    </div>
+                </form>
             </div>
-            
-            <form id="loginForm">
-                <div class="mb-3">
-                    <label for="username" class="form-label">
-                        <i class="fas fa-user"></i> Username
-                    </label>
-                    <input type="text" class="form-control" id="username" 
-                           placeholder="Enter username" required>
-                </div>
-                
-                <div class="mb-3">
-                    <label for="password" class="form-label">
-                        <i class="fas fa-lock"></i> Password
-                    </label>
-                    <input type="password" class="form-control" id="password" 
-                           placeholder="Enter password" required>
-                </div>
-                
-                <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="rememberMe">
-                    <label class="form-check-label" for="rememberMe">Remember me</label>
-                </div>
-                
-                <button type="submit" class="btn login-btn">
-                    <i class="fas fa-sign-in-alt"></i> Login
-                </button>
-                
-                <div class="text-center mt-3">
-                    <small class="text-muted">
-                        <i class="fas fa-info-circle"></i> Contact admin for credentials
-                    </small>
-                </div>
-            </form>
         </div>
     </div>
 
     <!-- Main Application Section -->
     <div class="container main-container" id="mainSection">
-        <!-- Updated Header to match template -->
-        <div class="header">
+        <div class="directory-header">
             <button class="logout-btn" onclick="logout()">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </button>
-            <div class="header-content">
-                <p class="trust-name">Pimpri Chinchwad Education Trust's</p>
-                <h2 class="college-name">Pimpri Chinchwad College of Engineering</h2>
-                <h1 class="directory-title">PCCOE Student Directory</h1>
-                <p class="academic-year">AY2022-2025</p>
-            </div>
+            <h2><i class="fas fa-graduation-cap"></i> <span>PCCOE</span> STUDENT DIRECTORY</h2>
+            <p>First Year Computer Engineering</p>
+            <div class="academic-year">Academic Year 2023-24</div>
         </div>
 
         <!-- Search Section -->
@@ -462,9 +666,9 @@
         <!-- Footer -->
         <div class="footer">
             <p class="mb-1">
-                <i class="fas fa-laptop-code"></i> PCCOE FY Contact Directory
+                <i class="fas fa-laptop-code"></i> PCCOE FY Computer Engineering Contact Directory
             </p>
-            <small>CSV File: contact_testing_csv.csv | Updated: <span id="currentDate"></span></small>
+            <small>Data Source: CSV File | Last Updated: <span id="currentDate"></span> | Version 2.0</small>
         </div>
     </div>
 
@@ -546,6 +750,7 @@
             document.getElementById('username').value = '';
             document.getElementById('password').value = '';
             document.getElementById('loginError').style.display = 'none';
+            document.getElementById('username').focus();
         }
 
         // Show main application
@@ -941,11 +1146,6 @@
                     searchTimer = setTimeout(searchTable, 300);
                 }
             });
-            
-            // Auto-focus username field on login page
-            if (!isLoggedIn) {
-                document.getElementById('username').focus();
-            }
         });
     </script>
 </body>
