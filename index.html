@@ -305,10 +305,7 @@
                         render: function(data, type, row) {
                             return `
                                 <button class="btn btn-sm btn-outline-primary action-btn" onclick="copyEmail('${row.email}')" title="Copy Email">
-                                    <i class="far fa-copy"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-success action-btn" onclick="callNumber('${row.student_mobile}')" title="Call Student">
-                                    <i class="fas fa-phone"></i>
+                                    <i class="far fa-copy"></i> Copy Email
                                 </button>
                             `;
                         }
@@ -326,7 +323,7 @@
             });
 
             // Update statistics
-            updateStats(data.length);
+            updateStats();
         }
 
         // Load CSV from GitHub
@@ -395,7 +392,7 @@
             
             // Initialize DataTable with the data
             initDataTable(allStudents);
-            updateStats(allStudents.length);
+            updateStats();
         }
 
         // Search function
@@ -412,7 +409,7 @@
             if (!prnSearch && !nameSearch) {
                 // No search terms, show all data
                 dataTable.search('').draw();
-                updateStats(allStudents.length);
+                updateStats();
                 return;
             }
             
@@ -462,7 +459,7 @@
             
             // Update search results count
             const filteredCount = dataTable.rows({ search: 'applied' }).count();
-            updateStats(allStudents.length, filteredCount);
+            updateSearchResults(filteredCount);
         }
 
         // Clear search
@@ -473,21 +470,24 @@
             
             if (dataTable) {
                 dataTable.search('').draw();
-                updateStats(allStudents.length);
+                updateStats();
             }
         }
 
         // Update statistics
-        function updateStats(total, found = null) {
-            document.getElementById('totalStudents').textContent = total;
-            if (found !== null) {
-                document.getElementById('searchResults').textContent = found;
-            } else {
-                document.getElementById('searchResults').textContent = total;
-            }
+        function updateStats() {
+            // Update total students count based on actual data
+            document.getElementById('totalStudents').textContent = allStudents.length;
+            document.getElementById('searchResults').textContent = allStudents.length;
         }
 
-        // Action functions
+        // Update search results only
+        function updateSearchResults(filteredCount) {
+            document.getElementById('totalStudents').textContent = allStudents.length;
+            document.getElementById('searchResults').textContent = filteredCount;
+        }
+
+        // Action function
         function copyEmail(email) {
             navigator.clipboard.writeText(email).then(() => {
                 alert(`Email copied: ${email}`);
@@ -495,12 +495,6 @@
                 console.error('Failed to copy:', err);
                 prompt('Copy this email:', email);
             });
-        }
-
-        function callNumber(number) {
-            if (confirm(`Call ${number}?`)) {
-                window.open(`tel:${number}`);
-            }
         }
 
         // Initialize on page load
