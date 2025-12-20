@@ -659,9 +659,6 @@
                 <button class="admin-btn" onclick="clearSearch()">
                     <i class="fas fa-times"></i> Clear All Filters
                 </button>
-                <button class="admin-btn" onclick="saveDataToLocalStorage()">
-                    <i class="fas fa-save"></i> Save Changes
-                </button>
             </div>
             <small class="text-muted">
                 <i class="fas fa-info-circle"></i> Admin privileges: Edit/Delete students, View all data, Export complete database
@@ -999,7 +996,6 @@
         let isAdmin = false;
         let editModal = null;
         let addModal = null;
-        let useLocalStorageData = false;
 
         // Check if user is already logged in
         function checkLoginStatus() {
@@ -1026,15 +1022,8 @@
             // Clear previous error
             loginError.style.display = 'none';
             
-            // Debug logging
-            console.log('Login attempt:', { username, password });
-            console.log('Valid credentials:', VALID_CREDENTIALS);
-            console.log('Username exists:', VALID_CREDENTIALS[username]);
-            console.log('Password matches:', VALID_CREDENTIALS[username] === password);
-            
             // Validate credentials
             if (VALID_CREDENTIALS[username] && VALID_CREDENTIALS[username] === password) {
-                console.log('Login successful!');
                 isLoggedIn = true;
                 isAdmin = (username === 'admin');
                 
@@ -1046,16 +1035,13 @@
                         expiry: Date.now() + (7 * 24 * 60 * 60 * 1000) // 7 days
                     };
                     localStorage.setItem('pccoeLogin', JSON.stringify(loginData));
-                    console.log('Saved to localStorage:', loginData);
                 } else {
                     // Session only
                     sessionStorage.setItem('pccoeSession', JSON.stringify({ loggedIn: true, isAdmin: isAdmin }));
-                    console.log('Saved to sessionStorage');
                 }
                 
                 showMainApp();
             } else {
-                console.log('Login failed!');
                 loginError.style.display = 'block';
                 document.getElementById('password').value = '';
             }
@@ -1107,24 +1093,7 @@
             editModal = new bootstrap.Modal(document.getElementById('editStudentModal'));
             addModal = new bootstrap.Modal(document.getElementById('addStudentModal'));
             
-            // Check if we have saved data in localStorage
-            const savedData = localStorage.getItem('pccoeStudentData');
-            if (savedData) {
-                try {
-                    const parsedData = JSON.parse(savedData);
-                    if (parsedData && parsedData.length > 0) {
-                        useLocalStorageData = true;
-                        processCSVData(parsedData);
-                        document.getElementById('dataStatus').textContent = 'Loaded from Local Storage';
-                        showCopySuccess('Loaded saved data from local storage', 'success');
-                        return;
-                    }
-                } catch (e) {
-                    console.error('Error loading saved data:', e);
-                }
-            }
-            
-            // Load CSV from GitHub if no saved data
+            // Load CSV data
             loadCSVData();
         }
 
@@ -1635,23 +1604,6 @@
             document.getElementById('exportHeaderBtn').disabled = false;
         }
 
-        // Save data to localStorage
-        function saveDataToLocalStorage() {
-            if (!isAdmin) {
-                showCopySuccess('Admin access required', 'error');
-                return;
-            }
-            
-            try {
-                localStorage.setItem('pccoeStudentData', JSON.stringify(allStudents));
-                showCopySuccess(`Saved ${allStudents.length} student records to local storage`, 'success');
-                useLocalStorageData = true;
-            } catch (error) {
-                console.error('Error saving to localStorage:', error);
-                showCopySuccess('Error saving data. Local storage might be full.', 'error');
-            }
-        }
-
         // Export search results
         function exportSearchResults() {
             if (!isLoggedIn) {
@@ -1790,7 +1742,7 @@
             ];
             
             // Add all student data
-            allStudents.forEach((student, index) {
+            allStudents.forEach((student, index) => {
                 worksheetData.push([
                     index + 1,
                     student.offering_year || '2022-2025',
@@ -1909,9 +1861,6 @@
             // Update statistics
             updateTotalCount();
             
-            // Save to localStorage
-            saveDataToLocalStorage();
-            
             // Close modal
             addModal.hide();
             
@@ -1972,9 +1921,6 @@
             // Update DataTable
             dataTable.row(index).data(updatedStudent).draw();
             
-            // Save to localStorage
-            saveDataToLocalStorage();
-            
             // Close modal
             editModal.hide();
             
@@ -1999,9 +1945,6 @@
                 
                 // Update statistics
                 updateTotalCount();
-                
-                // Save to localStorage
-                saveDataToLocalStorage();
                 
                 showCopySuccess(`Student ${student.name} (${student.prn}) deleted successfully`, 'success');
             }
@@ -2102,10 +2045,7 @@
         // Initialize on page load
         $(document).ready(function() {
             // Setup login form
-            document.getElementById('loginForm').addEventListener('submit', function(e) {
-                console.log('Form submitted');
-                handleLogin(e);
-            });
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
             
             // Check if user is already logged in
             checkLoginStatus();
@@ -2113,14 +2053,6 @@
             if (!isLoggedIn) {
                 showLogin();
             }
-            
-            // Test login function directly
-            window.testLogin = function() {
-                const username = 'admin';
-                const password = 'pccoe@admin';
-                console.log('Testing login with:', username, password);
-                console.log('Is valid?', VALID_CREDENTIALS[username] === password);
-            };
             
             // Add enter key support for search
             $(document).on('keypress', '#searchPRN, #searchName, #multiPRNSearch', function(e) {
