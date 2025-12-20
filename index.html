@@ -392,6 +392,11 @@
             color: #1a237e;
         }
         
+        /* Hide the "Show entries" dropdown */
+        .dataTables_length {
+            display: none !important;
+        }
+        
         @media (max-width: 768px) {
             .directory-header {
                 flex-direction: column;
@@ -554,14 +559,9 @@
                     <i class="fas fa-download"></i> Export Options
                 </div>
                 <div class="row g-3">
-                    <div class="col-md-3">
+                    <div class="col-md-6">
                         <button class="btn export-btn w-100" onclick="exportToExcel('current')" id="exportCurrentBtn">
                             <i class="fas fa-file-excel"></i> Export Current Results
-                        </button>
-                    </div>
-                    <div class="col-md-3">
-                        <button class="btn export-btn w-100" onclick="exportToExcel('all')" id="exportAllBtn">
-                            <i class="fas fa-database"></i> Export All Data
                         </button>
                     </div>
                     <div class="col-md-3">
@@ -583,17 +583,17 @@
             
             <!-- Action Buttons -->
             <div class="row g-2 mt-3">
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <button class="btn btn-outline-secondary w-100" onclick="clearSearch()">
                         <i class="fas fa-times"></i> Clear All Search
                     </button>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <button class="btn btn-outline-info w-100" onclick="loadCSVData()">
                         <i class="fas fa-sync"></i> Reload Data
                     </button>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <select class="form-select" id="filterColumn" onchange="searchTable()">
                         <option value="all">Search in All Columns</option>
                         <option value="1">PRN</option>
@@ -603,13 +603,6 @@
                         <option value="5">Email</option>
                         <option value="6">Offering Year</option>
                     </select>
-                </div>
-                <div class="col-md-3">
-                    <div class="text-end">
-                        <small class="text-muted">
-                            <i class="fas fa-info-circle"></i> Export works with current search results
-                        </small>
-                    </div>
                 </div>
             </div>
         </div>
@@ -857,10 +850,9 @@
                     }
                 ],
                 pageLength: 10,
-                lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+                lengthMenu: [], // Empty array to hide the "Show entries" dropdown
                 language: {
                     search: "Search:",
-                    lengthMenu: "Show _MENU_ entries",
                     info: "Showing _START_ to _END_ of _TOTAL_ entries",
                     infoEmpty: "No entries found",
                     infoFiltered: "(filtered from _MAX_ total entries)"
@@ -971,8 +963,8 @@
             enableExportButtons();
         }
 
-        // Export to Excel function
-        function exportToExcel(type = 'current') {
+        // Export to Excel function - only exports current results
+        function exportToExcel() {
             if (!isLoggedIn) {
                 showLogin();
                 return;
@@ -983,25 +975,17 @@
                 return;
             }
             
-            let exportData;
-            let fileName;
+            let exportData = getCurrentFilteredData();
+            
+            if (exportData.length === 0) {
+                showCopySuccess('No search results to export. Please search first.', 'error');
+                return;
+            }
+            
+            let fileName = 'PCCOE_Search_Results';
             const includeTimestamp = document.getElementById('includeTimestamp').checked;
             const format = document.getElementById('exportFormat').value;
             const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-            
-            if (type === 'all') {
-                exportData = allStudents;
-                fileName = 'PCCOE_All_Students';
-            } else {
-                // Get current filtered data
-                exportData = getCurrentFilteredData();
-                fileName = 'PCCOE_Search_Results';
-            }
-            
-            if (exportData.length === 0) {
-                showCopySuccess('No data to export', 'error');
-                return;
-            }
             
             if (includeTimestamp) {
                 fileName += `_${timestamp}`;
@@ -1067,7 +1051,7 @@
                     URL.revokeObjectURL(url);
                 }
                 
-                showCopySuccess(`Exported ${exportData.length} records to ${fileName}`, 'success');
+                showCopySuccess(`Exported ${exportData.length} search results to ${fileName}`, 'success');
             } catch (error) {
                 console.error('Export error:', error);
                 showCopySuccess('Error exporting file. Please try again.', 'error');
@@ -1096,13 +1080,11 @@
         // Disable export buttons
         function disableExportButtons() {
             document.getElementById('exportCurrentBtn').disabled = true;
-            document.getElementById('exportAllBtn').disabled = true;
         }
 
         // Enable export buttons
         function enableExportButtons() {
             document.getElementById('exportCurrentBtn').disabled = false;
-            document.getElementById('exportAllBtn').disabled = false;
         }
 
         // Search function for single PRN and name
