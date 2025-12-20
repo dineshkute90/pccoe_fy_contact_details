@@ -199,7 +199,6 @@
             overflow: hidden;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             margin-bottom: 2rem;
-            display: none; /* Hide the table by default */
         }
         
         .table th {
@@ -393,13 +392,15 @@
             color: #1a237e;
         }
         
-        .search-results-info {
+        .search-results-header {
             background: #e8eaf6;
             border-left: 4px solid var(--pccoe-blue);
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 1rem;
-            display: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
         .results-count {
@@ -416,11 +417,8 @@
             display: none;
         }
         
-        /* Hide DataTable elements */
-        .dataTables_length,
-        .dataTables_filter,
-        .dataTables_info,
-        .dataTables_paginate {
+        /* Hide the "Show entries" dropdown */
+        .dataTables_length {
             display: none !important;
         }
         
@@ -451,6 +449,12 @@
             .logout-btn {
                 margin-top: 10px;
                 margin-left: 0;
+            }
+            
+            .search-results-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
             }
         }
     </style>
@@ -580,36 +584,34 @@
                 </div>
             </div>
             
-            <!-- Search Results Info (shown after search) -->
-            <div class="search-results-info" id="searchResultsInfo">
-                <div class="row align-items-center">
-                    <div class="col-md-8">
-                        <h6 class="mb-0"><i class="fas fa-search me-2"></i>Search Results</h6>
-                        <p class="mb-0 mt-1">
-                            Found <span class="results-count" id="resultsCount">0</span> student(s) matching your search criteria.
-                            <span id="searchCriteria" class="text-muted"></span>
-                        </p>
-                    </div>
-                    <div class="col-md-4 text-end">
-                        <button class="btn export-btn" onclick="exportSearchResults()" id="exportSearchBtn">
+            <!-- Export Options -->
+            <div class="export-options">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <button class="btn export-btn w-100" onclick="exportSearchResults()" id="exportSearchBtn">
                             <i class="fas fa-file-excel"></i> Export Search Results
                         </button>
                     </div>
-                </div>
-            </div>
-            
-            <!-- Export Options -->
-            <div class="export-options">
-                <div class="export-option-label">
-                    <i class="fas fa-info-circle"></i> Important Information
-                </div>
-                <div class="row g-3">
-                    <div class="col-12">
-                        <div class="alert alert-info mb-0">
-                            <i class="fas fa-shield-alt me-2"></i>
-                            <strong>Data Security Notice:</strong> For data protection, student details are not displayed on screen. 
-                            You can search for students and export only your search results to Excel/CSV format.
+                    <div class="col-md-3">
+                        <select class="form-select" id="exportFormat">
+                            <option value="xlsx">Excel (.xlsx)</option>
+                            <option value="csv">CSV (.csv)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-check mt-2">
+                            <input class="form-check-input" type="checkbox" id="includeTimestamp" checked>
+                            <label class="form-check-label" for="includeTimestamp">
+                                Include timestamp in filename
+                            </label>
                         </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-12">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle"></i> Note: Only exports current search results for data security
+                        </small>
                     </div>
                 </div>
             </div>
@@ -642,25 +644,32 @@
 
         <!-- Stats -->
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="stats-card">
                     <i class="fas fa-users"></i>
                     <h5 id="totalStudents">0</h5>
-                    <small>Total Students in Database</small>
+                    <small>Total Students</small>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="stats-card">
                     <i class="fas fa-database"></i>
                     <h5 id="dataStatus">Loading...</h5>
                     <small>Data Status</small>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="stats-card">
                     <i class="fas fa-search"></i>
                     <h5 id="searchResults">0</h5>
-                    <small>Current Search Results</small>
+                    <small>Search Results</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <i class="fas fa-download"></i>
+                    <h5 id="exportCount">0</h5>
+                    <small>Ready to Export</small>
                 </div>
             </div>
         </div>
@@ -676,12 +685,26 @@
         <!-- No Results Message -->
         <div class="no-results-message" id="noResultsMessage">
             <i class="fas fa-search fa-3x text-muted mb-3"></i>
-            <h5>No Search Results</h5>
+            <h5>Search Students</h5>
             <p class="text-muted">Enter search criteria above to find students.</p>
-            <p class="text-muted small">For data security, student details are only available for export after search.</p>
+            <p class="text-muted small">Search results will be displayed here and available for export.</p>
         </div>
 
-        <!-- Data Table (Hidden by default) -->
+        <!-- Search Results Header -->
+        <div class="search-results-header" id="searchResultsHeader" style="display: none;">
+            <div>
+                <h6 class="mb-0"><i class="fas fa-search me-2"></i>Search Results</h6>
+                <p class="mb-0 mt-1">
+                    Found <span class="results-count" id="resultsCount">0</span> student(s) 
+                    <span id="searchCriteria" class="text-muted"></span>
+                </p>
+            </div>
+            <button class="btn export-btn" onclick="exportSearchResults()" id="exportHeaderBtn">
+                <i class="fas fa-file-excel"></i> Export Results
+            </button>
+        </div>
+
+        <!-- Data Table -->
         <div class="data-table" id="dataTableContainer">
             <table id="studentTable" class="table table-striped" style="width:100%">
                 <thead>
@@ -696,7 +719,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Data will be loaded by DataTable but not displayed -->
+                    <!-- Data will be loaded by DataTable -->
                 </tbody>
             </table>
         </div>
@@ -807,14 +830,14 @@
             });
             
             // Hide elements initially
-            document.getElementById('searchResultsInfo').style.display = 'none';
             document.getElementById('noResultsMessage').style.display = 'block';
+            document.getElementById('searchResultsHeader').style.display = 'none';
             
             // Load CSV data
             loadCSVData();
         }
 
-        // Initialize DataTable (hidden, for internal filtering only)
+        // Initialize DataTable
         function initDataTable(data) {
             if (dataTable) {
                 dataTable.destroy();
@@ -839,47 +862,74 @@
                     { 
                         data: 'prn',
                         render: function(data) {
-                            return data;
+                            return `<span class="badge-prn">${data}</span>`;
                         }
                     },
                     { data: 'name' },
                     { 
                         data: 'student_mobile',
                         render: function(data) {
-                            return data;
+                            return `
+                                <div class="mobile-container">
+                                    <div class="mobile-text">
+                                        <i class="fas fa-phone text-success me-1"></i>${data}
+                                    </div>
+                                    <button class="copy-icon-btn" onclick="copyToClipboard('${data}', 'Student mobile number')" title="Copy Student Mobile">
+                                        <i class="far fa-copy"></i>
+                                    </button>
+                                </div>
+                            `;
                         }
                     },
                     { 
                         data: 'parent_mobile',
                         render: function(data) {
-                            return data;
+                            return `
+                                <div class="mobile-container">
+                                    <div class="mobile-text">
+                                        <i class="fas fa-user-friends text-primary me-1"></i>${data}
+                                    </div>
+                                    <button class="copy-icon-btn" onclick="copyToClipboard('${data}', 'Parent mobile number')" title="Copy Parent Mobile">
+                                        <i class="far fa-copy"></i>
+                                    </button>
+                                </div>
+                            `;
                         }
                     },
                     { 
                         data: 'email',
                         render: function(data) {
-                            return data;
+                            return `
+                                <div class="email-container">
+                                    <div class="email-text">
+                                        <i class="fas fa-envelope text-danger me-1"></i>${data}
+                                    </div>
+                                    <button class="copy-icon-btn" onclick="copyToClipboard('${data}', 'Email address')" title="Copy Email">
+                                        <i class="far fa-copy"></i>
+                                    </button>
+                                </div>
+                            `;
                         }
                     }
                 ],
                 pageLength: 10,
-                lengthChange: false,
-                searching: false,
-                info: false,
-                paging: false,
+                lengthMenu: [], // Empty array to hide the "Show entries" dropdown
                 language: {
-                    search: ""
+                    search: "Search in results:",
+                    info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                    infoEmpty: "No entries found",
+                    infoFiltered: "(filtered from _MAX_ total entries)"
+                },
+                drawCallback: function() {
+                    // Update export count after each draw
+                    updateExportCount();
+                    updateCurrentSearchResults();
                 }
             });
 
             // Update statistics
             updateTotalCount();
-            hideDataTable();
-        }
-
-        // Hide the data table
-        function hideDataTable() {
-            document.getElementById('dataTableContainer').style.display = 'none';
+            updateExportCount();
         }
 
         // Load CSV from GitHub
@@ -887,8 +937,9 @@
             if (!isLoggedIn) return;
             
             document.getElementById('loading').style.display = 'block';
-            document.getElementById('noResultsMessage').style.display = 'none';
             document.getElementById('dataStatus').textContent = 'Loading...';
+            document.getElementById('noResultsMessage').style.display = 'none';
+            disableExportButtons();
             
             try {
                 // Your CSV file URL on GitHub
@@ -915,12 +966,14 @@
                         document.getElementById('loading').style.display = 'none';
                         document.getElementById('dataStatus').textContent = 'Loaded';
                         document.getElementById('noResultsMessage').style.display = 'block';
+                        enableExportButtons();
                     },
                     error: function(error) {
                         console.error('CSV parsing error:', error);
                         document.getElementById('dataStatus').textContent = 'Error';
                         document.getElementById('loading').style.display = 'none';
                         document.getElementById('noResultsMessage').style.display = 'block';
+                        disableExportButtons();
                         showCopySuccess('Error loading CSV file. Please check console for details.', 'error');
                     }
                 });
@@ -929,6 +982,7 @@
                 document.getElementById('dataStatus').textContent = 'Failed';
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('noResultsMessage').style.display = 'block';
+                disableExportButtons();
                 showCopySuccess('Failed to load CSV file. Please check if the file exists.', 'error');
             }
         }
@@ -942,6 +996,8 @@
                 console.error('No data found in CSV');
                 showCopySuccess('No data found in CSV file', 'error');
                 document.getElementById('loading').style.display = 'none';
+                document.getElementById('noResultsMessage').style.display = 'block';
+                disableExportButtons();
                 return;
             }
             
@@ -972,6 +1028,8 @@
             
             // Force update of total count
             updateTotalCount();
+            updateExportCount();
+            enableExportButtons();
         }
 
         // Main search function
@@ -990,7 +1048,7 @@
             dataTable.search('').draw();
             
             if (!prnSearch && !nameSearch) {
-                // No search terms, clear results
+                // No search terms, show all data initially
                 clearSearchResults();
                 return;
             }
@@ -1045,15 +1103,24 @@
             // Remove the custom filter function
             $.fn.dataTable.ext.search.pop();
             
-            // Get and store search results
-            updateSearchResults();
+            // Update search results
+            updateCurrentSearchResults();
+            updateSearchResultsDisplay();
             
-            // Show/hide appropriate messages
+            // Show/hide appropriate elements
             const resultsCount = currentSearchResults.length;
             if (resultsCount > 0) {
-                showSearchResultsInfo();
+                document.getElementById('searchResultsHeader').style.display = 'flex';
+                document.getElementById('noResultsMessage').style.display = 'none';
             } else {
-                showNoResultsMessage();
+                document.getElementById('searchResultsHeader').style.display = 'none';
+                document.getElementById('noResultsMessage').style.display = 'block';
+                document.getElementById('noResultsMessage').innerHTML = `
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h5>No Results Found</h5>
+                    <p class="text-muted">No students found matching: <strong>${lastSearchCriteria}</strong></p>
+                    <p class="text-muted small">Please try different search criteria.</p>
+                `;
             }
         }
 
@@ -1120,15 +1187,24 @@
             // Remove the custom filter function
             $.fn.dataTable.ext.search.pop();
             
-            // Get and store search results
-            updateSearchResults();
+            // Update search results
+            updateCurrentSearchResults();
+            updateSearchResultsDisplay();
             
-            // Show/hide appropriate messages
+            // Show/hide appropriate elements
             const resultsCount = currentSearchResults.length;
             if (resultsCount > 0) {
-                showSearchResultsInfo();
+                document.getElementById('searchResultsHeader').style.display = 'flex';
+                document.getElementById('noResultsMessage').style.display = 'none';
             } else {
-                showNoResultsMessage();
+                document.getElementById('searchResultsHeader').style.display = 'none';
+                document.getElementById('noResultsMessage').style.display = 'block';
+                document.getElementById('noResultsMessage').innerHTML = `
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h5>No Results Found</h5>
+                    <p class="text-muted">No students found matching: <strong>${lastSearchCriteria}</strong></p>
+                    <p class="text-muted small">Please try different search criteria.</p>
+                `;
             }
         }
 
@@ -1152,23 +1228,29 @@
             if (dataTable) {
                 dataTable.search('').draw();
                 currentSearchResults = [];
-                updateSearchResultsCount();
-                document.getElementById('searchResultsInfo').style.display = 'none';
+                updateCurrentSearchResults();
+                document.getElementById('searchResultsHeader').style.display = 'none';
                 document.getElementById('noResultsMessage').style.display = 'block';
+                document.getElementById('noResultsMessage').innerHTML = `
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h5>Search Students</h5>
+                    <p class="text-muted">Enter search criteria above to find students.</p>
+                    <p class="text-muted small">Search results will be displayed here and available for export.</p>
+                `;
             }
         }
 
-        // Update search results array
-        function updateSearchResults() {
+        // Update current search results array
+        function updateCurrentSearchResults() {
             if (!dataTable) return;
             
             const filteredIndices = dataTable.rows({ search: 'applied' }).indexes().toArray();
             currentSearchResults = filteredIndices.map(index => allStudents[index]);
-            updateSearchResultsCount();
+            updateExportCount();
         }
 
-        // Update search results count display
-        function updateSearchResultsCount() {
+        // Update search results display
+        function updateSearchResultsDisplay() {
             const resultsCount = currentSearchResults.length;
             document.getElementById('resultsCount').textContent = resultsCount;
             document.getElementById('searchResults').textContent = resultsCount;
@@ -1181,27 +1263,27 @@
             }
         }
 
-        // Show search results info panel
-        function showSearchResultsInfo() {
-            document.getElementById('searchResultsInfo').style.display = 'block';
-            document.getElementById('noResultsMessage').style.display = 'none';
-            document.getElementById('exportSearchBtn').disabled = false;
+        // Update export count
+        function updateExportCount() {
+            if (!dataTable) {
+                document.getElementById('exportCount').textContent = '0';
+                return;
+            }
+            
+            const filteredCount = dataTable.rows({ search: 'applied' }).count();
+            document.getElementById('exportCount').textContent = filteredCount;
         }
 
-        // Show no results message
-        function showNoResultsMessage() {
-            document.getElementById('searchResultsInfo').style.display = 'none';
-            document.getElementById('noResultsMessage').style.display = 'block';
+        // Disable export buttons
+        function disableExportButtons() {
             document.getElementById('exportSearchBtn').disabled = true;
-            
-            if (lastSearchCriteria) {
-                document.getElementById('noResultsMessage').innerHTML = `
-                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
-                    <h5>No Results Found</h5>
-                    <p class="text-muted">No students found matching: <strong>${lastSearchCriteria}</strong></p>
-                    <p class="text-muted small">Please try different search criteria.</p>
-                `;
-            }
+            document.getElementById('exportHeaderBtn').disabled = true;
+        }
+
+        // Enable export buttons
+        function enableExportButtons() {
+            document.getElementById('exportSearchBtn').disabled = false;
+            document.getElementById('exportHeaderBtn').disabled = false;
         }
 
         // Export search results
@@ -1216,8 +1298,17 @@
                 return;
             }
             
+            const includeTimestamp = document.getElementById('includeTimestamp').checked;
+            const format = document.getElementById('exportFormat').value;
             const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-            const fileName = `PCCOE_Search_Results_${timestamp}.xlsx`;
+            
+            let fileName = 'PCCOE_Search_Results';
+            
+            if (includeTimestamp) {
+                fileName += `_${timestamp}`;
+            }
+            
+            fileName += `.${format}`;
             
             // Prepare worksheet data
             const worksheetData = [
@@ -1262,7 +1353,22 @@
             XLSX.utils.book_append_sheet(workbook, worksheet, 'Students');
             
             try {
-                XLSX.writeFile(workbook, fileName);
+                if (format === 'xlsx') {
+                    XLSX.writeFile(workbook, fileName);
+                } else {
+                    // For CSV, convert to CSV string
+                    const csv = XLSX.utils.sheet_to_csv(worksheet);
+                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                    const link = document.createElement('a');
+                    const url = URL.createObjectURL(blob);
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', fileName);
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                }
+                
                 showCopySuccess(`Exported ${currentSearchResults.length} search results to ${fileName}`, 'success');
             } catch (error) {
                 console.error('Export error:', error);
@@ -1274,6 +1380,28 @@
         function updateTotalCount() {
             const totalCount = allStudents.length;
             document.getElementById('totalStudents').textContent = totalCount;
+        }
+
+        // Generic copy to clipboard function
+        function copyToClipboard(text, label) {
+            if (!isLoggedIn) {
+                showLogin();
+                return;
+            }
+            
+            navigator.clipboard.writeText(text).then(() => {
+                showCopySuccess(`${label} copied to clipboard`);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                // Fallback method
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showCopySuccess(`${label} copied to clipboard`);
+            });
         }
 
         // Show copy success message
