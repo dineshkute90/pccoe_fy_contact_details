@@ -1026,8 +1026,15 @@
             // Clear previous error
             loginError.style.display = 'none';
             
+            // Debug logging
+            console.log('Login attempt:', { username, password });
+            console.log('Valid credentials:', VALID_CREDENTIALS);
+            console.log('Username exists:', VALID_CREDENTIALS[username]);
+            console.log('Password matches:', VALID_CREDENTIALS[username] === password);
+            
             // Validate credentials
             if (VALID_CREDENTIALS[username] && VALID_CREDENTIALS[username] === password) {
+                console.log('Login successful!');
                 isLoggedIn = true;
                 isAdmin = (username === 'admin');
                 
@@ -1039,13 +1046,16 @@
                         expiry: Date.now() + (7 * 24 * 60 * 60 * 1000) // 7 days
                     };
                     localStorage.setItem('pccoeLogin', JSON.stringify(loginData));
+                    console.log('Saved to localStorage:', loginData);
                 } else {
                     // Session only
                     sessionStorage.setItem('pccoeSession', JSON.stringify({ loggedIn: true, isAdmin: isAdmin }));
+                    console.log('Saved to sessionStorage');
                 }
                 
                 showMainApp();
             } else {
+                console.log('Login failed!');
                 loginError.style.display = 'block';
                 document.getElementById('password').value = '';
             }
@@ -2092,7 +2102,10 @@
         // Initialize on page load
         $(document).ready(function() {
             // Setup login form
-            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                console.log('Form submitted');
+                handleLogin(e);
+            });
             
             // Check if user is already logged in
             checkLoginStatus();
@@ -2100,6 +2113,14 @@
             if (!isLoggedIn) {
                 showLogin();
             }
+            
+            // Test login function directly
+            window.testLogin = function() {
+                const username = 'admin';
+                const password = 'pccoe@admin';
+                console.log('Testing login with:', username, password);
+                console.log('Is valid?', VALID_CREDENTIALS[username] === password);
+            };
             
             // Add enter key support for search
             $(document).on('keypress', '#searchPRN, #searchName, #multiPRNSearch', function(e) {
