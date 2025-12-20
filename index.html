@@ -428,6 +428,102 @@
             margin-top: 0.25rem;
         }
         
+        .admin-features {
+            background: #fff3e0;
+            border-left: 4px solid var(--pccoe-gold);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .admin-badge {
+            background: linear-gradient(135deg, var(--pccoe-gold) 0%, #ffb74d 100%);
+            color: #1a237e;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-left: 10px;
+        }
+        
+        .admin-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .admin-btn {
+            background: linear-gradient(135deg, var(--pccoe-gold) 0%, #ffb74d 100%);
+            border: none;
+            color: #1a237e;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .admin-btn:hover {
+            background: linear-gradient(135deg, #f57c00 0%, var(--pccoe-gold) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 152, 0, 0.3);
+            color: #1a237e;
+        }
+        
+        .edit-btn {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        
+        .edit-btn:hover {
+            background: #0d8bf2;
+            transform: scale(1.05);
+        }
+        
+        .delete-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        
+        .delete-btn:hover {
+            background: #e53935;
+            transform: scale(1.05);
+        }
+        
+        .modal-content {
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .modal-header {
+            background: var(--pccoe-blue);
+            color: white;
+            border-radius: 10px 10px 0 0;
+        }
+        
+        .modal-title {
+            font-weight: 600;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: #1a237e;
+        }
+        
         @media (max-width: 768px) {
             .directory-header {
                 flex-direction: column;
@@ -461,6 +557,10 @@
                 flex-direction: column;
                 text-align: center;
                 gap: 10px;
+            }
+            
+            .admin-controls {
+                flex-direction: column;
             }
         }
     </style>
@@ -510,7 +610,7 @@
                 
                 <div class="text-center mt-3">
                     <small class="text-muted">
-                        <i class="fas fa-info-circle"></i> Contact admin for credentials- Mr. Dinesh Kute
+                        <i class="fas fa-info-circle"></i> Admin: admin/pccoe@admin | User: pccoeash/ashpccoe@2025
                     </small>
                 </div>
             </form>
@@ -538,6 +638,31 @@
             <button class="logout-btn" onclick="logout()">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </button>
+        </div>
+        
+        <!-- Admin Features Section (Visible only to admin) -->
+        <div class="admin-features" id="adminFeatures" style="display: none;">
+            <div class="d-flex align-items-center mb-3">
+                <h5 class="mb-0"><i class="fas fa-user-shield"></i> Admin Controls</h5>
+                <span class="admin-badge">ADMIN MODE</span>
+            </div>
+            <div class="admin-controls">
+                <button class="admin-btn" onclick="showAllStudents()">
+                    <i class="fas fa-list"></i> View All Students
+                </button>
+                <button class="admin-btn" onclick="exportAllData()">
+                    <i class="fas fa-download"></i> Download Entire Database
+                </button>
+                <button class="admin-btn" onclick="showAddStudentModal()">
+                    <i class="fas fa-user-plus"></i> Add New Student
+                </button>
+                <button class="admin-btn" onclick="clearSearch()">
+                    <i class="fas fa-times"></i> Clear All Filters
+                </button>
+            </div>
+            <small class="text-muted">
+                <i class="fas fa-info-circle"></i> Admin privileges: Edit/Delete students, View all data, Export complete database
+            </small>
         </div>
 
         <!-- Search Section -->
@@ -726,6 +851,7 @@
                         <th>Student Mobile</th>
                         <th>Parent Mobile</th>
                         <th>Email ID</th>
+                        <th id="actionColumnHeader" style="display: none;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -743,6 +869,110 @@
         </div>
     </div>
 
+    <!-- Add Student Modal -->
+    <div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addStudentModalLabel">
+                        <i class="fas fa-user-plus"></i> Add New Student
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addStudentForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="addPRN" class="form-label">PRN *</label>
+                                <input type="text" class="form-control" id="addPRN" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="addName" class="form-label">Student Name *</label>
+                                <input type="text" class="form-control" id="addName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="addOfferingYear" class="form-label">Offering Year</label>
+                                <input type="text" class="form-control" id="addOfferingYear" value="2025-26">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="addStudentMobile" class="form-label">Student Mobile *</label>
+                                <input type="tel" class="form-control" id="addStudentMobile" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="addParentMobile" class="form-label">Parent Mobile</label>
+                                <input type="tel" class="form-control" id="addParentMobile">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="addEmail" class="form-label">Email ID *</label>
+                                <input type="email" class="form-control" id="addEmail" required>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="addNewStudent()">
+                        <i class="fas fa-save"></i> Save Student
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Student Modal -->
+    <div class="modal fade" id="editStudentModal" tabindex="-1" aria-labelledby="editStudentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editStudentModalLabel">
+                        <i class="fas fa-edit"></i> Edit Student Information
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editStudentForm">
+                        <input type="hidden" id="editStudentIndex">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="editPRN" class="form-label">PRN *</label>
+                                <input type="text" class="form-control" id="editPRN" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editName" class="form-label">Student Name *</label>
+                                <input type="text" class="form-control" id="editName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editOfferingYear" class="form-label">Offering Year</label>
+                                <input type="text" class="form-control" id="editOfferingYear">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editStudentMobile" class="form-label">Student Mobile *</label>
+                                <input type="tel" class="form-control" id="editStudentMobile" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editParentMobile" class="form-label">Parent Mobile</label>
+                                <input type="tel" class="form-control" id="editParentMobile">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editEmail" class="form-label">Email ID *</label>
+                                <input type="email" class="form-control" id="editEmail" required>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" onclick="deleteCurrentStudent()">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveStudentChanges()">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -753,14 +983,19 @@
 
     <script>
         // Login credentials
-        const VALID_USERNAME = "pccoeash";
-        const VALID_PASSWORD = "ashpccoe@2025";
+        const VALID_CREDENTIALS = {
+            'pccoeash': 'ashpccoe@2025',  // Regular user
+            'admin': 'pccoe@admin'        // Admin user
+        };
         
         let dataTable = null;
         let allStudents = [];
         let isLoggedIn = false;
         let currentSearchResults = [];
         let lastSearchCriteria = '';
+        let isAdmin = false;
+        let editModal = null;
+        let addModal = null;
 
         // Check if user is already logged in
         function checkLoginStatus() {
@@ -769,6 +1004,7 @@
                 const loginData = JSON.parse(savedLogin);
                 if (loginData.loggedIn && loginData.expiry > Date.now()) {
                     isLoggedIn = true;
+                    isAdmin = loginData.isAdmin || false;
                     showMainApp();
                 }
             }
@@ -787,19 +1023,21 @@
             loginError.style.display = 'none';
             
             // Validate credentials
-            if (username === VALID_USERNAME && password === VALID_PASSWORD) {
+            if (VALID_CREDENTIALS[username] && VALID_CREDENTIALS[username] === password) {
                 isLoggedIn = true;
+                isAdmin = (username === 'admin');
                 
                 // Save login if "Remember me" is checked
                 if (rememberMe) {
                     const loginData = {
                         loggedIn: true,
+                        isAdmin: isAdmin,
                         expiry: Date.now() + (7 * 24 * 60 * 60 * 1000) // 7 days
                     };
                     localStorage.setItem('pccoeLogin', JSON.stringify(loginData));
                 } else {
-                    // Session only (cleared when browser closes)
-                    sessionStorage.setItem('pccoeSession', 'true');
+                    // Session only
+                    sessionStorage.setItem('pccoeSession', JSON.stringify({ loggedIn: true, isAdmin: isAdmin }));
                 }
                 
                 showMainApp();
@@ -812,6 +1050,7 @@
         // Logout function
         function logout() {
             isLoggedIn = false;
+            isAdmin = false;
             localStorage.removeItem('pccoeLogin');
             sessionStorage.removeItem('pccoeSession');
             showLogin();
@@ -839,9 +1078,20 @@
                 year: 'numeric'
             });
             
+            // Show/hide admin features
+            if (isAdmin) {
+                document.getElementById('adminFeatures').style.display = 'block';
+            } else {
+                document.getElementById('adminFeatures').style.display = 'none';
+            }
+            
             // Hide elements initially
             document.getElementById('noResultsMessage').style.display = 'block';
             document.getElementById('searchResultsHeader').style.display = 'none';
+            
+            // Initialize modals
+            editModal = new bootstrap.Modal(document.getElementById('editStudentModal'));
+            addModal = new bootstrap.Modal(document.getElementById('addStudentModal'));
             
             // Load CSV data
             loadCSVData();
@@ -854,74 +1104,99 @@
                 $('#studentTable').empty();
             }
 
+            // Show/hide action column based on admin status
+            const actionColumn = isAdmin ? {
+                data: null,
+                render: function(data, type, row, meta) {
+                    return `
+                        <button class="edit-btn" onclick="editStudent(${meta.row})" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="delete-btn" onclick="deleteStudent(${meta.row})" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    `;
+                }
+            } : null;
+
+            const columns = [
+                { 
+                    data: null,
+                    render: function(data, type, row, meta) {
+                        return meta.row + 1;
+                    }
+                },
+                { 
+                    data: 'offering_year',
+                    render: function(data) {
+                        return data || '2022-2025';
+                    }
+                },
+                { 
+                    data: 'prn',
+                    render: function(data) {
+                        return `<span class="badge-prn">${data}</span>`;
+                    }
+                },
+                { data: 'name' },
+                { 
+                    data: 'student_mobile',
+                    render: function(data) {
+                        return `
+                            <div class="mobile-container">
+                                <div class="mobile-text">
+                                    <i class="fas fa-phone text-success me-1"></i>${data}
+                                </div>
+                                <button class="copy-icon-btn" onclick="copyToClipboard('${data}', 'Student mobile number')" title="Copy Student Mobile">
+                                    <i class="far fa-copy"></i>
+                                </button>
+                            </div>
+                        `;
+                    }
+                },
+                { 
+                    data: 'parent_mobile',
+                    render: function(data) {
+                        return `
+                            <div class="mobile-container">
+                                <div class="mobile-text">
+                                    <i class="fas fa-user-friends text-primary me-1"></i>${data}
+                                </div>
+                                <button class="copy-icon-btn" onclick="copyToClipboard('${data}', 'Parent mobile number')" title="Copy Parent Mobile">
+                                    <i class="far fa-copy"></i>
+                                </button>
+                            </div>
+                        `;
+                    }
+                },
+                { 
+                    data: 'email',
+                    render: function(data) {
+                        return `
+                            <div class="email-container">
+                                <div class="email-text">
+                                    <i class="fas fa-envelope text-danger me-1"></i>${data}
+                                </div>
+                                <button class="copy-icon-btn" onclick="copyToClipboard('${data}', 'Email address')" title="Copy Email">
+                                    <i class="far fa-copy"></i>
+                                </button>
+                            </div>
+                        `;
+                    }
+                }
+            ];
+
+            // Add action column for admin
+            if (actionColumn) {
+                columns.push(actionColumn);
+                document.getElementById('actionColumnHeader').style.display = '';
+            } else {
+                document.getElementById('actionColumnHeader').style.display = 'none';
+            }
+
             dataTable = $('#studentTable').DataTable({
                 data: data,
-                columns: [
-                    { 
-                        data: null,
-                        render: function(data, type, row, meta) {
-                            return meta.row + 1;
-                        }
-                    },
-                    { 
-                        data: 'offering_year',
-                        render: function(data) {
-                            return data || '2022-2025';
-                        }
-                    },
-                    { 
-                        data: 'prn',
-                        render: function(data) {
-                            return `<span class="badge-prn">${data}</span>`;
-                        }
-                    },
-                    { data: 'name' },
-                    { 
-                        data: 'student_mobile',
-                        render: function(data) {
-                            return `
-                                <div class="mobile-container">
-                                    <div class="mobile-text">
-                                        <i class="fas fa-phone text-success me-1"></i>${data}
-                                    </div>
-                                    <button class="copy-icon-btn" onclick="copyToClipboard('${data}', 'Student mobile number')" title="Copy Student Mobile">
-                                        <i class="far fa-copy"></i>
-                                    </button>
-                                </div>
-                            `;
-                        }
-                    },
-                    { 
-                        data: 'parent_mobile',
-                        render: function(data) {
-                            return `
-                                <div class="mobile-container">
-                                    <div class="mobile-text">
-                                        <i class="fas fa-user-friends text-primary me-1"></i>${data}
-                                    </div>
-                                    <button class="copy-icon-btn" onclick="copyToClipboard('${data}', 'Parent mobile number')" title="Copy Parent Mobile">
-                                        <i class="far fa-copy"></i>
-                                    </button>
-                                </div>
-                            `;
-                        }
-                    },
-                    { 
-                        data: 'email',
-                        render: function(data) {
-                            return `
-                                <div class="email-container">
-                                    <div class="email-text">
-                                        <i class="fas fa-envelope text-danger me-1"></i>${data}
-                                    </div>
-                                    <button class="copy-icon-btn" onclick="copyToClipboard('${data}', 'Email address')" title="Copy Email">
-                                        <i class="far fa-copy"></i>
-                                    </button>
-                                </div>
-                            `;
-                        }
-                    }
-                ],
+                columns: columns,
                 pageLength: 10,
                 lengthMenu: [], // Empty array to hide the "Show entries" dropdown
                 language: {
@@ -1417,6 +1692,274 @@
                 console.error('Export error:', error);
                 showCopySuccess('Error exporting file. Please try again.', 'error');
             }
+        }
+
+        // ADMIN FUNCTIONS
+
+        // Show all students (admin only)
+        function showAllStudents() {
+            if (!isAdmin) {
+                showCopySuccess('Admin access required', 'error');
+                return;
+            }
+            
+            clearSearch();
+            document.getElementById('searchResultsHeader').style.display = 'flex';
+            document.getElementById('resultsCount').textContent = allStudents.length;
+            document.getElementById('searchCriteria').textContent = '(All Students)';
+            document.getElementById('noResultsMessage').style.display = 'none';
+            
+            showCopySuccess(`Displaying all ${allStudents.length} students`, 'success');
+        }
+
+        // Export entire database (admin only)
+        function exportAllData() {
+            if (!isAdmin) {
+                showCopySuccess('Admin access required', 'error');
+                return;
+            }
+            
+            const includeTimestamp = document.getElementById('includeTimestamp').checked;
+            const format = document.getElementById('exportFormat').value;
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+            
+            let fileName = 'PCCOE_Complete_Database';
+            
+            if (includeTimestamp) {
+                fileName += `_${timestamp}`;
+            }
+            
+            fileName += `.${format}`;
+            
+            // Prepare worksheet data
+            const worksheetData = [
+                ['PCCOE Student Directory - Department of Applied Sciences & Humanities'],
+                ['Exported on: ' + new Date().toLocaleString('en-IN')],
+                ['Complete Database Export - Admin Access'],
+                ['Total Records: ' + allStudents.length],
+                [''], // Empty row
+                ['Sr. No.', 'Offering Year', 'PRN', 'Student Name', 'Student Mobile', 'Parent Mobile', 'Email ID']
+            ];
+            
+            // Add all student data
+            allStudents.forEach((student, index) => {
+                worksheetData.push([
+                    index + 1,
+                    student.offering_year || '2022-2025',
+                    student.prn || '',
+                    student.name || '',
+                    student.student_mobile || '',
+                    student.parent_mobile || '',
+                    student.email || ''
+                ]);
+            });
+            
+            // Create workbook
+            const workbook = XLSX.utils.book_new();
+            const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+            
+            // Set column widths
+            const colWidths = [
+                { wch: 8 },  // Sr. No.
+                { wch: 15 }, // Offering Year
+                { wch: 12 }, // PRN
+                { wch: 25 }, // Student Name
+                { wch: 15 }, // Student Mobile
+                { wch: 15 }, // Parent Mobile
+                { wch: 30 }  // Email ID
+            ];
+            worksheet['!cols'] = colWidths;
+            
+            // Add worksheet to workbook
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Students');
+            
+            try {
+                if (format === 'xlsx') {
+                    XLSX.writeFile(workbook, fileName);
+                } else {
+                    // For CSV, convert to CSV string
+                    const csv = XLSX.utils.sheet_to_csv(worksheet);
+                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                    const link = document.createElement('a');
+                    const url = URL.createObjectURL(blob);
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', fileName);
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                }
+                
+                showCopySuccess(`Exported complete database (${allStudents.length} records) to ${fileName}`, 'success');
+            } catch (error) {
+                console.error('Export error:', error);
+                showCopySuccess('Error exporting file. Please try again.', 'error');
+            }
+        }
+
+        // Show add student modal
+        function showAddStudentModal() {
+            if (!isAdmin) {
+                showCopySuccess('Admin access required', 'error');
+                return;
+            }
+            
+            // Clear form
+            document.getElementById('addPRN').value = '';
+            document.getElementById('addName').value = '';
+            document.getElementById('addOfferingYear').value = '2025-26';
+            document.getElementById('addStudentMobile').value = '';
+            document.getElementById('addParentMobile').value = '';
+            document.getElementById('addEmail').value = '';
+            
+            addModal.show();
+        }
+
+        // Add new student
+        function addNewStudent() {
+            if (!isAdmin) {
+                showCopySuccess('Admin access required', 'error');
+                return;
+            }
+            
+            const prn = document.getElementById('addPRN').value.trim();
+            const name = document.getElementById('addName').value.trim();
+            const offeringYear = document.getElementById('addOfferingYear').value.trim() || '2025-26';
+            const studentMobile = document.getElementById('addStudentMobile').value.trim();
+            const parentMobile = document.getElementById('addParentMobile').value.trim() || 'NA';
+            const email = document.getElementById('addEmail').value.trim();
+            
+            // Validation
+            if (!prn || !name || !studentMobile || !email) {
+                showCopySuccess('Please fill all required fields (PRN, Name, Mobile, Email)', 'error');
+                return;
+            }
+            
+            // Check if PRN already exists
+            if (allStudents.some(student => student.prn === prn)) {
+                showCopySuccess(`PRN ${prn} already exists. Please use a different PRN.`, 'error');
+                return;
+            }
+            
+            // Create new student object
+            const newStudent = {
+                sr_no: allStudents.length + 1,
+                offering_year: offeringYear,
+                prn: prn,
+                name: name,
+                student_mobile: studentMobile,
+                parent_mobile: parentMobile,
+                email: email
+            };
+            
+            // Add to array
+            allStudents.push(newStudent);
+            
+            // Update DataTable
+            dataTable.row.add(newStudent).draw();
+            
+            // Update statistics
+            updateTotalCount();
+            
+            // Close modal
+            addModal.hide();
+            
+            showCopySuccess(`Student ${name} (${prn}) added successfully`, 'success');
+        }
+
+        // Edit student
+        function editStudent(index) {
+            if (!isAdmin) {
+                showCopySuccess('Admin access required', 'error');
+                return;
+            }
+            
+            const student = allStudents[index];
+            
+            // Fill form with student data
+            document.getElementById('editStudentIndex').value = index;
+            document.getElementById('editPRN').value = student.prn || '';
+            document.getElementById('editName').value = student.name || '';
+            document.getElementById('editOfferingYear').value = student.offering_year || '2025-26';
+            document.getElementById('editStudentMobile').value = student.student_mobile || '';
+            document.getElementById('editParentMobile').value = student.parent_mobile || '';
+            document.getElementById('editEmail').value = student.email || '';
+            
+            editModal.show();
+        }
+
+        // Save student changes
+        function saveStudentChanges() {
+            if (!isAdmin) {
+                showCopySuccess('Admin access required', 'error');
+                return;
+            }
+            
+            const index = parseInt(document.getElementById('editStudentIndex').value);
+            const student = allStudents[index];
+            
+            // Get updated values
+            const updatedStudent = {
+                sr_no: student.sr_no,
+                offering_year: document.getElementById('editOfferingYear').value.trim() || '2025-26',
+                prn: document.getElementById('editPRN').value.trim(),
+                name: document.getElementById('editName').value.trim(),
+                student_mobile: document.getElementById('editStudentMobile').value.trim(),
+                parent_mobile: document.getElementById('editParentMobile').value.trim() || 'NA',
+                email: document.getElementById('editEmail').value.trim()
+            };
+            
+            // Validation
+            if (!updatedStudent.prn || !updatedStudent.name || !updatedStudent.student_mobile || !updatedStudent.email) {
+                showCopySuccess('Please fill all required fields (PRN, Name, Mobile, Email)', 'error');
+                return;
+            }
+            
+            // Update in array
+            allStudents[index] = updatedStudent;
+            
+            // Update DataTable
+            dataTable.row(index).data(updatedStudent).draw();
+            
+            // Close modal
+            editModal.hide();
+            
+            showCopySuccess(`Student ${updatedStudent.name} (${updatedStudent.prn}) updated successfully`, 'success');
+        }
+
+        // Delete student from table
+        function deleteStudent(index) {
+            if (!isAdmin) {
+                showCopySuccess('Admin access required', 'error');
+                return;
+            }
+            
+            const student = allStudents[index];
+            
+            if (confirm(`Are you sure you want to delete student ${student.name} (${student.prn})?`)) {
+                // Remove from array
+                allStudents.splice(index, 1);
+                
+                // Update DataTable
+                dataTable.row(index).remove().draw();
+                
+                // Update statistics
+                updateTotalCount();
+                
+                showCopySuccess(`Student ${student.name} (${student.prn}) deleted successfully`, 'success');
+            }
+        }
+
+        // Delete current student from modal
+        function deleteCurrentStudent() {
+            if (!isAdmin) {
+                showCopySuccess('Admin access required', 'error');
+                return;
+            }
+            
+            const index = parseInt(document.getElementById('editStudentIndex').value);
+            deleteStudent(index);
+            editModal.hide();
         }
 
         // Update total count
