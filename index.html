@@ -199,6 +199,7 @@
             overflow: hidden;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             margin-bottom: 2rem;
+            display: none; /* Hide the table by default */
         }
         
         .table th {
@@ -392,8 +393,34 @@
             color: #1a237e;
         }
         
-        /* Hide the "Show entries" dropdown */
-        .dataTables_length {
+        .search-results-info {
+            background: #e8eaf6;
+            border-left: 4px solid var(--pccoe-blue);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        
+        .results-count {
+            font-weight: 600;
+            color: var(--pccoe-blue);
+        }
+        
+        .no-results-message {
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: none;
+        }
+        
+        /* Hide DataTable elements */
+        .dataTables_length,
+        .dataTables_filter,
+        .dataTables_info,
+        .dataTables_paginate {
             display: none !important;
         }
         
@@ -553,29 +580,35 @@
                 </div>
             </div>
             
+            <!-- Search Results Info (shown after search) -->
+            <div class="search-results-info" id="searchResultsInfo">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h6 class="mb-0"><i class="fas fa-search me-2"></i>Search Results</h6>
+                        <p class="mb-0 mt-1">
+                            Found <span class="results-count" id="resultsCount">0</span> student(s) matching your search criteria.
+                            <span id="searchCriteria" class="text-muted"></span>
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <button class="btn export-btn" onclick="exportSearchResults()" id="exportSearchBtn">
+                            <i class="fas fa-file-excel"></i> Export Search Results
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Export Options -->
             <div class="export-options">
                 <div class="export-option-label">
-                    <i class="fas fa-download"></i> Export Options
+                    <i class="fas fa-info-circle"></i> Important Information
                 </div>
                 <div class="row g-3">
-                    <div class="col-md-6">
-                        <button class="btn export-btn w-100" onclick="exportToExcel('current')" id="exportCurrentBtn">
-                            <i class="fas fa-file-excel"></i> Export Current Results
-                        </button>
-                    </div>
-                    <div class="col-md-3">
-                        <select class="form-select" id="exportFormat">
-                            <option value="xlsx">Excel (.xlsx)</option>
-                            <option value="csv">CSV (.csv)</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-check mt-2">
-                            <input class="form-check-input" type="checkbox" id="includeTimestamp" checked>
-                            <label class="form-check-label" for="includeTimestamp">
-                                Include timestamp in filename
-                            </label>
+                    <div class="col-12">
+                        <div class="alert alert-info mb-0">
+                            <i class="fas fa-shield-alt me-2"></i>
+                            <strong>Data Security Notice:</strong> For data protection, student details are not displayed on screen. 
+                            You can search for students and export only your search results to Excel/CSV format.
                         </div>
                     </div>
                 </div>
@@ -585,7 +618,7 @@
             <div class="row g-2 mt-3">
                 <div class="col-md-4">
                     <button class="btn btn-outline-secondary w-100" onclick="clearSearch()">
-                        <i class="fas fa-times"></i> Clear All Search
+                        <i class="fas fa-times"></i> Clear Search
                     </button>
                 </div>
                 <div class="col-md-4">
@@ -609,32 +642,25 @@
 
         <!-- Stats -->
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="stats-card">
                     <i class="fas fa-users"></i>
                     <h5 id="totalStudents">0</h5>
-                    <small>Total Students</small>
+                    <small>Total Students in Database</small>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="stats-card">
                     <i class="fas fa-database"></i>
                     <h5 id="dataStatus">Loading...</h5>
                     <small>Data Status</small>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="stats-card">
                     <i class="fas fa-search"></i>
                     <h5 id="searchResults">0</h5>
-                    <small>Search Results</small>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stats-card">
-                    <i class="fas fa-download"></i>
-                    <h5 id="exportCount">0</h5>
-                    <small>Ready to Export</small>
+                    <small>Current Search Results</small>
                 </div>
             </div>
         </div>
@@ -647,8 +673,16 @@
             <p class="mt-2">Loading student data from CSV...</p>
         </div>
 
-        <!-- Data Table -->
-        <div class="data-table">
+        <!-- No Results Message -->
+        <div class="no-results-message" id="noResultsMessage">
+            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+            <h5>No Search Results</h5>
+            <p class="text-muted">Enter search criteria above to find students.</p>
+            <p class="text-muted small">For data security, student details are only available for export after search.</p>
+        </div>
+
+        <!-- Data Table (Hidden by default) -->
+        <div class="data-table" id="dataTableContainer">
             <table id="studentTable" class="table table-striped" style="width:100%">
                 <thead>
                     <tr>
@@ -662,7 +696,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Data will be loaded by DataTable -->
+                    <!-- Data will be loaded by DataTable but not displayed -->
                 </tbody>
             </table>
         </div>
@@ -692,6 +726,8 @@
         let dataTable = null;
         let allStudents = [];
         let isLoggedIn = false;
+        let currentSearchResults = [];
+        let lastSearchCriteria = '';
 
         // Check if user is already logged in
         function checkLoginStatus() {
@@ -770,11 +806,15 @@
                 year: 'numeric'
             });
             
+            // Hide elements initially
+            document.getElementById('searchResultsInfo').style.display = 'none';
+            document.getElementById('noResultsMessage').style.display = 'block';
+            
             // Load CSV data
             loadCSVData();
         }
 
-        // Initialize DataTable
+        // Initialize DataTable (hidden, for internal filtering only)
         function initDataTable(data) {
             if (dataTable) {
                 dataTable.destroy();
@@ -799,73 +839,47 @@
                     { 
                         data: 'prn',
                         render: function(data) {
-                            return `<span class="badge-prn">${data}</span>`;
+                            return data;
                         }
                     },
                     { data: 'name' },
                     { 
                         data: 'student_mobile',
                         render: function(data) {
-                            return `
-                                <div class="mobile-container">
-                                    <div class="mobile-text">
-                                        <i class="fas fa-phone text-success me-1"></i>${data}
-                                    </div>
-                                    <button class="copy-icon-btn" onclick="copyToClipboard('${data}', 'Student mobile number')" title="Copy Student Mobile">
-                                        <i class="far fa-copy"></i>
-                                    </button>
-                                </div>
-                            `;
+                            return data;
                         }
                     },
                     { 
                         data: 'parent_mobile',
                         render: function(data) {
-                            return `
-                                <div class="mobile-container">
-                                    <div class="mobile-text">
-                                        <i class="fas fa-user-friends text-primary me-1"></i>${data}
-                                    </div>
-                                    <button class="copy-icon-btn" onclick="copyToClipboard('${data}', 'Parent mobile number')" title="Copy Parent Mobile">
-                                        <i class="far fa-copy"></i>
-                                    </button>
-                                </div>
-                            `;
+                            return data;
                         }
                     },
                     { 
                         data: 'email',
                         render: function(data) {
-                            return `
-                                <div class="email-container">
-                                    <div class="email-text">
-                                        <i class="fas fa-envelope text-danger me-1"></i>${data}
-                                    </div>
-                                    <button class="copy-icon-btn" onclick="copyToClipboard('${data}', 'Email address')" title="Copy Email">
-                                        <i class="far fa-copy"></i>
-                                    </button>
-                                </div>
-                            `;
+                            return data;
                         }
                     }
                 ],
                 pageLength: 10,
-                lengthMenu: [], // Empty array to hide the "Show entries" dropdown
+                lengthChange: false,
+                searching: false,
+                info: false,
+                paging: false,
                 language: {
-                    search: "Search:",
-                    info: "Showing _START_ to _END_ of _TOTAL_ entries",
-                    infoEmpty: "No entries found",
-                    infoFiltered: "(filtered from _MAX_ total entries)"
-                },
-                drawCallback: function() {
-                    // Update export count after each draw
-                    updateExportCount();
+                    search: ""
                 }
             });
 
             // Update statistics
             updateTotalCount();
-            updateExportCount();
+            hideDataTable();
+        }
+
+        // Hide the data table
+        function hideDataTable() {
+            document.getElementById('dataTableContainer').style.display = 'none';
         }
 
         // Load CSV from GitHub
@@ -873,8 +887,8 @@
             if (!isLoggedIn) return;
             
             document.getElementById('loading').style.display = 'block';
+            document.getElementById('noResultsMessage').style.display = 'none';
             document.getElementById('dataStatus').textContent = 'Loading...';
-            disableExportButtons();
             
             try {
                 // Your CSV file URL on GitHub
@@ -889,7 +903,7 @@
                 const csvText = await response.text();
                 
                 Papa.parse(csvText, {
-                    header: true, // Assuming first row has headers
+                    header: true,
                     skipEmptyLines: true,
                     dynamicTyping: false,
                     complete: function(results) {
@@ -900,13 +914,13 @@
                         processCSVData(results.data);
                         document.getElementById('loading').style.display = 'none';
                         document.getElementById('dataStatus').textContent = 'Loaded';
-                        enableExportButtons();
+                        document.getElementById('noResultsMessage').style.display = 'block';
                     },
                     error: function(error) {
                         console.error('CSV parsing error:', error);
                         document.getElementById('dataStatus').textContent = 'Error';
                         document.getElementById('loading').style.display = 'none';
-                        disableExportButtons();
+                        document.getElementById('noResultsMessage').style.display = 'block';
                         showCopySuccess('Error loading CSV file. Please check console for details.', 'error');
                     }
                 });
@@ -914,7 +928,7 @@
                 console.error('Failed to fetch CSV:', error);
                 document.getElementById('dataStatus').textContent = 'Failed';
                 document.getElementById('loading').style.display = 'none';
-                disableExportButtons();
+                document.getElementById('noResultsMessage').style.display = 'block';
                 showCopySuccess('Failed to load CSV file. Please check if the file exists.', 'error');
             }
         }
@@ -928,7 +942,6 @@
                 console.error('No data found in CSV');
                 showCopySuccess('No data found in CSV file', 'error');
                 document.getElementById('loading').style.display = 'none';
-                disableExportButtons();
                 return;
             }
             
@@ -959,138 +972,12 @@
             
             // Force update of total count
             updateTotalCount();
-            updateExportCount();
-            enableExportButtons();
         }
 
-        // Export to Excel function - only exports current results
-        function exportToExcel() {
-            if (!isLoggedIn) {
-                showLogin();
-                return;
-            }
-            
-            if (!dataTable || allStudents.length === 0) {
-                showCopySuccess('No data available to export', 'error');
-                return;
-            }
-            
-            let exportData = getCurrentFilteredData();
-            
-            if (exportData.length === 0) {
-                showCopySuccess('No search results to export. Please search first.', 'error');
-                return;
-            }
-            
-            let fileName = 'PCCOE_Search_Results';
-            const includeTimestamp = document.getElementById('includeTimestamp').checked;
-            const format = document.getElementById('exportFormat').value;
-            const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-            
-            if (includeTimestamp) {
-                fileName += `_${timestamp}`;
-            }
-            
-            fileName += `.${format}`;
-            
-            // Prepare worksheet data
-            const worksheetData = [
-                ['PCCOE Student Directory - Department of Applied Sciences & Humanities'],
-                ['Exported on: ' + new Date().toLocaleString('en-IN')],
-                ['Total Records: ' + exportData.length],
-                [''], // Empty row
-                ['Sr. No.', 'Offering Year', 'PRN', 'Student Name', 'Student Mobile', 'Parent Mobile', 'Email ID']
-            ];
-            
-            // Add student data
-            exportData.forEach((student, index) => {
-                worksheetData.push([
-                    index + 1,
-                    student.offering_year || '2022-2025',
-                    student.prn || '',
-                    student.name || '',
-                    student.student_mobile || '',
-                    student.parent_mobile || '',
-                    student.email || ''
-                ]);
-            });
-            
-            // Create workbook
-            const workbook = XLSX.utils.book_new();
-            const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
-            
-            // Set column widths
-            const colWidths = [
-                { wch: 8 },  // Sr. No.
-                { wch: 15 }, // Offering Year
-                { wch: 12 }, // PRN
-                { wch: 25 }, // Student Name
-                { wch: 15 }, // Student Mobile
-                { wch: 15 }, // Parent Mobile
-                { wch: 30 }  // Email ID
-            ];
-            worksheet['!cols'] = colWidths;
-            
-            // Add worksheet to workbook
-            XLSX.utils.book_append_sheet(workbook, worksheet, 'Students');
-            
-            try {
-                if (format === 'xlsx') {
-                    XLSX.writeFile(workbook, fileName);
-                } else {
-                    // For CSV, convert to CSV string
-                    const csv = XLSX.utils.sheet_to_csv(worksheet);
-                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-                    const link = document.createElement('a');
-                    const url = URL.createObjectURL(blob);
-                    link.setAttribute('href', url);
-                    link.setAttribute('download', fileName);
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    URL.revokeObjectURL(url);
-                }
-                
-                showCopySuccess(`Exported ${exportData.length} search results to ${fileName}`, 'success');
-            } catch (error) {
-                console.error('Export error:', error);
-                showCopySuccess('Error exporting file. Please try again.', 'error');
-            }
-        }
-
-        // Get current filtered data from DataTable
-        function getCurrentFilteredData() {
-            if (!dataTable) return [];
-            
-            const filteredIndices = dataTable.rows({ search: 'applied' }).indexes().toArray();
-            return filteredIndices.map(index => allStudents[index]);
-        }
-
-        // Update export count
-        function updateExportCount() {
-            if (!dataTable) {
-                document.getElementById('exportCount').textContent = '0';
-                return;
-            }
-            
-            const filteredCount = dataTable.rows({ search: 'applied' }).count();
-            document.getElementById('exportCount').textContent = filteredCount;
-        }
-
-        // Disable export buttons
-        function disableExportButtons() {
-            document.getElementById('exportCurrentBtn').disabled = true;
-        }
-
-        // Enable export buttons
-        function enableExportButtons() {
-            document.getElementById('exportCurrentBtn').disabled = false;
-        }
-
-        // Search function for single PRN and name
+        // Main search function
         function searchTable() {
-            const prnSearch = document.getElementById('searchPRN').value.toLowerCase().trim();
-            const nameSearch = document.getElementById('searchName').value.toLowerCase().trim();
+            const prnSearch = document.getElementById('searchPRN').value.trim();
+            const nameSearch = document.getElementById('searchName').value.trim();
             const filterColumn = document.getElementById('filterColumn').value;
             
             // Clear multi-PRN search
@@ -1103,11 +990,16 @@
             dataTable.search('').draw();
             
             if (!prnSearch && !nameSearch) {
-                // No search terms, show all data
-                updateTotalCount();
-                updateExportCount();
+                // No search terms, clear results
+                clearSearchResults();
                 return;
             }
+            
+            // Store search criteria for display
+            let searchCriteria = '';
+            if (prnSearch) searchCriteria = `PRN: ${prnSearch}`;
+            if (nameSearch) searchCriteria = searchCriteria ? `${searchCriteria}, Name: ${nameSearch}` : `Name: ${nameSearch}`;
+            lastSearchCriteria = searchCriteria;
             
             // Custom filtering
             $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
@@ -1124,7 +1016,7 @@
                 
                 if (filterColumn === 'all') {
                     // Search in all columns
-                    const searchTerm = prnSearch || nameSearch;
+                    const searchTerm = (prnSearch || nameSearch).toLowerCase();
                     return (
                         studentPRN.includes(searchTerm) ||
                         studentName.includes(searchTerm) ||
@@ -1134,7 +1026,7 @@
                     );
                 } else {
                     // Search in specific column
-                    const searchTerm = (filterColumn === '1' ? prnSearch : nameSearch);
+                    const searchTerm = (filterColumn === '1' ? prnSearch : nameSearch).toLowerCase();
                     if (!searchTerm) return true;
                     
                     switch(filterColumn) {
@@ -1153,9 +1045,16 @@
             // Remove the custom filter function
             $.fn.dataTable.ext.search.pop();
             
-            // Update counts
+            // Get and store search results
             updateSearchResults();
-            updateExportCount();
+            
+            // Show/hide appropriate messages
+            const resultsCount = currentSearchResults.length;
+            if (resultsCount > 0) {
+                showSearchResultsInfo();
+            } else {
+                showNoResultsMessage();
+            }
         }
 
         // Search multiple PRNs
@@ -1170,11 +1069,8 @@
             if (!dataTable) return;
             
             if (!multiPRNInput) {
-                // If no PRNs, show all data
-                dataTable.search('').draw();
-                document.getElementById('prnBadgesContainer').style.display = 'none';
-                updateTotalCount();
-                updateExportCount();
+                // If no PRNs, clear results
+                clearSearchResults();
                 return;
             }
             
@@ -1183,6 +1079,9 @@
                 .split(',')
                 .map(prn => prn.trim())
                 .filter(prn => prn.length > 0);
+            
+            // Store search criteria for display
+            lastSearchCriteria = `PRNs: ${prnList.join(', ')}`;
             
             // Display PRN badges
             const badgesContainer = document.getElementById('prnBadges');
@@ -1221,13 +1120,16 @@
             // Remove the custom filter function
             $.fn.dataTable.ext.search.pop();
             
-            // Update counts
+            // Get and store search results
             updateSearchResults();
-            updateExportCount();
             
-            // Show success message
-            const foundCount = dataTable.rows({ search: 'applied' }).count();
-            showCopySuccess(`Found ${foundCount} students matching ${prnList.length} PRN(s)`);
+            // Show/hide appropriate messages
+            const resultsCount = currentSearchResults.length;
+            if (resultsCount > 0) {
+                showSearchResultsInfo();
+            } else {
+                showNoResultsMessage();
+            }
         }
 
         // Clear all search
@@ -1241,11 +1143,130 @@
             // Hide PRN badges
             document.getElementById('prnBadgesContainer').style.display = 'none';
             
-            // Reset table
+            // Clear search results
+            clearSearchResults();
+        }
+
+        // Clear search results display
+        function clearSearchResults() {
             if (dataTable) {
                 dataTable.search('').draw();
-                updateTotalCount();
-                updateExportCount();
+                currentSearchResults = [];
+                updateSearchResultsCount();
+                document.getElementById('searchResultsInfo').style.display = 'none';
+                document.getElementById('noResultsMessage').style.display = 'block';
+            }
+        }
+
+        // Update search results array
+        function updateSearchResults() {
+            if (!dataTable) return;
+            
+            const filteredIndices = dataTable.rows({ search: 'applied' }).indexes().toArray();
+            currentSearchResults = filteredIndices.map(index => allStudents[index]);
+            updateSearchResultsCount();
+        }
+
+        // Update search results count display
+        function updateSearchResultsCount() {
+            const resultsCount = currentSearchResults.length;
+            document.getElementById('resultsCount').textContent = resultsCount;
+            document.getElementById('searchResults').textContent = resultsCount;
+            
+            // Update search criteria display
+            if (lastSearchCriteria) {
+                document.getElementById('searchCriteria').textContent = `(${lastSearchCriteria})`;
+            } else {
+                document.getElementById('searchCriteria').textContent = '';
+            }
+        }
+
+        // Show search results info panel
+        function showSearchResultsInfo() {
+            document.getElementById('searchResultsInfo').style.display = 'block';
+            document.getElementById('noResultsMessage').style.display = 'none';
+            document.getElementById('exportSearchBtn').disabled = false;
+        }
+
+        // Show no results message
+        function showNoResultsMessage() {
+            document.getElementById('searchResultsInfo').style.display = 'none';
+            document.getElementById('noResultsMessage').style.display = 'block';
+            document.getElementById('exportSearchBtn').disabled = true;
+            
+            if (lastSearchCriteria) {
+                document.getElementById('noResultsMessage').innerHTML = `
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h5>No Results Found</h5>
+                    <p class="text-muted">No students found matching: <strong>${lastSearchCriteria}</strong></p>
+                    <p class="text-muted small">Please try different search criteria.</p>
+                `;
+            }
+        }
+
+        // Export search results
+        function exportSearchResults() {
+            if (!isLoggedIn) {
+                showLogin();
+                return;
+            }
+            
+            if (currentSearchResults.length === 0) {
+                showCopySuccess('No search results to export. Please search first.', 'error');
+                return;
+            }
+            
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+            const fileName = `PCCOE_Search_Results_${timestamp}.xlsx`;
+            
+            // Prepare worksheet data
+            const worksheetData = [
+                ['PCCOE Student Directory - Department of Applied Sciences & Humanities'],
+                ['Exported on: ' + new Date().toLocaleString('en-IN')],
+                ['Search Criteria: ' + (lastSearchCriteria || 'All Students')],
+                ['Total Records: ' + currentSearchResults.length],
+                [''], // Empty row
+                ['Sr. No.', 'Offering Year', 'PRN', 'Student Name', 'Student Mobile', 'Parent Mobile', 'Email ID']
+            ];
+            
+            // Add student data
+            currentSearchResults.forEach((student, index) => {
+                worksheetData.push([
+                    index + 1,
+                    student.offering_year || '2022-2025',
+                    student.prn || '',
+                    student.name || '',
+                    student.student_mobile || '',
+                    student.parent_mobile || '',
+                    student.email || ''
+                ]);
+            });
+            
+            // Create workbook
+            const workbook = XLSX.utils.book_new();
+            const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+            
+            // Set column widths
+            const colWidths = [
+                { wch: 8 },  // Sr. No.
+                { wch: 15 }, // Offering Year
+                { wch: 12 }, // PRN
+                { wch: 25 }, // Student Name
+                { wch: 15 }, // Student Mobile
+                { wch: 15 }, // Parent Mobile
+                { wch: 30 }  // Email ID
+            ];
+            worksheet['!cols'] = colWidths;
+            
+            // Add worksheet to workbook
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Students');
+            
+            try {
+                XLSX.writeFile(workbook, fileName);
+                showCopySuccess(`Exported ${currentSearchResults.length} search results to ${fileName}`, 'success');
+            } catch (error) {
+                console.error('Export error:', error);
+                showCopySuccess('Error exporting file. Please try again.', 'error');
             }
         }
 
@@ -1253,38 +1274,6 @@
         function updateTotalCount() {
             const totalCount = allStudents.length;
             document.getElementById('totalStudents').textContent = totalCount;
-            document.getElementById('searchResults').textContent = totalCount;
-        }
-
-        // Update search results
-        function updateSearchResults() {
-            if (dataTable) {
-                const filteredCount = dataTable.rows({ search: 'applied' }).count();
-                document.getElementById('totalStudents').textContent = allStudents.length;
-                document.getElementById('searchResults').textContent = filteredCount;
-            }
-        }
-
-        // Generic copy to clipboard function
-        function copyToClipboard(text, label) {
-            if (!isLoggedIn) {
-                showLogin();
-                return;
-            }
-            
-            navigator.clipboard.writeText(text).then(() => {
-                showCopySuccess(`${label} copied to clipboard`);
-            }).catch(err => {
-                console.error('Failed to copy:', err);
-                // Fallback method
-                const textArea = document.createElement('textarea');
-                textArea.value = text;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                showCopySuccess(`${label} copied to clipboard`);
-            });
         }
 
         // Show copy success message
