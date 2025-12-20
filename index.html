@@ -422,6 +422,12 @@
             display: none !important;
         }
         
+        .paste-info {
+            font-size: 0.75rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+        
         @media (max-width: 768px) {
             .directory-header {
                 flex-direction: column;
@@ -564,12 +570,16 @@
                 <div class="row g-3">
                     <div class="col-md-10">
                         <label for="multiPRNSearch" class="form-label">
-                            <i class="fas fa-list-check"></i> Search Multiple PRNs (Comma separated)
+                            <i class="fas fa-list-check"></i> Search Multiple PRNs
                         </label>
-                        <input type="text" class="form-control" id="multiPRNSearch" 
-                               placeholder="e.g., 123B1G035, 123B1G036, 123B1G037">
+                        <textarea class="form-control" id="multiPRNSearch" 
+                               placeholder="Paste PRNs from Excel or enter separated by commas, spaces, or semicolons&#10;e.g., 123B1G035, 123B1G036 123B1G037; 123B1G038"
+                               rows="3"></textarea>
                         <div class="multi-prn-help">
-                            <i class="fas fa-info-circle"></i> Enter multiple PRNs separated by commas
+                            <i class="fas fa-info-circle"></i> Supports: commas (,), spaces, semicolons (;), tabs, or new lines
+                        </div>
+                        <div class="paste-info">
+                            <i class="fas fa-paste"></i> You can directly paste a column of PRNs from Excel
                         </div>
                         <div id="prnBadgesContainer" class="mt-2" style="display: none;">
                             <small>Searching for:</small>
@@ -1032,6 +1042,25 @@
             enableExportButtons();
         }
 
+        // Parse PRN input with multiple separators
+        function parsePRNInput(input) {
+            if (!input) return [];
+            
+            // Replace various separators with comma
+            let normalized = input
+                .replace(/;/g, ',')   // Replace semicolons with commas
+                .replace(/\t/g, ',')  // Replace tabs with commas
+                .replace(/\n/g, ',')  // Replace new lines with commas
+                .replace(/\s+/g, ','); // Replace multiple spaces with comma
+            
+            // Split by comma and clean up
+            return normalized
+                .split(',')
+                .map(prn => prn.trim())
+                .filter(prn => prn.length > 0)
+                .filter((prn, index, self) => self.indexOf(prn) === index); // Remove duplicates
+        }
+
         // Main search function
         function searchTable() {
             const prnSearch = document.getElementById('searchPRN').value.trim();
@@ -1141,25 +1170,37 @@
                 return;
             }
             
-            // Parse PRNs (split by comma, trim whitespace, remove empty entries)
-            const prnList = multiPRNInput
-                .split(',')
-                .map(prn => prn.trim())
-                .filter(prn => prn.length > 0);
+            // Parse PRNs using the enhanced parser
+            const prnList = parsePRNInput(multiPRNInput);
+            
+            if (prnList.length === 0) {
+                showCopySuccess('No valid PRNs found in input. Please check your input.', 'error');
+                return;
+            }
             
             // Store search criteria for display
-            lastSearchCriteria = `PRNs: ${prnList.join(', ')}`;
+            lastSearchCriteria = `${prnList.length} PRN(s): ${prnList.slice(0, 5).join(', ')}${prnList.length > 5 ? '...' : ''}`;
             
-            // Display PRN badges
+            // Display PRN badges (show first 10 only to avoid clutter)
             const badgesContainer = document.getElementById('prnBadges');
             badgesContainer.innerHTML = '';
             
-            prnList.forEach(prn => {
+            const displayPrns = prnList.slice(0, 10);
+            displayPrns.forEach(prn => {
                 const badge = document.createElement('span');
                 badge.className = 'prn-badge';
                 badge.textContent = prn;
                 badgesContainer.appendChild(badge);
             });
+            
+            if (prnList.length > 10) {
+                const moreBadge = document.createElement('span');
+                moreBadge.className = 'prn-badge';
+                moreBadge.textContent = `+${prnList.length - 10} more`;
+                moreBadge.style.backgroundColor = '#ff9800';
+                moreBadge.style.color = '#1a237e';
+                badgesContainer.appendChild(moreBadge);
+            }
             
             document.getElementById('prnBadgesContainer').style.display = 'block';
             
@@ -1174,7 +1215,7 @@
                 
                 // Check if this student's PRN matches any in our list
                 for (const searchPRN of prnList) {
-                    if (studentPRN.includes(searchPRN.toLowerCase())) {
+                    if (studentPRN === searchPRN.toLowerCase()) {
                         return true;
                     }
                 }
@@ -1196,15 +1237,17 @@
             if (resultsCount > 0) {
                 document.getElementById('searchResultsHeader').style.display = 'flex';
                 document.getElementById('noResultsMessage').style.display = 'none';
+                showCopySuccess(`Found ${resultsCount} student(s) matching ${prnList.length} PRN(s)`, 'success');
             } else {
                 document.getElementById('searchResultsHeader').style.display = 'none';
                 document.getElementById('noResultsMessage').style.display = 'block';
                 document.getElementById('noResultsMessage').innerHTML = `
                     <i class="fas fa-search fa-3x text-muted mb-3"></i>
                     <h5>No Results Found</h5>
-                    <p class="text-muted">No students found matching: <strong>${lastSearchCriteria}</strong></p>
-                    <p class="text-muted small">Please try different search criteria.</p>
+                    <p class="text-muted">No students found matching the ${prnList.length} PRN(s) provided.</p>
+                    <p class="text-muted small">Please check the PRN numbers and try again.</p>
                 `;
+                showCopySuccess(`No students found for the ${prnList.length} PRN(s) provided`, 'error');
             }
         }
 
@@ -1495,11 +1538,22 @@
                     clearTimeout(multiPRNTimer);
                     multiPRNTimer = setTimeout(function() {
                         const input = document.getElementById('multiPRNSearch').value.trim();
-                        if (input && input.includes(',')) {
+                        if (input) {
                             searchMultiplePRNs();
                         }
                     }, 500);
                 }
+            });
+            
+            // Handle paste event for Excel data
+            document.getElementById('multiPRNSearch').addEventListener('paste', function(e) {
+                // Let the paste happen first
+                setTimeout(() => {
+                    // Auto-trigger search after paste
+                    if (this.value.trim()) {
+                        searchMultiplePRNs();
+                    }
+                }, 100);
             });
         });
     </script>
