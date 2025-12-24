@@ -524,6 +524,131 @@
             color: #1a237e;
         }
         
+        /* Email-specific styles */
+        .email-actions {
+            display: flex;
+            gap: 5px;
+            margin-top: 5px;
+        }
+        
+        .send-email-btn {
+            background-color: #34a853;
+            color: white;
+            border: none;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            white-space: nowrap;
+        }
+        
+        .send-email-btn:hover {
+            background-color: #2e8b47;
+            transform: scale(1.05);
+        }
+        
+        .send-email-btn i {
+            font-size: 0.7rem;
+        }
+        
+        .bulk-email-btn {
+            background: linear-gradient(135deg, #ea4335 0%, #fbbc05 100%);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+        }
+        
+        .bulk-email-btn:hover {
+            background: linear-gradient(135deg, #d62516 0%, #e6a700 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(234, 67, 53, 0.3);
+        }
+        
+        .template-badge {
+            background-color: #e8f0fe;
+            color: #1967d2;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.7rem;
+            margin-left: 5px;
+            font-weight: 500;
+        }
+        
+        /* Email Modal Styles */
+        .email-modal-body {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .template-preview {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .template-preview h6 {
+            color: #1a237e;
+            border-bottom: 2px solid #1a237e;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .template-item {
+            padding: 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .template-item:hover {
+            background-color: #e8eaf6;
+            border-color: #1a237e;
+        }
+        
+        .template-item.active {
+            background-color: #e8eaf6;
+            border-color: #1a237e;
+            border-left: 4px solid #1a237e;
+        }
+        
+        .template-subject {
+            font-weight: 600;
+            color: #1a237e;
+            margin-bottom: 5px;
+        }
+        
+        .template-content {
+            font-size: 0.85rem;
+            color: #495057;
+            white-space: pre-line;
+        }
+        
+        /* Progress indicator */
+        .email-progress {
+            display: none;
+            margin-top: 15px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: linear-gradient(90deg, #34a853, #4285f4);
+        }
+        
         @media (max-width: 768px) {
             .directory-header {
                 flex-direction: column;
@@ -561,6 +686,10 @@
             
             .admin-controls {
                 flex-direction: column;
+            }
+            
+            .email-actions {
+                flex-wrap: wrap;
             }
         }
     </style>
@@ -655,6 +784,9 @@
                 </button>
                 <button class="admin-btn" onclick="showAddStudentModal()">
                     <i class="fas fa-user-plus"></i> Add New Student
+                </button>
+                <button class="admin-btn" onclick="openBulkEmailModal()">
+                    <i class="fas fa-envelope-open-text"></i> Send Bulk Email
                 </button>
                 <button class="admin-btn" onclick="clearSearch()">
                     <i class="fas fa-times"></i> Clear All Filters
@@ -973,6 +1105,73 @@
         </div>
     </div>
 
+    <!-- Bulk Email Modal -->
+    <div class="modal fade" id="bulkEmailModal" tabindex="-1" aria-labelledby="bulkEmailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="background: linear-gradient(135deg, #ea4335 0%, #fbbc05 100%); color: white;">
+                    <h5 class="modal-title" id="bulkEmailModalLabel">
+                        <i class="fas fa-envelope"></i> Send Bulk Email
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body email-modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Email Template</label>
+                        <div class="template-preview">
+                            <h6>Selected Template Preview</h6>
+                            <div id="templatePreview">
+                                <p class="text-muted">Select a template to preview</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Choose Template</label>
+                        <div class="template-list" id="templateList">
+                            <!-- Templates will be loaded here -->
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Selected Students</label>
+                        <div class="alert alert-info">
+                            <i class="fas fa-users"></i> 
+                            <span id="selectedStudentsCount">0</span> student(s) selected for email
+                        </div>
+                        <div id="selectedStudentsEmails" class="small text-muted mt-2">
+                            <!-- Emails will be listed here -->
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i> 
+                        <strong>Note:</strong> This will open Gmail in separate tabs for each student. 
+                        You may need to allow popups for this site.
+                    </div>
+                    
+                    <!-- Progress indicator -->
+                    <div class="email-progress" id="emailProgress">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Sending emails...</span>
+                            <span id="emailProgressText">0/0</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                 id="emailProgressBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="sendBulkEmails()" id="sendBulkEmailsBtn">
+                        <i class="fas fa-paper-plane"></i> Send Emails
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -996,6 +1195,143 @@
         let isAdmin = false;
         let editModal = null;
         let addModal = null;
+
+        // Email Templates
+        const EMAIL_TEMPLATES = {
+            'defaulter': {
+                name: 'Defaulter Student Notice',
+                subject: 'Important Notice Regarding Your Academic Standing - PCCOE',
+                body: `Dear [Student Name],
+
+This is regarding your academic performance in the current semester. Our records indicate that you are falling behind in the following areas:
+
+- Attendance requirements
+- Assignment submissions
+- Internal assessments
+
+You are requested to meet your faculty advisor immediately to discuss your academic progress and create a plan for improvement.
+
+Please bring this to the attention of your parents/guardians as well.
+
+PRN: [PRN]
+Student Name: [Student Name]
+
+Best regards,
+Department of Applied Sciences & Humanities
+PCCOE, Pune`
+            },
+            'exam_performance': {
+                name: 'Exam Performance Review',
+                subject: 'Discussion on Your Recent Exam Performance - PCCOE',
+                body: `Dear [Student Name],
+
+This email is to discuss your performance in the recent Summative Assessments. Our analysis shows room for improvement in your scores.
+
+Key Observations:
+- Below-average performance in recent exams
+- Need for focused preparation
+- Regular revision required
+
+We recommend that you:
+1. Meet with your subject faculty for guidance
+2. Join remedial classes if available
+3. Follow a structured study schedule
+
+We believe with proper guidance and effort, you can significantly improve your performance.
+
+PRN: [PRN]
+Student Name: [Student Name]
+
+Sincerely,
+Examination Cell
+PCCOE, Pune`
+            },
+            'attendance': {
+                name: 'Low Attendance Alert',
+                subject: 'Urgent: Low Attendance Alert - PCCOE',
+                body: `Dear [Student Name],
+
+This is to inform you that your attendance percentage has fallen below the required minimum (75%) for the current semester.
+
+Current Attendance: [Attendance]%
+Required Minimum: 75%
+
+As per university norms, students with less than 75% attendance may be debarred from appearing for the end-semester examinations.
+
+Immediate Actions Required:
+1. Start attending all classes regularly
+2. Submit leave applications for any absences with valid reasons
+3. Meet your class coordinator to discuss this matter
+
+Please ensure regular attendance henceforth to avoid any academic consequences.
+
+PRN: [PRN]
+Student Name: [Student Name]
+
+Regards,
+Department of Applied Sciences & Humanities
+PCCOE, Pune`
+            },
+            'exam_schedule': {
+                name: 'SA Exam Schedule',
+                subject: 'Summative Assessment (SA) Examination Schedule - PCCOE',
+                body: `Dear Student,
+
+Please find below the schedule for the upcoming Summative Assessment (SA) Examinations:
+
+**Exam Schedule:**
+- Date: [Date Range]
+- Time: As per seating arrangement
+- Venue: PCCOE Examination Halls
+
+**Important Guidelines:**
+1. Carry your college ID card and hall ticket
+2. Reach the examination center 30 minutes before the exam
+3. Follow all examination rules and regulations
+4. Electronic devices are strictly prohibited
+
+Seating arrangement will be displayed on the notice boards one week before the exams.
+
+For any queries, please contact the examination cell.
+
+PRN: [PRN]
+Student Name: [Student Name]
+
+Best wishes,
+Examination Cell
+PCCOE, Pune`
+            },
+            'parent_meeting': {
+                name: 'Parent-Teacher Meeting',
+                subject: 'Invitation for Parent-Teacher Meeting - PCCOE',
+                body: `Respected Parents,
+
+You are cordially invited to attend the Parent-Teacher Meeting scheduled as per details below:
+
+**Meeting Details:**
+- Date: [Date]
+- Time: [Time]
+- Venue: PCCOE Campus, Department of Applied Sciences & Humanities
+
+**Agenda:**
+1. Discussion of your ward's academic performance
+2. Attendance and behavioral aspects
+3. Future planning and guidance
+4. One-on-one interaction with faculty
+
+Your presence is highly valued and will help us work together for the betterment of your ward's academic journey.
+
+Student Details:
+PRN: [PRN]
+Student Name: [Student Name]
+
+We look forward to your participation.
+
+Warm regards,
+Department of Applied Sciences & Humanities
+PCCOE, Pune`
+            }
+        };
 
         // Check if user is already logged in
         function checkLoginStatus() {
@@ -1171,14 +1507,34 @@
                 },
                 { 
                     data: 'email',
-                    render: function(data) {
+                    render: function(data, type, row, meta) {
+                        const email = data || '';
+                        const studentName = row.name || '';
+                        const prn = row.prn || '';
+                        
                         return `
                             <div class="email-container">
                                 <div class="email-text">
-                                    <i class="fas fa-envelope text-danger me-1"></i>${data}
+                                    <i class="fas fa-envelope text-danger me-1"></i>${email}
                                 </div>
-                                <button class="copy-icon-btn" onclick="copyToClipboard('${data}', 'Email address')" title="Copy Email">
-                                    <i class="far fa-copy"></i>
+                                <div class="d-flex gap-1">
+                                    <button class="copy-icon-btn" onclick="copyToClipboard('${email}', 'Email address')" title="Copy Email">
+                                        <i class="far fa-copy"></i>
+                                    </button>
+                                    <button class="send-email-btn" onclick="sendSingleEmail('${email}', '${studentName}', '${prn}')" title="Send Email">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="email-actions">
+                                <button class="btn btn-sm btn-outline-primary" onclick="sendTemplateEmail('${email}', '${studentName}', '${prn}', 'defaulter')">
+                                    Defaulter
+                                </button>
+                                <button class="btn btn-sm btn-outline-warning" onclick="sendTemplateEmail('${email}', '${studentName}', '${prn}', 'exam_performance')">
+                                    Exam
+                                </button>
+                                <button class="btn btn-sm btn-outline-info" onclick="sendTemplateEmail('${email}', '${studentName}', '${prn}', 'attendance')">
+                                    Attendance
                                 </button>
                             </div>
                         `;
@@ -1692,6 +2048,226 @@
                 console.error('Export error:', error);
                 showCopySuccess('Error exporting file. Please try again.', 'error');
             }
+        }
+
+        // Email sending functions
+        function sendSingleEmail(email, studentName, prn) {
+            if (!isLoggedIn) {
+                showLogin();
+                return;
+            }
+            
+            if (!email) {
+                showCopySuccess('No email address available for this student', 'error');
+                return;
+            }
+            
+            // Open Gmail with blank email
+            const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent('Message from PCCOE')}`;
+            window.open(gmailUrl, '_blank');
+        }
+
+        function sendTemplateEmail(email, studentName, prn, templateKey) {
+            if (!isLoggedIn) {
+                showLogin();
+                return;
+            }
+            
+            if (!email) {
+                showCopySuccess('No email address available for this student', 'error');
+                return;
+            }
+            
+            const template = EMAIL_TEMPLATES[templateKey];
+            if (!template) {
+                showCopySuccess('Template not found', 'error');
+                return;
+            }
+            
+            // Replace placeholders in template
+            let subject = template.subject;
+            let body = template.body;
+            
+            subject = subject.replace('[Student Name]', studentName);
+            body = body.replace(/\[Student Name\]/g, studentName)
+                       .replace(/\[PRN\]/g, prn);
+            
+            // Open Gmail with pre-filled draft
+            const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            window.open(gmailUrl, '_blank');
+            
+            showCopySuccess(`Opening Gmail for ${studentName} with ${template.name}`, 'success');
+        }
+
+        // Bulk email functions
+        function openBulkEmailModal() {
+            if (!isAdmin) {
+                showCopySuccess('Admin access required', 'error');
+                return;
+            }
+            
+            if (currentSearchResults.length === 0) {
+                showCopySuccess('No students in search results. Please search for students first.', 'error');
+                return;
+            }
+            
+            // Update selected students count
+            document.getElementById('selectedStudentsCount').textContent = currentSearchResults.length;
+            
+            // Update email list
+            const emailList = document.getElementById('selectedStudentsEmails');
+            emailList.innerHTML = '';
+            
+            currentSearchResults.slice(0, 10).forEach(student => {
+                const emailItem = document.createElement('div');
+                emailItem.className = 'text-truncate';
+                emailItem.title = `${student.name} - ${student.email}`;
+                emailItem.textContent = `${student.name}: ${student.email}`;
+                emailList.appendChild(emailItem);
+            });
+            
+            if (currentSearchResults.length > 10) {
+                const moreItem = document.createElement('div');
+                moreItem.className = 'text-muted';
+                moreItem.textContent = `...and ${currentSearchResults.length - 10} more students`;
+                emailList.appendChild(moreItem);
+            }
+            
+            // Load templates
+            const templateList = document.getElementById('templateList');
+            templateList.innerHTML = '';
+            
+            Object.keys(EMAIL_TEMPLATES).forEach(key => {
+                const template = EMAIL_TEMPLATES[key];
+                const templateDiv = document.createElement('div');
+                templateDiv.className = 'template-item';
+                templateDiv.dataset.templateKey = key;
+                templateDiv.onclick = function() {
+                    // Remove active class from all
+                    document.querySelectorAll('.template-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    // Add active to clicked
+                    this.classList.add('active');
+                    // Show preview
+                    showTemplatePreview(key);
+                };
+                
+                templateDiv.innerHTML = `
+                    <div class="template-subject">${template.name}</div>
+                    <div class="template-content">${template.subject}</div>
+                `;
+                
+                templateList.appendChild(templateDiv);
+            });
+            
+            // Show first template by default
+            if (Object.keys(EMAIL_TEMPLATES).length > 0) {
+                const firstKey = Object.keys(EMAIL_TEMPLATES)[0];
+                document.querySelector(`[data-template-key="${firstKey}"]`).classList.add('active');
+                showTemplatePreview(firstKey);
+            }
+            
+            // Reset progress
+            document.getElementById('emailProgress').style.display = 'none';
+            document.getElementById('sendBulkEmailsBtn').disabled = false;
+            
+            // Show modal
+            const bulkEmailModal = new bootstrap.Modal(document.getElementById('bulkEmailModal'));
+            bulkEmailModal.show();
+        }
+
+        function showTemplatePreview(templateKey) {
+            const template = EMAIL_TEMPLATES[templateKey];
+            const previewDiv = document.getElementById('templatePreview');
+            
+            previewDiv.innerHTML = `
+                <div class="template-subject">Subject: ${template.subject}</div>
+                <div class="template-content">${template.body.replace(/\n/g, '<br>')}</div>
+            `;
+        }
+
+        function sendBulkEmails() {
+            const activeTemplate = document.querySelector('.template-item.active');
+            if (!activeTemplate) {
+                showCopySuccess('Please select a template first', 'error');
+                return;
+            }
+            
+            const templateKey = activeTemplate.dataset.templateKey;
+            const template = EMAIL_TEMPLATES[templateKey];
+            
+            // Disable send button and show progress
+            const sendBtn = document.getElementById('sendBulkEmailsBtn');
+            sendBtn.disabled = true;
+            
+            const progressDiv = document.getElementById('emailProgress');
+            const progressBar = document.getElementById('emailProgressBar');
+            const progressText = document.getElementById('emailProgressText');
+            
+            progressDiv.style.display = 'block';
+            
+            // Filter students with valid email
+            const studentsWithEmail = currentSearchResults.filter(student => 
+                student.email && student.email.includes('@')
+            );
+            
+            if (studentsWithEmail.length === 0) {
+                showCopySuccess('No students with valid email addresses found', 'error');
+                sendBtn.disabled = false;
+                progressDiv.style.display = 'none';
+                return;
+            }
+            
+            let sentCount = 0;
+            const totalCount = studentsWithEmail.length;
+            
+            progressText.textContent = `${sentCount}/${totalCount}`;
+            progressBar.style.width = '0%';
+            
+            // Send emails one by one with delay to avoid popup blocking
+            function sendNextEmail(index) {
+                if (index >= totalCount) {
+                    // All emails sent
+                    sendBtn.disabled = false;
+                    showCopySuccess(`Opened Gmail for ${sentCount} student(s)`, 'success');
+                    
+                    // Close modal after delay
+                    setTimeout(() => {
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('bulkEmailModal'));
+                        if (modal) modal.hide();
+                    }, 2000);
+                    
+                    return;
+                }
+                
+                const student = studentsWithEmail[index];
+                
+                // Prepare personalized email
+                let subject = template.subject;
+                let body = template.body;
+                
+                subject = subject.replace('[Student Name]', student.name || 'Student');
+                body = body.replace(/\[Student Name\]/g, student.name || 'Student')
+                           .replace(/\[PRN\]/g, student.prn || '')
+                           .replace(/\[Attendance\]/g, 'To be updated');
+                
+                // Open Gmail in new tab
+                const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(student.email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                window.open(gmailUrl, '_blank');
+                
+                sentCount++;
+                
+                // Update progress
+                progressText.textContent = `${sentCount}/${totalCount}`;
+                progressBar.style.width = `${(sentCount / totalCount) * 100}%`;
+                
+                // Send next email after delay (to avoid popup blocking)
+                setTimeout(() => sendNextEmail(index + 1), 1000);
+            }
+            
+            // Start sending emails
+            sendNextEmail(0);
         }
 
         // ADMIN FUNCTIONS
