@@ -2349,52 +2349,73 @@ PCCOE, Pune`
 
         // Send template email to selected students
         function sendSelectedTemplateEmail(templateKey) {
-            const selectedStudents = getSelectedStudents();
-            
-            if (selectedStudents.length === 0) {
-                showCopySuccess('Please select at least one student', 'error');
-                return;
-            }
-            
-            const template = EMAIL_TEMPLATES[templateKey];
-            if (!template) {
-                showCopySuccess('Template not found', 'error');
-                return;
-            }
-            
-            // Filter students with valid email
-            const studentsWithEmail = selectedStudents.filter(student => 
-                student.email && student.email.includes('@')
-            );
-            
-            if (studentsWithEmail.length === 0) {
-                showCopySuccess('No selected students have valid email addresses', 'error');
-                return;
-            }
-            
-            // Send emails one by one
-            studentsWithEmail.forEach((student, index) => {
-                setTimeout(() => {
-                    // Prepare personalized email
-                    let subject = template.subject;
-                    let body = template.body;
-                    
-                    subject = subject.replace('[Student Name]', student.name || 'Student');
-                    body = body.replace(/\[Student Name\]/g, student.name || 'Student')
-                               .replace(/\[PRN\]/g, student.prn || '')
-                               .replace(/\[Attendance\]/g, 'To be updated');
-                    
-                    // Open Gmail in new tab
-                    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(student.email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-                    window.open(gmailUrl, '_blank');
-                    
-                    if (index === studentsWithEmail.length - 1) {
-                        showCopySuccess(`Opened Gmail for ${studentsWithEmail.length} selected student(s)`, 'success');
-                    }
-                }, index * 500); // Delay to avoid popup blocking
-            });
+    const selectedStudents = getSelectedStudents();
+    
+    if (selectedStudents.length === 0) {
+        showCopySuccess('Please select at least one student', 'error');
+        return;
+    }
+    
+    const template = EMAIL_TEMPLATES[templateKey];
+    if (!template) {
+        showCopySuccess('Template not found', 'error');
+        return;
+    }
+    
+    // Filter students with valid email
+    const studentsWithEmail = selectedStudents.filter(student => 
+        student.email && student.email.includes('@')
+    );
+    
+    if (studentsWithEmail.length === 0) {
+        showCopySuccess('No selected students have valid email addresses', 'error');
+        return;
+    }
+    
+    // Show sending in progress
+    showCopySuccess(`Preparing emails for ${studentsWithEmail.length} student(s)...`, 'success');
+    
+    // Send emails one by one with proper delay
+    let sentCount = 0;
+    
+    function sendNextEmail(index) {
+        if (index >= studentsWithEmail.length) {
+            // All emails sent
+            showCopySuccess(`Opened Gmail for ${sentCount} student(s). Check your tabs.`, 'success');
+            return;
         }
-
+        
+        const student = studentsWithEmail[index];
+        
+        // Prepare personalized email
+        let subject = template.subject;
+        let body = template.body;
+        
+        subject = subject.replace('[Student Name]', student.name || 'Student');
+        body = body.replace(/\[Student Name\]/g, student.name || 'Student')
+                   .replace(/\[PRN\]/g, student.prn || '')
+                   .replace(/\[Attendance\]/g, 'To be updated');
+        
+        // Open Gmail in new tab
+        const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(student.email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        
+        // Use window.open with a unique name to ensure each email opens in a new tab
+        window.open(gmailUrl, `gmail_${Date.now()}_${index}`);
+        
+        sentCount++;
+        
+        // Show progress
+        if (sentCount === 1) {
+            showCopySuccess(`Opening email for ${student.name}...`, 'success');
+        }
+        
+        // Send next email after delay (2 seconds to avoid popup blocking)
+        setTimeout(() => sendNextEmail(index + 1), 2000);
+    }
+    
+    // Start sending emails
+    sendNextEmail(0);
+}
         // Bulk email functions
         function openBulkEmailModal() {
             const selectedStudents = getSelectedStudents();
