@@ -2346,7 +2346,57 @@ PCCOE, Pune`
             
             showCopySuccess(`Opening Gmail for ${studentName} with ${template.name}`, 'success');
         }
-
+// Function to open multiple emails with better handling
+function openMultipleEmails(students, template, delay = 3000) {
+    let count = 0;
+    const total = students.length;
+    
+    function openEmail(index) {
+        if (index >= total) {
+            showCopySuccess(`Successfully opened ${count} email draft(s) for selected students.`, 'success');
+            return;
+        }
+        
+        const student = students[index];
+        
+        // Prepare email
+        let subject = template.subject;
+        let body = template.body;
+        
+        subject = subject.replace('[Student Name]', student.name || 'Student');
+        body = body.replace(/\[Student Name\]/g, student.name || 'Student')
+                   .replace(/\[PRN\]/g, student.prn || '')
+                   .replace(/\[Attendance\]/g, 'To be updated');
+        
+        // Update progress message
+        showCopySuccess(`Opening email ${index + 1}/${total} for ${student.name}...`, 'success');
+        
+        // Create the Gmail URL
+        const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(student.email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        
+        // Try to open the email
+        try {
+            const newWindow = window.open(gmailUrl, `gmail_${Date.now()}_${index}`);
+            
+            if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+                showCopySuccess(`Popup blocked for ${student.name}. Please allow popups and try again.`, 'error');
+            } else {
+                count++;
+            }
+            
+            // Wait and open next email
+            setTimeout(() => {
+                openEmail(index + 1);
+            }, delay);
+            
+        } catch (error) {
+            showCopySuccess(`Error opening email for ${student.name}: ${error.message}`, 'error');
+            setTimeout(() => openEmail(index + 1), delay);
+        }
+    }
+    
+    openEmail(0);
+}
         // Send template email to selected students
         function sendSelectedTemplateEmail(templateKey) {
     const selectedStudents = getSelectedStudents();
@@ -2375,46 +2425,55 @@ PCCOE, Pune`
     // Show sending in progress
     showCopySuccess(`Preparing emails for ${studentsWithEmail.length} student(s)...`, 'success');
     
-    // Send emails one by one with proper delay
-    let sentCount = 0;
+   // Send emails one by one with proper delay
+let sentCount = 0;
+
+function sendNextEmail(index) {
+    if (index >= studentsWithEmail.length) {
+        // All emails sent
+        showCopySuccess(`Opened Gmail for ${sentCount} student(s). Check your tabs.`, 'success');
+        return;
+    }
     
-    function sendNextEmail(index) {
-        if (index >= studentsWithEmail.length) {
-            // All emails sent
-            showCopySuccess(`Opened Gmail for ${sentCount} student(s). Check your tabs.`, 'success');
-            return;
-        }
-        
-        const student = studentsWithEmail[index];
-        
-        // Prepare personalized email
-        let subject = template.subject;
-        let body = template.body;
-        
-        subject = subject.replace('[Student Name]', student.name || 'Student');
-        body = body.replace(/\[Student Name\]/g, student.name || 'Student')
-                   .replace(/\[PRN\]/g, student.prn || '')
-                   .replace(/\[Attendance\]/g, 'To be updated');
-        
-        // Open Gmail in new tab
+    const student = studentsWithEmail[index];
+    
+    // Prepare personalized email
+    let subject = template.subject;
+    let body = template.body;
+    
+    subject = subject.replace('[Student Name]', student.name || 'Student');
+    body = body.replace(/\[Student Name\]/g, student.name || 'Student')
+               .replace(/\[PRN\]/g, student.prn || '')
+               .replace(/\[Attendance\]/g, 'To be updated');
+    
+    // Show progress
+    if (sentCount === 0) {
+        showCopySuccess(`Opening email for ${student.name}...`, 'success');
+    } else {
+        showCopySuccess(`Opened ${sentCount} email(s). Now opening for ${student.name}...`, 'success');
+    }
+    
+    // Open Gmail in new tab with a slight delay to ensure the previous window is loaded
+    setTimeout(() => {
         const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(student.email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
         
-        // Use window.open with a unique name to ensure each email opens in a new tab
-        window.open(gmailUrl, `gmail_${Date.now()}_${index}`);
+        // Open in a new window with specific features to avoid popup blocking
+        const mailWindow = window.open(gmailUrl, `gmail_${Date.now()}_${index}`, 'width=800,height=600,scrollbars=yes');
+        
+        // Check if window was opened successfully
+        if (!mailWindow || mailWindow.closed) {
+            showCopySuccess(`Could not open email for ${student.name}. Popup might be blocked.`, 'error');
+        }
         
         sentCount++;
         
-        // Show progress
-        if (sentCount === 1) {
-            showCopySuccess(`Opening email for ${student.name}...`, 'success');
-        }
-        
-        // Send next email after delay (2 seconds to avoid popup blocking)
-        setTimeout(() => sendNextEmail(index + 1), 2000);
-    }
-    
-    // Start sending emails
-    sendNextEmail(0);
+        // Send next email after delay (3 seconds to avoid popup blocking)
+        setTimeout(() => sendNextEmail(index + 1), 3000);
+    }, 500);
+}
+
+// Start sending emails
+sendNextEmail(0);
 }
         // Bulk email functions
         function openBulkEmailModal() {
@@ -2542,23 +2601,21 @@ PCCOE, Pune`
             progressText.textContent = `${sentCount}/${totalCount}`;
             progressBar.style.width = '0%';
             
-            // Send emails one by one with delay to avoid popup blocking
-            function sendNextEmail(index) {
-                if (index >= totalCount) {
-                    // All emails sent
-                    sendBtn.disabled = false;
-                    showCopySuccess(`Opened Gmail for ${sentCount} selected student(s)`, 'success');
-                    
-                    // Close modal after delay
-                    setTimeout(() => {
-                        const modal = bootstrap.Modal.getInstance(document.getElementById('bulkEmailModal'));
-                        if (modal) modal.hide();
-                    }, 2000);
-                    
-                    return;
-                }
-                
-                const student = studentsWithEmail[index];
+           // Filter students with valid email
+const studentsWithEmail = selectedStudents.filter(student => 
+    student.email && student.email.includes('@')
+);
+
+if (studentsWithEmail.length === 0) {
+    showCopySuccess('No selected students have valid email addresses', 'error');
+    return;
+}
+
+// Show warning about popups
+showCopySuccess(`Opening ${studentsWithEmail.length} email draft(s). Please allow popups and check your browser tabs.`, 'warning');
+
+// Use the new function to open multiple emails
+openMultipleEmails(studentsWithEmail, template, 3000);
                 
                 // Prepare personalized email
                 let subject = template.subject;
