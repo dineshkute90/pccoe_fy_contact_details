@@ -201,15 +201,21 @@
             margin-bottom: 2rem;
         }
         
+        /* Smaller font for table */
+        .table {
+            font-size: 0.85rem;
+        }
+        
         .table th {
             background-color: var(--pccoe-blue);
             color: white;
             border: none;
-            padding: 12px 15px;
+            padding: 10px 8px;
+            font-size: 0.9rem;
         }
         
         .table td {
-            padding: 10px 15px;
+            padding: 8px;
             vertical-align: middle;
         }
         
@@ -240,10 +246,10 @@
         .badge-prn {
             background-color: #5c6bc0;
             color: white;
-            padding: 3px 8px;
+            padding: 2px 6px;
             border-radius: 4px;
             font-family: monospace;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
         
         #loading {
@@ -252,9 +258,9 @@
         }
         
         .action-btn {
-            padding: 4px 8px;
+            padding: 3px 6px;
             margin: 0 2px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
         }
         
         .dataTables_wrapper {
@@ -265,19 +271,20 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 8px;
+            gap: 5px;
         }
         
         .mobile-text {
             flex-grow: 1;
+            font-size: 0.8rem;
         }
         
         .copy-icon-btn {
             background-color: transparent;
             border: 1px solid #6c757d;
             color: #6c757d;
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             border-radius: 4px;
             display: flex;
             align-items: center;
@@ -285,6 +292,7 @@
             cursor: pointer;
             transition: all 0.2s;
             flex-shrink: 0;
+            font-size: 0.75rem;
         }
         
         .copy-icon-btn:hover {
@@ -293,26 +301,23 @@
             transform: scale(1.05);
         }
         
-        .copy-icon-btn i {
-            font-size: 0.8rem;
-        }
-        
         .email-container {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 8px;
+            gap: 5px;
         }
         
         .email-text {
             flex-grow: 1;
             overflow: hidden;
             text-overflow: ellipsis;
+            font-size: 0.8rem;
         }
         
         .error-message {
             color: #dc3545;
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             margin-top: 5px;
             display: none;
         }
@@ -333,7 +338,7 @@
         }
         
         .multi-prn-help {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #6c757d;
             margin-top: 0.25rem;
         }
@@ -342,12 +347,12 @@
             background-color: #e3f2fd;
             color: #1976d2;
             border: 1px solid #bbdefb;
-            padding: 0.25rem 0.5rem;
+            padding: 0.2rem 0.4rem;
             border-radius: 4px;
             font-family: monospace;
-            font-size: 0.85rem;
-            margin-right: 0.25rem;
-            margin-bottom: 0.25rem;
+            font-size: 0.8rem;
+            margin-right: 0.2rem;
+            margin-bottom: 0.2rem;
             display: inline-block;
         }
         
@@ -355,13 +360,14 @@
             background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%);
             border: none;
             color: white;
-            padding: 8px 20px;
+            padding: 8px 15px;
             border-radius: 6px;
             font-weight: 600;
             transition: all 0.3s;
             display: flex;
             align-items: center;
             gap: 8px;
+            font-size: 0.9rem;
         }
         
         .export-btn:hover {
@@ -395,7 +401,7 @@
         .search-results-header {
             background: #e8eaf6;
             border-left: 4px solid var(--pccoe-blue);
-            padding: 15px;
+            padding: 12px;
             border-radius: 8px;
             margin-bottom: 1rem;
             display: flex;
@@ -423,7 +429,7 @@
         }
         
         .paste-info {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #6c757d;
             margin-top: 0.25rem;
         }
@@ -431,25 +437,26 @@
         .admin-features {
             background: #fff3e0;
             border-left: 4px solid var(--pccoe-gold);
-            padding: 15px;
+            padding: 12px;
             border-radius: 8px;
             margin-bottom: 1rem;
+            font-size: 0.9rem;
         }
         
         .admin-badge {
             background: linear-gradient(135deg, var(--pccoe-gold) 0%, #ffb74d 100%);
             color: #1a237e;
-            padding: 3px 10px;
+            padding: 2px 8px;
             border-radius: 15px;
             font-weight: 600;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             margin-left: 10px;
         }
         
         .admin-controls {
             display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
+            gap: 8px;
+            margin-bottom: 12px;
             flex-wrap: wrap;
         }
         
@@ -457,13 +464,14 @@
             background: linear-gradient(135deg, var(--pccoe-gold) 0%, #ffb74d 100%);
             border: none;
             color: #1a237e;
-            padding: 8px 15px;
+            padding: 6px 12px;
             border-radius: 6px;
             font-weight: 600;
             transition: all 0.3s;
             display: flex;
             align-items: center;
             gap: 5px;
+            font-size: 0.85rem;
         }
         
         .admin-btn:hover {
@@ -477,9 +485,9 @@
             background: #2196f3;
             color: white;
             border: none;
-            padding: 4px 8px;
+            padding: 3px 6px;
             border-radius: 4px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             transition: all 0.2s;
         }
         
@@ -492,9 +500,9 @@
             background: #f44336;
             color: white;
             border: none;
-            padding: 4px 8px;
+            padding: 3px 6px;
             border-radius: 4px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             transition: all 0.2s;
         }
         
@@ -527,7 +535,7 @@
         /* Email-specific styles */
         .email-actions {
             display: flex;
-            gap: 5px;
+            gap: 4px;
             margin-top: 5px;
         }
         
@@ -535,9 +543,9 @@
             background-color: #34a853;
             color: white;
             border: none;
-            padding: 3px 8px;
+            padding: 2px 6px;
             border-radius: 4px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
@@ -552,20 +560,21 @@
         }
         
         .send-email-btn i {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
         }
         
         .bulk-email-btn {
             background: linear-gradient(135deg, #ea4335 0%, #fbbc05 100%);
             color: white;
             border: none;
-            padding: 6px 12px;
+            padding: 6px 10px;
             border-radius: 6px;
             font-weight: 600;
             display: flex;
             align-items: center;
             gap: 5px;
             transition: all 0.3s;
+            font-size: 0.85rem;
         }
         
         .bulk-email-btn:hover {
@@ -577,9 +586,9 @@
         .template-badge {
             background-color: #e8f0fe;
             color: #1967d2;
-            padding: 2px 6px;
+            padding: 2px 5px;
             border-radius: 3px;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             margin-left: 5px;
             font-weight: 500;
         }
@@ -594,8 +603,8 @@
             background: #f8f9fa;
             border: 1px solid #dee2e6;
             border-radius: 5px;
-            padding: 15px;
-            margin-bottom: 15px;
+            padding: 12px;
+            margin-bottom: 12px;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
@@ -607,10 +616,10 @@
         }
         
         .template-item {
-            padding: 10px;
+            padding: 8px;
             border: 1px solid #dee2e6;
             border-radius: 5px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             cursor: pointer;
             transition: all 0.2s;
         }
@@ -629,11 +638,12 @@
         .template-subject {
             font-weight: 600;
             color: #1a237e;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
+            font-size: 0.9rem;
         }
         
         .template-content {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #495057;
             white-space: pre-line;
         }
@@ -647,6 +657,37 @@
         .progress-bar {
             height: 8px;
             background: linear-gradient(90deg, #34a853, #4285f4);
+        }
+        
+        /* New column styles */
+        .division-badge {
+            background-color: #e8f5e8;
+            color: #2e7d32;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+        
+        .batch-badge {
+            background-color: #e3f2fd;
+            color: #1565c0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+        
+        .program-badge {
+            background-color: #f3e5f5;
+            color: #7b1fa2;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
         }
         
         @media (max-width: 768px) {
@@ -690,6 +731,20 @@
             
             .email-actions {
                 flex-wrap: wrap;
+            }
+            
+            /* Even smaller font on mobile */
+            .table {
+                font-size: 0.8rem;
+            }
+            
+            .table th {
+                padding: 8px 5px;
+                font-size: 0.85rem;
+            }
+            
+            .table td {
+                padding: 6px 5px;
             }
         }
     </style>
@@ -801,19 +856,26 @@
         <div class="search-box">
             <!-- Single Search Section -->
             <div class="row g-3">
-                <div class="col-md-5">
+                <div class="col-md-4">
                     <label for="searchPRN" class="form-label">
                         <i class="fas fa-id-card"></i> Search by PRN (Single)
                     </label>
                     <input type="text" class="form-control" id="searchPRN" 
                            placeholder="e.g., 123B1G035">
                 </div>
-                <div class="col-md-5">
+                <div class="col-md-4">
                     <label for="searchName" class="form-label">
                         <i class="fas fa-user"></i> Search by Name
                     </label>
                     <input type="text" class="form-control" id="searchName" 
                            placeholder="Enter student name">
+                </div>
+                <div class="col-md-2">
+                    <label for="searchDivision" class="form-label">
+                        <i class="fas fa-layer-group"></i> Division
+                    </label>
+                    <input type="text" class="form-control" id="searchDivision" 
+                           placeholder="e.g., A, B">
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
                     <button class="btn btn-primary search-btn w-100" onclick="searchTable()">
@@ -900,10 +962,13 @@
                         <option value="all">Search in All Columns</option>
                         <option value="1">PRN</option>
                         <option value="2">Student Name</option>
-                        <option value="3">Student Mobile</option>
-                        <option value="4">Parent Mobile</option>
-                        <option value="5">Email</option>
-                        <option value="6">Offering Year</option>
+                        <option value="3">Division</option>
+                        <option value="4">Batch</option>
+                        <option value="5">Program</option>
+                        <option value="6">Student Mobile</option>
+                        <option value="7">Parent Mobile</option>
+                        <option value="8">Email</option>
+                        <option value="9">Offering Year</option>
                     </select>
                 </div>
             </div>
@@ -979,6 +1044,9 @@
                         <th>Sr. No.</th>
                         <th>Offering Year</th>
                         <th>PRN</th>
+                        <th>Division</th>
+                        <th>Batch</th>
+                        <th>Program</th>
                         <th>Student Name</th>
                         <th>Student Mobile</th>
                         <th>Parent Mobile</th>
@@ -1021,6 +1089,18 @@
                             <div class="col-md-6">
                                 <label for="addName" class="form-label">Student Name *</label>
                                 <input type="text" class="form-control" id="addName" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="addDivision" class="form-label">Division</label>
+                                <input type="text" class="form-control" id="addDivision" placeholder="e.g., A">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="addBatch" class="form-label">Batch</label>
+                                <input type="text" class="form-control" id="addBatch" placeholder="e.g., B1">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="addProgram" class="form-label">Program</label>
+                                <input type="text" class="form-control" id="addProgram" placeholder="e.g., Engineering">
                             </div>
                             <div class="col-md-6">
                                 <label for="addOfferingYear" class="form-label">Offering Year</label>
@@ -1072,6 +1152,18 @@
                             <div class="col-md-6">
                                 <label for="editName" class="form-label">Student Name *</label>
                                 <input type="text" class="form-control" id="editName" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="editDivision" class="form-label">Division</label>
+                                <input type="text" class="form-control" id="editDivision">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="editBatch" class="form-label">Batch</label>
+                                <input type="text" class="form-control" id="editBatch">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="editProgram" class="form-label">Program</label>
+                                <input type="text" class="form-control" id="editProgram">
                             </div>
                             <div class="col-md-6">
                                 <label for="editOfferingYear" class="form-label">Offering Year</label>
@@ -1215,6 +1307,8 @@ Please bring this to the attention of your parents/guardians as well.
 
 PRN: [PRN]
 Student Name: [Student Name]
+Division: [Division]
+Batch: [Batch]
 
 Best regards,
 Department of Applied Sciences & Humanities
@@ -1241,6 +1335,8 @@ We believe with proper guidance and effort, you can significantly improve your p
 
 PRN: [PRN]
 Student Name: [Student Name]
+Division: [Division]
+Batch: [Batch]
 
 Sincerely,
 Examination Cell
@@ -1267,6 +1363,8 @@ Please ensure regular attendance henceforth to avoid any academic consequences.
 
 PRN: [PRN]
 Student Name: [Student Name]
+Division: [Division]
+Batch: [Batch]
 
 Regards,
 Department of Applied Sciences & Humanities
@@ -1296,6 +1394,8 @@ For any queries, please contact the examination cell.
 
 PRN: [PRN]
 Student Name: [Student Name]
+Division: [Division]
+Batch: [Batch]
 
 Best wishes,
 Examination Cell
@@ -1324,6 +1424,8 @@ Your presence is highly valued and will help us work together for the betterment
 Student Details:
 PRN: [PRN]
 Student Name: [Student Name]
+Division: [Division]
+Batch: [Batch]
 
 We look forward to your participation.
 
@@ -1474,6 +1576,24 @@ PCCOE, Pune`
                         return `<span class="badge-prn">${data}</span>`;
                     }
                 },
+                { 
+                    data: 'division',
+                    render: function(data) {
+                        return data ? `<span class="division-badge">${data}</span>` : '';
+                    }
+                },
+                { 
+                    data: 'batch',
+                    render: function(data) {
+                        return data ? `<span class="batch-badge">${data}</span>` : '';
+                    }
+                },
+                { 
+                    data: 'program',
+                    render: function(data) {
+                        return data ? `<span class="program-badge">${data}</span>` : '';
+                    }
+                },
                 { data: 'name' },
                 { 
                     data: 'student_mobile',
@@ -1511,6 +1631,8 @@ PCCOE, Pune`
                         const email = data || '';
                         const studentName = row.name || '';
                         const prn = row.prn || '';
+                        const division = row.division || '';
+                        const batch = row.batch || '';
                         
                         return `
                             <div class="email-container">
@@ -1527,13 +1649,13 @@ PCCOE, Pune`
                                 </div>
                             </div>
                             <div class="email-actions">
-                                <button class="btn btn-sm btn-outline-primary" onclick="sendTemplateEmail('${email}', '${studentName}', '${prn}', 'defaulter')">
+                                <button class="btn btn-sm btn-outline-primary" onclick="sendTemplateEmail('${email}', '${studentName}', '${prn}', '${division}', '${batch}', 'defaulter')">
                                     Defaulter
                                 </button>
-                                <button class="btn btn-sm btn-outline-warning" onclick="sendTemplateEmail('${email}', '${studentName}', '${prn}', 'exam_performance')">
+                                <button class="btn btn-sm btn-outline-warning" onclick="sendTemplateEmail('${email}', '${studentName}', '${prn}', '${division}', '${batch}', 'exam_performance')">
                                     Exam
                                 </button>
-                                <button class="btn btn-sm btn-outline-info" onclick="sendTemplateEmail('${email}', '${studentName}', '${prn}', 'attendance')">
+                                <button class="btn btn-sm btn-outline-info" onclick="sendTemplateEmail('${email}', '${studentName}', '${prn}', '${division}', '${batch}', 'attendance')">
                                     Attendance
                                 </button>
                             </div>
@@ -1645,11 +1767,14 @@ PCCOE, Pune`
             console.log('Total records found in CSV:', data.length);
             
             data.forEach((row, index) => {
-                // Map CSV columns to our data structure
+                // Map CSV columns to our data structure with new columns
                 const student = {
                     sr_no: row['Sr. No.'] || row['sr_no'] || row['Sr No'] || index + 1,
                     offering_year: row['Offering Year'] || row['offering_year'] || row['Offering_Year'] || '2022-2025',
                     prn: row['PRN'] || row['prn'] || row['PRN Number'] || '',
+                    division: row['Division'] || row['division'] || '',
+                    batch: row['Batch'] || row['batch'] || '',
+                    program: row['Program'] || row['program'] || '',
                     name: row['Student Name'] || row['name'] || row['Student_Name'] || row['Name'] || '',
                     student_mobile: row['Student Mobile Number'] || row['student_mobile'] || row['Student Mobile'] || row['Student_Mobile'] || row['Mobile'] || '',
                     parent_mobile: row['Parent Mobile Number'] || row['parent_mobile'] || row['Parent Mobile'] || row['Parent_Mobile'] || row['Parent Phone'] || '',
@@ -1696,6 +1821,7 @@ PCCOE, Pune`
         function searchTable() {
             const prnSearch = document.getElementById('searchPRN').value.trim();
             const nameSearch = document.getElementById('searchName').value.trim();
+            const divisionSearch = document.getElementById('searchDivision').value.trim();
             const filterColumn = document.getElementById('filterColumn').value;
             
             // Clear multi-PRN search
@@ -1707,7 +1833,7 @@ PCCOE, Pune`
             // Reset search
             dataTable.search('').draw();
             
-            if (!prnSearch && !nameSearch) {
+            if (!prnSearch && !nameSearch && !divisionSearch) {
                 // No search terms, show all data initially
                 clearSearchResults();
                 return;
@@ -1717,6 +1843,7 @@ PCCOE, Pune`
             let searchCriteria = '';
             if (prnSearch) searchCriteria = `PRN: ${prnSearch}`;
             if (nameSearch) searchCriteria = searchCriteria ? `${searchCriteria}, Name: ${nameSearch}` : `Name: ${nameSearch}`;
+            if (divisionSearch) searchCriteria = searchCriteria ? `${searchCriteria}, Division: ${divisionSearch}` : `Division: ${divisionSearch}`;
             lastSearchCriteria = searchCriteria;
             
             // Custom filtering
@@ -1728,31 +1855,56 @@ PCCOE, Pune`
                 
                 const studentPRN = (student.prn || '').toLowerCase();
                 const studentName = (student.name || '').toLowerCase();
+                const studentDivision = (student.division || '').toLowerCase();
+                const studentBatch = (student.batch || '').toLowerCase();
+                const studentProgram = (student.program || '').toLowerCase();
                 const studentMobile = (student.student_mobile || '').toLowerCase();
                 const parentMobile = (student.parent_mobile || '').toLowerCase();
                 const studentEmail = (student.email || '').toLowerCase();
+                const offeringYear = (student.offering_year || '').toLowerCase();
                 
                 if (filterColumn === 'all') {
                     // Search in all columns
-                    const searchTerm = (prnSearch || nameSearch).toLowerCase();
+                    const searchTerm = (prnSearch || nameSearch || divisionSearch).toLowerCase();
+                    if (!searchTerm) return true;
+                    
                     return (
                         studentPRN.includes(searchTerm) ||
                         studentName.includes(searchTerm) ||
+                        studentDivision.includes(searchTerm) ||
+                        studentBatch.includes(searchTerm) ||
+                        studentProgram.includes(searchTerm) ||
                         studentMobile.includes(searchTerm) ||
                         parentMobile.includes(searchTerm) ||
-                        studentEmail.includes(searchTerm)
+                        studentEmail.includes(searchTerm) ||
+                        offeringYear.includes(searchTerm)
                     );
                 } else {
                     // Search in specific column
-                    const searchTerm = (filterColumn === '1' ? prnSearch : nameSearch).toLowerCase();
+                    let searchTerm = '';
+                    if (filterColumn === '1') searchTerm = prnSearch;
+                    else if (filterColumn === '2') searchTerm = nameSearch;
+                    else if (filterColumn === '3') searchTerm = divisionSearch;
+                    else if (filterColumn === '4') searchTerm = prnSearch; // For batch, use same as PRN search
+                    else if (filterColumn === '5') searchTerm = prnSearch; // For program, use same as PRN search
+                    else if (filterColumn === '6') searchTerm = prnSearch; // For mobile, use same as PRN search
+                    else if (filterColumn === '7') searchTerm = prnSearch; // For parent mobile, use same as PRN search
+                    else if (filterColumn === '8') searchTerm = prnSearch; // For email, use same as PRN search
+                    else if (filterColumn === '9') searchTerm = prnSearch; // For offering year, use same as PRN search
+                    
+                    searchTerm = searchTerm.toLowerCase();
                     if (!searchTerm) return true;
                     
                     switch(filterColumn) {
                         case '1': return studentPRN.includes(searchTerm);
                         case '2': return studentName.includes(searchTerm);
-                        case '3': return studentMobile.includes(searchTerm);
-                        case '4': return parentMobile.includes(searchTerm);
-                        case '5': return studentEmail.includes(searchTerm);
+                        case '3': return studentDivision.includes(searchTerm);
+                        case '4': return studentBatch.includes(searchTerm);
+                        case '5': return studentProgram.includes(searchTerm);
+                        case '6': return studentMobile.includes(searchTerm);
+                        case '7': return parentMobile.includes(searchTerm);
+                        case '8': return studentEmail.includes(searchTerm);
+                        case '9': return offeringYear.includes(searchTerm);
                         default: return true;
                     }
                 }
@@ -1791,6 +1943,7 @@ PCCOE, Pune`
             // Clear single search fields
             document.getElementById('searchPRN').value = '';
             document.getElementById('searchName').value = '';
+            document.getElementById('searchDivision').value = '';
             document.getElementById('filterColumn').value = 'all';
             
             if (!dataTable) return;
@@ -1887,6 +2040,7 @@ PCCOE, Pune`
             // Clear all search fields
             document.getElementById('searchPRN').value = '';
             document.getElementById('searchName').value = '';
+            document.getElementById('searchDivision').value = '';
             document.getElementById('multiPRNSearch').value = '';
             document.getElementById('filterColumn').value = 'all';
             
@@ -1991,7 +2145,7 @@ PCCOE, Pune`
                 ['Search Criteria: ' + (lastSearchCriteria || 'All Students')],
                 ['Total Records: ' + currentSearchResults.length],
                 [''], // Empty row
-                ['Sr. No.', 'Offering Year', 'PRN', 'Student Name', 'Student Mobile', 'Parent Mobile', 'Email ID']
+                ['Sr. No.', 'Offering Year', 'PRN', 'Division', 'Batch', 'Program', 'Student Name', 'Student Mobile', 'Parent Mobile', 'Email ID']
             ];
             
             // Add student data
@@ -2000,6 +2154,9 @@ PCCOE, Pune`
                     index + 1,
                     student.offering_year || '2022-2025',
                     student.prn || '',
+                    student.division || '',
+                    student.batch || '',
+                    student.program || '',
                     student.name || '',
                     student.student_mobile || '',
                     student.parent_mobile || '',
@@ -2013,13 +2170,16 @@ PCCOE, Pune`
             
             // Set column widths
             const colWidths = [
-                { wch: 8 },  // Sr. No.
-                { wch: 15 }, // Offering Year
-                { wch: 12 }, // PRN
-                { wch: 25 }, // Student Name
-                { wch: 15 }, // Student Mobile
-                { wch: 15 }, // Parent Mobile
-                { wch: 30 }  // Email ID
+                { wch: 8 },   // Sr. No.
+                { wch: 12 },  // Offering Year
+                { wch: 12 },  // PRN
+                { wch: 10 },  // Division
+                { wch: 10 },  // Batch
+                { wch: 15 },  // Program
+                { wch: 20 },  // Student Name
+                { wch: 15 },  // Student Mobile
+                { wch: 15 },  // Parent Mobile
+                { wch: 25 }   // Email ID
             ];
             worksheet['!cols'] = colWidths;
             
@@ -2067,7 +2227,7 @@ PCCOE, Pune`
             window.open(gmailUrl, '_blank');
         }
 
-        function sendTemplateEmail(email, studentName, prn, templateKey) {
+        function sendTemplateEmail(email, studentName, prn, division, batch, templateKey) {
             if (!isLoggedIn) {
                 showLogin();
                 return;
@@ -2090,7 +2250,9 @@ PCCOE, Pune`
             
             subject = subject.replace('[Student Name]', studentName);
             body = body.replace(/\[Student Name\]/g, studentName)
-                       .replace(/\[PRN\]/g, prn);
+                       .replace(/\[PRN\]/g, prn)
+                       .replace(/\[Division\]/g, division)
+                       .replace(/\[Batch\]/g, batch);
             
             // Open Gmail with pre-filled draft
             const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
@@ -2250,6 +2412,8 @@ PCCOE, Pune`
                 subject = subject.replace('[Student Name]', student.name || 'Student');
                 body = body.replace(/\[Student Name\]/g, student.name || 'Student')
                            .replace(/\[PRN\]/g, student.prn || '')
+                           .replace(/\[Division\]/g, student.division || '')
+                           .replace(/\[Batch\]/g, student.batch || '')
                            .replace(/\[Attendance\]/g, 'To be updated');
                 
                 // Open Gmail in new tab
@@ -2314,7 +2478,7 @@ PCCOE, Pune`
                 ['Complete Database Export - Admin Access'],
                 ['Total Records: ' + allStudents.length],
                 [''], // Empty row
-                ['Sr. No.', 'Offering Year', 'PRN', 'Student Name', 'Student Mobile', 'Parent Mobile', 'Email ID']
+                ['Sr. No.', 'Offering Year', 'PRN', 'Division', 'Batch', 'Program', 'Student Name', 'Student Mobile', 'Parent Mobile', 'Email ID']
             ];
             
             // Add all student data
@@ -2323,6 +2487,9 @@ PCCOE, Pune`
                     index + 1,
                     student.offering_year || '2022-2025',
                     student.prn || '',
+                    student.division || '',
+                    student.batch || '',
+                    student.program || '',
                     student.name || '',
                     student.student_mobile || '',
                     student.parent_mobile || '',
@@ -2336,13 +2503,16 @@ PCCOE, Pune`
             
             // Set column widths
             const colWidths = [
-                { wch: 8 },  // Sr. No.
-                { wch: 15 }, // Offering Year
-                { wch: 12 }, // PRN
-                { wch: 25 }, // Student Name
-                { wch: 15 }, // Student Mobile
-                { wch: 15 }, // Parent Mobile
-                { wch: 30 }  // Email ID
+                { wch: 8 },   // Sr. No.
+                { wch: 12 },  // Offering Year
+                { wch: 12 },  // PRN
+                { wch: 10 },  // Division
+                { wch: 10 },  // Batch
+                { wch: 15 },  // Program
+                { wch: 20 },  // Student Name
+                { wch: 15 },  // Student Mobile
+                { wch: 15 },  // Parent Mobile
+                { wch: 25 }   // Email ID
             ];
             worksheet['!cols'] = colWidths;
             
@@ -2383,6 +2553,9 @@ PCCOE, Pune`
             // Clear form
             document.getElementById('addPRN').value = '';
             document.getElementById('addName').value = '';
+            document.getElementById('addDivision').value = '';
+            document.getElementById('addBatch').value = '';
+            document.getElementById('addProgram').value = '';
             document.getElementById('addOfferingYear').value = '2025-26';
             document.getElementById('addStudentMobile').value = '';
             document.getElementById('addParentMobile').value = '';
@@ -2400,6 +2573,9 @@ PCCOE, Pune`
             
             const prn = document.getElementById('addPRN').value.trim();
             const name = document.getElementById('addName').value.trim();
+            const division = document.getElementById('addDivision').value.trim();
+            const batch = document.getElementById('addBatch').value.trim();
+            const program = document.getElementById('addProgram').value.trim();
             const offeringYear = document.getElementById('addOfferingYear').value.trim() || '2025-26';
             const studentMobile = document.getElementById('addStudentMobile').value.trim();
             const parentMobile = document.getElementById('addParentMobile').value.trim() || 'NA';
@@ -2422,6 +2598,9 @@ PCCOE, Pune`
                 sr_no: allStudents.length + 1,
                 offering_year: offeringYear,
                 prn: prn,
+                division: division,
+                batch: batch,
+                program: program,
                 name: name,
                 student_mobile: studentMobile,
                 parent_mobile: parentMobile,
@@ -2456,6 +2635,9 @@ PCCOE, Pune`
             document.getElementById('editStudentIndex').value = index;
             document.getElementById('editPRN').value = student.prn || '';
             document.getElementById('editName').value = student.name || '';
+            document.getElementById('editDivision').value = student.division || '';
+            document.getElementById('editBatch').value = student.batch || '';
+            document.getElementById('editProgram').value = student.program || '';
             document.getElementById('editOfferingYear').value = student.offering_year || '2025-26';
             document.getElementById('editStudentMobile').value = student.student_mobile || '';
             document.getElementById('editParentMobile').value = student.parent_mobile || '';
@@ -2479,6 +2661,9 @@ PCCOE, Pune`
                 sr_no: student.sr_no,
                 offering_year: document.getElementById('editOfferingYear').value.trim() || '2025-26',
                 prn: document.getElementById('editPRN').value.trim(),
+                division: document.getElementById('editDivision').value.trim(),
+                batch: document.getElementById('editBatch').value.trim(),
+                program: document.getElementById('editProgram').value.trim(),
                 name: document.getElementById('editName').value.trim(),
                 student_mobile: document.getElementById('editStudentMobile').value.trim(),
                 parent_mobile: document.getElementById('editParentMobile').value.trim() || 'NA',
@@ -2631,7 +2816,7 @@ PCCOE, Pune`
             }
             
             // Add enter key support for search
-            $(document).on('keypress', '#searchPRN, #searchName, #multiPRNSearch', function(e) {
+            $(document).on('keypress', '#searchPRN, #searchName, #searchDivision, #multiPRNSearch', function(e) {
                 if (e.which === 13 && isLoggedIn) {
                     if ($(this).attr('id') === 'multiPRNSearch') {
                         searchMultiplePRNs();
@@ -2643,7 +2828,7 @@ PCCOE, Pune`
             
             // Auto-search after typing
             let searchTimer;
-            $(document).on('keyup', '#searchPRN, #searchName', function() {
+            $(document).on('keyup', '#searchPRN, #searchName, #searchDivision', function() {
                 if (isLoggedIn) {
                     clearTimeout(searchTimer);
                     searchTimer = setTimeout(searchTable, 300);
