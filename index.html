@@ -301,20 +301,6 @@
             transform: scale(1.05);
         }
         
-        .email-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 5px;
-        }
-        
-        .email-text {
-            flex-grow: 1;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            font-size: 0.8rem;
-        }
-        
         .error-message {
             color: #dc3545;
             font-size: 0.8rem;
@@ -690,6 +676,82 @@
             display: inline-block;
         }
         
+        /* Checkbox styles */
+        .checkbox-cell {
+            width: 30px;
+            text-align: center;
+        }
+        
+        .student-checkbox {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+        
+        .select-all-checkbox {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+        
+        .selected-count-badge {
+            background-color: #4285f4;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            margin-left: 10px;
+        }
+        
+        .selection-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #e8f5e9;
+            border-radius: 5px;
+            border: 1px solid #c8e6c9;
+        }
+        
+        .send-selected-btn {
+            background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+        }
+        
+        .send-selected-btn:hover {
+            background: linear-gradient(135deg, #3367d6 0%, #2e7d32 100%);
+            transform: translateY(-2px);
+        }
+        
+        .clear-selection-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+        }
+        
+        .clear-selection-btn:hover {
+            background: #545b62;
+            transform: translateY(-2px);
+        }
+        
         @media (max-width: 768px) {
             .directory-header {
                 flex-direction: column;
@@ -745,6 +807,11 @@
             
             .table td {
                 padding: 6px 5px;
+            }
+            
+            .selection-actions {
+                flex-direction: column;
+                align-items: stretch;
             }
         }
     </style>
@@ -913,6 +980,24 @@
                 </div>
             </div>
             
+            <!-- Selection Actions -->
+            <div class="selection-actions" id="selectionActions" style="display: none;">
+                <div class="d-flex align-items-center justify-content-between w-100">
+                    <div>
+                        <span id="selectedCountText">0 students selected</span>
+                        <span class="selected-count-badge" id="selectedCountBadge">0</span>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="clear-selection-btn" onclick="clearSelection()">
+                            <i class="fas fa-times"></i> Clear Selection
+                        </button>
+                        <button class="send-selected-btn" onclick="sendEmailToSelected()">
+                            <i class="fas fa-paper-plane"></i> Send Email to Selected
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Export Options -->
             <div class="export-options">
                 <div class="row g-3">
@@ -1041,6 +1126,9 @@
             <table id="studentTable" class="table table-striped" style="width:100%">
                 <thead>
                     <tr>
+                        <th class="checkbox-cell">
+                            <input type="checkbox" class="select-all-checkbox" id="selectAllCheckbox">
+                        </th>
                         <th>Sr. No.</th>
                         <th>Offering Year</th>
                         <th>PRN</th>
@@ -1050,7 +1138,7 @@
                         <th>Student Name</th>
                         <th>Student Mobile</th>
                         <th>Parent Mobile</th>
-                        <th>Email ID</th>
+                        <th>Email Actions</th>
                         <th id="actionColumnHeader" style="display: none;">Actions</th>
                     </tr>
                 </thead>
@@ -1287,24 +1375,23 @@
         let isAdmin = false;
         let editModal = null;
         let addModal = null;
+        let selectedStudents = new Set(); // To store indices of selected students
 
         // Email Templates
         const EMAIL_TEMPLATES = {
-            'defaulter': {
-                name: 'Defaulter Student Notice',
-                subject: 'Important Notice Regarding Your Academic Standing - PCCOE',
+            'general': {
+                name: 'General Communication',
+                subject: 'Important Communication from PCCOE',
                 body: `Dear [Student Name],
 
-This is regarding your academic performance in the current semester. Our records indicate that you are falling behind in the following areas:
+This is an important communication from PCCOE Department of Applied Sciences & Humanities.
 
-- Attendance requirements
-- Assignment submissions
-- Internal assessments
+Please note the following information:
 
-You are requested to meet your faculty advisor immediately to discuss your academic progress and create a plan for improvement.
+- [Add your message here]
+- [Add additional information]
 
-Please bring this to the attention of your parents/guardians as well.
-
+Your details:
 PRN: [PRN]
 Student Name: [Student Name]
 Division: [Division]
@@ -1314,68 +1401,12 @@ Best regards,
 Department of Applied Sciences & Humanities
 PCCOE, Pune`
             },
-            'exam_performance': {
-                name: 'Exam Performance Review',
-                subject: 'Discussion on Your Recent Exam Performance - PCCOE',
-                body: `Dear [Student Name],
-
-This email is to discuss your performance in the recent Summative Assessments. Our analysis shows room for improvement in your scores.
-
-Key Observations:
-- Below-average performance in recent exams
-- Need for focused preparation
-- Regular revision required
-
-We recommend that you:
-1. Meet with your subject faculty for guidance
-2. Join remedial classes if available
-3. Follow a structured study schedule
-
-We believe with proper guidance and effort, you can significantly improve your performance.
-
-PRN: [PRN]
-Student Name: [Student Name]
-Division: [Division]
-Batch: [Batch]
-
-Sincerely,
-Examination Cell
-PCCOE, Pune`
-            },
-            'attendance': {
-                name: 'Low Attendance Alert',
-                subject: 'Urgent: Low Attendance Alert - PCCOE',
-                body: `Dear [Student Name],
-
-This is to inform you that your attendance percentage has fallen below the required minimum (75%) for the current semester.
-
-Current Attendance: [Attendance]%
-Required Minimum: 75%
-
-As per university norms, students with less than 75% attendance may be debarred from appearing for the end-semester examinations.
-
-Immediate Actions Required:
-1. Start attending all classes regularly
-2. Submit leave applications for any absences with valid reasons
-3. Meet your class coordinator to discuss this matter
-
-Please ensure regular attendance henceforth to avoid any academic consequences.
-
-PRN: [PRN]
-Student Name: [Student Name]
-Division: [Division]
-Batch: [Batch]
-
-Regards,
-Department of Applied Sciences & Humanities
-PCCOE, Pune`
-            },
             'exam_schedule': {
-                name: 'SA Exam Schedule',
-                subject: 'Summative Assessment (SA) Examination Schedule - PCCOE',
-                body: `Dear Student,
+                name: 'Exam Schedule',
+                subject: 'Examination Schedule Notification - PCCOE',
+                body: `Dear [Student Name],
 
-Please find below the schedule for the upcoming Summative Assessment (SA) Examinations:
+Please find below the schedule for the upcoming examinations:
 
 **Exam Schedule:**
 - Date: [Date Range]
@@ -1526,6 +1557,7 @@ PCCOE, Pune`
             // Hide elements initially
             document.getElementById('noResultsMessage').style.display = 'block';
             document.getElementById('searchResultsHeader').style.display = 'none';
+            document.getElementById('selectionActions').style.display = 'none';
             
             // Initialize modals
             editModal = new bootstrap.Modal(document.getElementById('editStudentModal'));
@@ -1558,6 +1590,14 @@ PCCOE, Pune`
             } : null;
 
             const columns = [
+                { 
+                    data: null,
+                    orderable: false,
+                    className: 'checkbox-cell',
+                    render: function(data, type, row, meta) {
+                        return `<input type="checkbox" class="student-checkbox" data-index="${meta.row}" onchange="toggleStudentSelection(${meta.row})">`;
+                    }
+                },
                 { 
                     data: null,
                     render: function(data, type, row, meta) {
@@ -1635,28 +1675,9 @@ PCCOE, Pune`
                         const batch = row.batch || '';
                         
                         return `
-                            <div class="email-container">
-                                <div class="email-text">
-                                    <i class="fas fa-envelope text-danger me-1"></i>${email}
-                                </div>
-                                <div class="d-flex gap-1">
-                                    <button class="copy-icon-btn" onclick="copyToClipboard('${email}', 'Email address')" title="Copy Email">
-                                        <i class="far fa-copy"></i>
-                                    </button>
-                                    <button class="send-email-btn" onclick="sendSingleEmail('${email}', '${studentName}', '${prn}')" title="Send Email">
-                                        <i class="fas fa-paper-plane"></i>
-                                    </button>
-                                </div>
-                            </div>
                             <div class="email-actions">
-                                <button class="btn btn-sm btn-outline-primary" onclick="sendTemplateEmail('${email}', '${studentName}', '${prn}', '${division}', '${batch}', 'defaulter')">
-                                    Defaulter
-                                </button>
-                                <button class="btn btn-sm btn-outline-warning" onclick="sendTemplateEmail('${email}', '${studentName}', '${prn}', '${division}', '${batch}', 'exam_performance')">
-                                    Exam
-                                </button>
-                                <button class="btn btn-sm btn-outline-info" onclick="sendTemplateEmail('${email}', '${studentName}', '${prn}', '${division}', '${batch}', 'attendance')">
-                                    Attendance
+                                <button class="send-email-btn" onclick="sendSingleEmail('${email}', '${studentName}', '${prn}', '${division}', '${batch}')" title="Send Email">
+                                    <i class="fas fa-paper-plane"></i> Send Email
                                 </button>
                             </div>
                         `;
@@ -1687,12 +1708,127 @@ PCCOE, Pune`
                     // Update export count after each draw
                     updateExportCount();
                     updateCurrentSearchResults();
+                    
+                    // Update checkboxes after table redraw
+                    updateCheckboxesAfterDraw();
                 }
             });
+
+            // Setup select all checkbox
+            setupSelectAllCheckbox();
 
             // Update statistics
             updateTotalCount();
             updateExportCount();
+        }
+
+        // Setup select all checkbox functionality
+        function setupSelectAllCheckbox() {
+            const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+            selectAllCheckbox.addEventListener('change', function() {
+                const isChecked = this.checked;
+                const checkboxes = document.querySelectorAll('.student-checkbox');
+                
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = isChecked;
+                    const index = parseInt(checkbox.dataset.index);
+                    if (isChecked) {
+                        selectedStudents.add(index);
+                    } else {
+                        selectedStudents.delete(index);
+                    }
+                });
+                
+                updateSelectionDisplay();
+            });
+        }
+
+        // Toggle student selection
+        function toggleStudentSelection(index) {
+            if (selectedStudents.has(index)) {
+                selectedStudents.delete(index);
+            } else {
+                selectedStudents.add(index);
+            }
+            updateSelectionDisplay();
+        }
+
+        // Update selection display
+        function updateSelectionDisplay() {
+            const selectedCount = selectedStudents.size;
+            const selectionActions = document.getElementById('selectionActions');
+            const selectedCountText = document.getElementById('selectedCountText');
+            const selectedCountBadge = document.getElementById('selectedCountBadge');
+            
+            selectedCountText.textContent = `${selectedCount} student${selectedCount !== 1 ? 's' : ''} selected`;
+            selectedCountBadge.textContent = selectedCount;
+            
+            if (selectedCount > 0) {
+                selectionActions.style.display = 'block';
+            } else {
+                selectionActions.style.display = 'none';
+            }
+            
+            // Update select all checkbox state
+            const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+            const visibleCheckboxes = document.querySelectorAll('.student-checkbox');
+            const checkedCheckboxes = document.querySelectorAll('.student-checkbox:checked');
+            
+            if (visibleCheckboxes.length > 0 && checkedCheckboxes.length === visibleCheckboxes.length) {
+                selectAllCheckbox.checked = true;
+                selectAllCheckbox.indeterminate = false;
+            } else if (checkedCheckboxes.length > 0) {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = true;
+            } else {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = false;
+            }
+        }
+
+        // Clear selection
+        function clearSelection() {
+            selectedStudents.clear();
+            const checkboxes = document.querySelectorAll('.student-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            document.getElementById('selectAllCheckbox').checked = false;
+            document.getElementById('selectAllCheckbox').indeterminate = false;
+            updateSelectionDisplay();
+        }
+
+        // Get selected students data
+        function getSelectedStudents() {
+            const selectedData = [];
+            selectedStudents.forEach(index => {
+                if (dataTable.row(index).data()) {
+                    selectedData.push(dataTable.row(index).data());
+                }
+            });
+            return selectedData;
+        }
+
+        // Send email to selected students
+        function sendEmailToSelected() {
+            const selectedStudentsData = getSelectedStudents();
+            if (selectedStudentsData.length === 0) {
+                showCopySuccess('No students selected. Please select students first.', 'error');
+                return;
+            }
+            
+            openBulkEmailModal(selectedStudentsData);
+        }
+
+        // Update checkboxes after table draw
+        function updateCheckboxesAfterDraw() {
+            const checkboxes = document.querySelectorAll('.student-checkbox');
+            checkboxes.forEach(checkbox => {
+                const index = parseInt(checkbox.dataset.index);
+                checkbox.checked = selectedStudents.has(index);
+            });
+            
+            updateSelectionDisplay();
         }
 
         // Load CSV from GitHub
@@ -1753,6 +1889,7 @@ PCCOE, Pune`
         // Process CSV data
         function processCSVData(data) {
             allStudents = [];
+            selectedStudents.clear(); // Clear previous selection
             
             // Check if data is empty
             if (!data || data.length === 0) {
@@ -1915,6 +2052,9 @@ PCCOE, Pune`
             // Remove the custom filter function
             $.fn.dataTable.ext.search.pop();
             
+            // Clear selection when search changes
+            clearSelection();
+            
             // Update search results
             updateCurrentSearchResults();
             updateSearchResultsDisplay();
@@ -2012,6 +2152,9 @@ PCCOE, Pune`
             // Remove the custom filter function
             $.fn.dataTable.ext.search.pop();
             
+            // Clear selection when search changes
+            clearSelection();
+            
             // Update search results
             updateCurrentSearchResults();
             updateSearchResultsDisplay();
@@ -2046,6 +2189,9 @@ PCCOE, Pune`
             
             // Hide PRN badges
             document.getElementById('prnBadgesContainer').style.display = 'none';
+            
+            // Clear selection
+            clearSelection();
             
             // Clear search results
             clearSearchResults();
@@ -2149,7 +2295,7 @@ PCCOE, Pune`
             ];
             
             // Add student data
-            currentSearchResults.forEach((student, index) => {
+            currentSearchResults.forEach((student, index) {
                 worksheetData.push([
                     index + 1,
                     student.offering_year || '2022-2025',
@@ -2211,7 +2357,7 @@ PCCOE, Pune`
         }
 
         // Email sending functions
-        function sendSingleEmail(email, studentName, prn) {
+        function sendSingleEmail(email, studentName, prn, division, batch) {
             if (!isLoggedIn) {
                 showLogin();
                 return;
@@ -2227,60 +2373,23 @@ PCCOE, Pune`
             window.open(gmailUrl, '_blank');
         }
 
-        function sendTemplateEmail(email, studentName, prn, division, batch, templateKey) {
-            if (!isLoggedIn) {
-                showLogin();
-                return;
-            }
-            
-            if (!email) {
-                showCopySuccess('No email address available for this student', 'error');
-                return;
-            }
-            
-            const template = EMAIL_TEMPLATES[templateKey];
-            if (!template) {
-                showCopySuccess('Template not found', 'error');
-                return;
-            }
-            
-            // Replace placeholders in template
-            let subject = template.subject;
-            let body = template.body;
-            
-            subject = subject.replace('[Student Name]', studentName);
-            body = body.replace(/\[Student Name\]/g, studentName)
-                       .replace(/\[PRN\]/g, prn)
-                       .replace(/\[Division\]/g, division)
-                       .replace(/\[Batch\]/g, batch);
-            
-            // Open Gmail with pre-filled draft
-            const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-            window.open(gmailUrl, '_blank');
-            
-            showCopySuccess(`Opening Gmail for ${studentName} with ${template.name}`, 'success');
-        }
-
         // Bulk email functions
-        function openBulkEmailModal() {
-            if (!isAdmin) {
-                showCopySuccess('Admin access required', 'error');
-                return;
-            }
+        function openBulkEmailModal(studentsArray = null) {
+            const studentsToEmail = studentsArray || currentSearchResults;
             
-            if (currentSearchResults.length === 0) {
-                showCopySuccess('No students in search results. Please search for students first.', 'error');
+            if (studentsToEmail.length === 0) {
+                showCopySuccess('No students to email. Please search for students first.', 'error');
                 return;
             }
             
             // Update selected students count
-            document.getElementById('selectedStudentsCount').textContent = currentSearchResults.length;
+            document.getElementById('selectedStudentsCount').textContent = studentsToEmail.length;
             
             // Update email list
             const emailList = document.getElementById('selectedStudentsEmails');
             emailList.innerHTML = '';
             
-            currentSearchResults.slice(0, 10).forEach(student => {
+            studentsToEmail.slice(0, 10).forEach(student => {
                 const emailItem = document.createElement('div');
                 emailItem.className = 'text-truncate';
                 emailItem.title = `${student.name} - ${student.email}`;
@@ -2288,10 +2397,10 @@ PCCOE, Pune`
                 emailList.appendChild(emailItem);
             });
             
-            if (currentSearchResults.length > 10) {
+            if (studentsToEmail.length > 10) {
                 const moreItem = document.createElement('div');
                 moreItem.className = 'text-muted';
-                moreItem.textContent = `...and ${currentSearchResults.length - 10} more students`;
+                moreItem.textContent = `...and ${studentsToEmail.length - 10} more students`;
                 emailList.appendChild(moreItem);
             }
             
@@ -2334,6 +2443,9 @@ PCCOE, Pune`
             document.getElementById('emailProgress').style.display = 'none';
             document.getElementById('sendBulkEmailsBtn').disabled = false;
             
+            // Store students for email sending
+            window.currentEmailStudents = studentsToEmail;
+            
             // Show modal
             const bulkEmailModal = new bootstrap.Modal(document.getElementById('bulkEmailModal'));
             bulkEmailModal.show();
@@ -2358,6 +2470,7 @@ PCCOE, Pune`
             
             const templateKey = activeTemplate.dataset.templateKey;
             const template = EMAIL_TEMPLATES[templateKey];
+            const studentsToEmail = window.currentEmailStudents || currentSearchResults;
             
             // Disable send button and show progress
             const sendBtn = document.getElementById('sendBulkEmailsBtn');
@@ -2370,7 +2483,7 @@ PCCOE, Pune`
             progressDiv.style.display = 'block';
             
             // Filter students with valid email
-            const studentsWithEmail = currentSearchResults.filter(student => 
+            const studentsWithEmail = studentsToEmail.filter(student => 
                 student.email && student.email.includes('@')
             );
             
@@ -2413,8 +2526,7 @@ PCCOE, Pune`
                 body = body.replace(/\[Student Name\]/g, student.name || 'Student')
                            .replace(/\[PRN\]/g, student.prn || '')
                            .replace(/\[Division\]/g, student.division || '')
-                           .replace(/\[Batch\]/g, student.batch || '')
-                           .replace(/\[Attendance\]/g, 'To be updated');
+                           .replace(/\[Batch\]/g, student.batch || '');
                 
                 // Open Gmail in new tab
                 const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(student.email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
@@ -2482,7 +2594,7 @@ PCCOE, Pune`
             ];
             
             // Add all student data
-            allStudents.forEach((student, index) => {
+            allStudents.forEach((student, index) {
                 worksheetData.push([
                     index + 1,
                     student.offering_year || '2022-2025',
@@ -2700,6 +2812,9 @@ PCCOE, Pune`
             if (confirm(`Are you sure you want to delete student ${student.name} (${student.prn})?`)) {
                 // Remove from array
                 allStudents.splice(index, 1);
+                
+                // Remove from selected students
+                selectedStudents.delete(index);
                 
                 // Update DataTable
                 dataTable.row(index).remove().draw();
