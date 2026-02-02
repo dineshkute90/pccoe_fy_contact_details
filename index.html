@@ -861,7 +861,7 @@
                 
                 <div class="text-center mt-3">
                     <small class="text-muted">
-                        <i class="fas fa-info-circle"></i> Admin: Mr. Dinesh Kute
+                        <i class="fas fa-info-circle"></i> For demo: Use any username/password
                     </small>
                 </div>
             </form>
@@ -1138,8 +1138,8 @@
                         <th>Student Name</th>
                         <th>Student Mobile</th>
                         <th>Parent Mobile</th>
-                        <th>Email Actions</th>
-                        <th id="actionColumnHeader" style="display: none;">Actions</th>
+                        <th>Actions</th>
+                        <th id="actionColumnHeader" style="display: none;">Admin Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -1361,12 +1361,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <script>
-        // Login credentials
-        const VALID_CREDENTIALS = {
-            'pccoeash': 'ashpccoe@2025',  // Regular user
-            'admin': 'pccoe@admin'        // Admin user
-        };
-        
+        // Simplified login for demo - accept any username/password
         let dataTable = null;
         let allStudents = [];
         let isLoggedIn = false;
@@ -1479,7 +1474,7 @@ PCCOE, Pune`
             }
         }
 
-        // Handle login
+        // Handle login - Accept any username/password for demo
         function handleLogin(event) {
             event.preventDefault();
             
@@ -1491,10 +1486,11 @@ PCCOE, Pune`
             // Clear previous error
             loginError.style.display = 'none';
             
-            // Validate credentials
-            if (VALID_CREDENTIALS[username] && VALID_CREDENTIALS[username] === password) {
+            // DEMO: Accept any non-empty username and password
+            if (username.trim() !== '' && password.trim() !== '') {
                 isLoggedIn = true;
-                isAdmin = (username === 'admin');
+                // For demo: if username contains "admin", give admin privileges
+                isAdmin = username.toLowerCase().includes('admin');
                 
                 // Save login if "Remember me" is checked
                 if (rememberMe) {
@@ -1550,8 +1546,10 @@ PCCOE, Pune`
             // Show/hide admin features
             if (isAdmin) {
                 document.getElementById('adminFeatures').style.display = 'block';
+                document.getElementById('actionColumnHeader').style.display = '';
             } else {
                 document.getElementById('adminFeatures').style.display = 'none';
+                document.getElementById('actionColumnHeader').style.display = 'none';
             }
             
             // Hide elements initially
@@ -1577,6 +1575,8 @@ PCCOE, Pune`
             // Show/hide action column based on admin status
             const actionColumn = isAdmin ? {
                 data: null,
+                orderable: false,
+                className: 'text-center',
                 render: function(data, type, row, meta) {
                     return `
                         <button class="edit-btn" onclick="editStudent(${meta.row})" title="Edit">
@@ -1607,7 +1607,7 @@ PCCOE, Pune`
                 { 
                     data: 'offering_year',
                     render: function(data) {
-                        return data || '2022-2025';
+                        return data || '2025-26';
                     }
                 },
                 { 
@@ -1641,9 +1641,9 @@ PCCOE, Pune`
                         return `
                             <div class="mobile-container">
                                 <div class="mobile-text">
-                                    <i class="fas fa-phone text-success me-1"></i>${data}
+                                    <i class="fas fa-phone text-success me-1"></i>${data || 'N/A'}
                                 </div>
-                                <button class="copy-icon-btn" onclick="copyToClipboard('${data}', 'Student mobile number')" title="Copy Student Mobile">
+                                <button class="copy-icon-btn" onclick="copyToClipboard('${data || ''}', 'Student mobile number')" title="Copy Student Mobile">
                                     <i class="far fa-copy"></i>
                                 </button>
                             </div>
@@ -1656,9 +1656,9 @@ PCCOE, Pune`
                         return `
                             <div class="mobile-container">
                                 <div class="mobile-text">
-                                    <i class="fas fa-user-friends text-primary me-1"></i>${data}
+                                    <i class="fas fa-user-friends text-primary me-1"></i>${data || 'N/A'}
                                 </div>
-                                <button class="copy-icon-btn" onclick="copyToClipboard('${data}', 'Parent mobile number')" title="Copy Parent Mobile">
+                                <button class="copy-icon-btn" onclick="copyToClipboard('${data || ''}', 'Parent mobile number')" title="Copy Parent Mobile">
                                     <i class="far fa-copy"></i>
                                 </button>
                             </div>
@@ -1688,9 +1688,6 @@ PCCOE, Pune`
             // Add action column for admin
             if (actionColumn) {
                 columns.push(actionColumn);
-                document.getElementById('actionColumnHeader').style.display = '';
-            } else {
-                document.getElementById('actionColumnHeader').style.display = 'none';
             }
 
             dataTable = $('#studentTable').DataTable({
@@ -1725,22 +1722,24 @@ PCCOE, Pune`
         // Setup select all checkbox functionality
         function setupSelectAllCheckbox() {
             const selectAllCheckbox = document.getElementById('selectAllCheckbox');
-            selectAllCheckbox.addEventListener('change', function() {
-                const isChecked = this.checked;
-                const checkboxes = document.querySelectorAll('.student-checkbox');
-                
-                checkboxes.forEach(checkbox => {
-                    checkbox.checked = isChecked;
-                    const index = parseInt(checkbox.dataset.index);
-                    if (isChecked) {
-                        selectedStudents.add(index);
-                    } else {
-                        selectedStudents.delete(index);
-                    }
+            if (selectAllCheckbox) {
+                selectAllCheckbox.addEventListener('change', function() {
+                    const isChecked = this.checked;
+                    const checkboxes = document.querySelectorAll('.student-checkbox');
+                    
+                    checkboxes.forEach(checkbox => {
+                        checkbox.checked = isChecked;
+                        const index = parseInt(checkbox.dataset.index);
+                        if (isChecked) {
+                            selectedStudents.add(index);
+                        } else {
+                            selectedStudents.delete(index);
+                        }
+                    });
+                    
+                    updateSelectionDisplay();
                 });
-                
-                updateSelectionDisplay();
-            });
+            }
         }
 
         // Toggle student selection
@@ -1793,8 +1792,11 @@ PCCOE, Pune`
             checkboxes.forEach(checkbox => {
                 checkbox.checked = false;
             });
-            document.getElementById('selectAllCheckbox').checked = false;
-            document.getElementById('selectAllCheckbox').indeterminate = false;
+            const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+            if (selectAllCheckbox) {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = false;
+            }
             updateSelectionDisplay();
         }
 
@@ -1802,8 +1804,8 @@ PCCOE, Pune`
         function getSelectedStudents() {
             const selectedData = [];
             selectedStudents.forEach(index => {
-                if (dataTable.row(index).data()) {
-                    selectedData.push(dataTable.row(index).data());
+                if (allStudents[index]) {
+                    selectedData.push(allStudents[index]);
                 }
             });
             return selectedData;
@@ -1907,7 +1909,7 @@ PCCOE, Pune`
                 // Map CSV columns to our data structure with new columns
                 const student = {
                     sr_no: row['Sr. No.'] || row['sr_no'] || row['Sr No'] || index + 1,
-                    offering_year: row['Offering Year'] || row['offering_year'] || row['Offering_Year'] || '2022-2025',
+                    offering_year: row['Offering Year'] || row['offering_year'] || row['Offering_Year'] || '2025-26',
                     prn: row['PRN'] || row['prn'] || row['PRN Number'] || '',
                     division: row['Division'] || row['division'] || '',
                     batch: row['Batch'] || row['batch'] || '',
@@ -2298,7 +2300,7 @@ PCCOE, Pune`
             currentSearchResults.forEach((student, index) {
                 worksheetData.push([
                     index + 1,
-                    student.offering_year || '2022-2025',
+                    student.offering_year || '2025-26',
                     student.prn || '',
                     student.division || '',
                     student.batch || '',
@@ -2435,7 +2437,10 @@ PCCOE, Pune`
             // Show first template by default
             if (Object.keys(EMAIL_TEMPLATES).length > 0) {
                 const firstKey = Object.keys(EMAIL_TEMPLATES)[0];
-                document.querySelector(`[data-template-key="${firstKey}"]`).classList.add('active');
+                const firstTemplate = document.querySelector(`[data-template-key="${firstKey}"]`);
+                if (firstTemplate) {
+                    firstTemplate.classList.add('active');
+                }
                 showTemplatePreview(firstKey);
             }
             
@@ -2454,6 +2459,8 @@ PCCOE, Pune`
         function showTemplatePreview(templateKey) {
             const template = EMAIL_TEMPLATES[templateKey];
             const previewDiv = document.getElementById('templatePreview');
+            
+            if (!template) return;
             
             previewDiv.innerHTML = `
                 <div class="template-subject">Subject: ${template.subject}</div>
@@ -2509,7 +2516,8 @@ PCCOE, Pune`
                     
                     // Close modal after delay
                     setTimeout(() => {
-                        const modal = bootstrap.Modal.getInstance(document.getElementById('bulkEmailModal'));
+                        const modalElement = document.getElementById('bulkEmailModal');
+                        const modal = bootstrap.Modal.getInstance(modalElement);
                         if (modal) modal.hide();
                     }, 2000);
                     
@@ -2597,7 +2605,7 @@ PCCOE, Pune`
             allStudents.forEach((student, index) {
                 worksheetData.push([
                     index + 1,
-                    student.offering_year || '2022-2025',
+                    student.offering_year || '2025-26',
                     student.prn || '',
                     student.division || '',
                     student.batch || '',
@@ -2851,6 +2859,11 @@ PCCOE, Pune`
                 return;
             }
             
+            if (!text || text === 'N/A') {
+                showCopySuccess('No text to copy', 'error');
+                return;
+            }
+            
             navigator.clipboard.writeText(text).then(() => {
                 showCopySuccess(`${label} copied to clipboard`);
             }).catch(err => {
@@ -2974,6 +2987,10 @@ PCCOE, Pune`
                     }
                 }, 100);
             });
+            
+            // Demo login info
+            console.log('For demo: Use any username/password to login');
+            console.log('For admin access: Include "admin" in username');
         });
     </script>
 </body>
