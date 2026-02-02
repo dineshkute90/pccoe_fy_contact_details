@@ -690,6 +690,136 @@
             display: inline-block;
         }
         
+        /* Checkbox and Email Dropdown Styles from first code */
+        .checkbox-cell {
+            width: 40px;
+            text-align: center;
+        }
+        
+        .checkbox-cell input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        .email-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .email-dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            min-width: 250px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            z-index: 1000;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #dee2e6;
+        }
+        
+        .email-dropdown-content.show {
+            display: block;
+        }
+        
+        .email-dropdown-item {
+            padding: 12px 16px;
+            display: block;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #333;
+        }
+        
+        .email-dropdown-item:hover {
+            background-color: #f5f5f5;
+            color: #1a237e;
+        }
+        
+        .email-dropdown-item i {
+            margin-right: 8px;
+            color: #5c6bc0;
+        }
+        
+        .email-draft-btn {
+            background: linear-gradient(135deg, #34a853 0%, #4caf50 100%);
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+        }
+        
+        .email-draft-btn:hover {
+            background: linear-gradient(135deg, #2e8b47 0%, #45a049 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(52, 168, 83, 0.3);
+            color: white;
+        }
+        
+        .email-draft-btn:disabled {
+            background: #6c757d;
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .selected-count {
+            background: #4285F4;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        
+        .select-all-btn {
+            background: #f0f0f0;
+            color: #333;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+        }
+        
+        .select-all-btn:hover {
+            background: #e0e0e0;
+        }
+        
+        .clear-search-btn {
+            background: #ff9800;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+        }
+        
+        .clear-search-btn:hover {
+            background: #e68900;
+        }
+        
+        .action-buttons {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
         @media (max-width: 768px) {
             .directory-header {
                 flex-direction: column;
@@ -945,11 +1075,42 @@
                 </div>
             </div>
             
-            <!-- Action Buttons -->
+            <!-- Action Buttons (Checkbox selection and Email) -->
+            <div class="action-buttons">
+                <button class="select-all-btn" onclick="toggleSelectAll()">
+                    <i class="fas fa-check-square"></i> Select All
+                </button>
+                
+                <!-- Email Draft Dropdown -->
+                <div class="email-dropdown">
+                    <button class="email-draft-btn" id="emailDraftBtn" onclick="toggleEmailDropdown()">
+                        <i class="fas fa-envelope"></i> Send Email to Selected
+                        <span class="selected-count" id="selectedCount">0</span>
+                        <i class="fas fa-caret-down" style="margin-left: 5px;"></i>
+                    </button>
+                    <div class="email-dropdown-content" id="emailDropdown">
+                        <a class="email-dropdown-item" onclick="sendEmailWithDraft('openDay')">
+                            <i class="fas fa-calendar-day"></i> Open Day Email
+                        </a>
+                        <a class="email-dropdown-item" onclick="sendEmailWithDraft('faSchedule')">
+                            <i class="fas fa-calendar-alt"></i> FA Schedule Email
+                        </a>
+                        <a class="email-dropdown-item" onclick="sendEmailWithDraft('custom')">
+                            <i class="fas fa-edit"></i> Custom Email
+                        </a>
+                    </div>
+                </div>
+                
+                <button class="clear-search-btn" onclick="clearSearch()">
+                    <i class="fas fa-times"></i> Clear Search
+                </button>
+            </div>
+            
+            <!-- Additional Filters -->
             <div class="row g-2 mt-3">
                 <div class="col-md-4">
                     <button class="btn btn-outline-secondary w-100" onclick="clearSearch()">
-                        <i class="fas fa-times"></i> Clear Search
+                        <i class="fas fa-times"></i> Clear Filters
                     </button>
                 </div>
                 <div class="col-md-4">
@@ -1041,6 +1202,9 @@
             <table id="studentTable" class="table table-striped" style="width:100%">
                 <thead>
                     <tr>
+                        <th class="checkbox-cell">
+                            <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll()">
+                        </th>
                         <th>Sr. No.</th>
                         <th>Offering Year</th>
                         <th>PRN</th>
@@ -1287,6 +1451,64 @@
         let isAdmin = false;
         let editModal = null;
         let addModal = null;
+        let selectedStudents = new Set(); // Track selected student IDs
+
+        // Email Drafts for Selected Students (from first code)
+        const EMAIL_DRAFTS = {
+            openDay: {
+                subject: "Open Day Schedule for Examination",
+                body: `Dear Students,
+
+This is to inform you that the Open Day of the Examination has been scheduled as per the
+details given below:
+
+- Examination: SA / Re-SA / Summer  
+- Course Name:   
+- Course Code:   
+- Date:   
+- Time:   
+- Course Teacher:
+
+Students are advised to attend the open day as scheduled. Please note that no queries
+regarding marks will be entertained after the open day.
+
+Thanking you.
+
+ASH Department – Examination Section`
+            },
+            faSchedule: {
+                subject: "Formative Assessment Schedule",
+                body: `Dear Students,
+
+This is to inform you that the Formative Assessment (FA) schedule is as detailed below. Students are requested to take note of the same.
+
+• Course Name: {Enter your course name}
+• Course Code: {Enter your course code}
+• Course Teacher: {Name of Course Teacher}
+
+Details of FA I / FA II
+- Tool:	{Mention FA I/ FA II Tool}
+- Syllabus: {Mention unit number}
+- Max Marks: {Mention marks}
+- Date:	{Date of Exam}
+- Time:	{Time of Exam}
+- Location:	{Exam Location}
+
+Students are advised to appear for the Formative Assessment examinations strictly as per the above schedule.
+
+Thanking you.
+ASH Department – Examination Section`
+            },
+            custom: {
+                subject: "Important Announcement",
+                body: `Dear Students,
+
+[Your custom message here]
+
+Best regards,
+ASH Department`
+            }
+        };
 
         // Email Templates
         const EMAIL_TEMPLATES = {
@@ -1558,6 +1780,14 @@ PCCOE, Pune`
             } : null;
 
             const columns = [
+                {
+                    data: null,
+                    orderable: false,
+                    render: function(data, type, row, meta) {
+                        const isChecked = selectedStudents.has(row._id);
+                        return `<input type="checkbox" class="student-checkbox" data-id="${row._id}" ${isChecked ? 'checked' : ''} onchange="toggleStudentSelection(${row._id})">`;
+                    }
+                },
                 { 
                     data: null,
                     render: function(data, type, row, meta) {
@@ -1687,12 +1917,15 @@ PCCOE, Pune`
                     // Update export count after each draw
                     updateExportCount();
                     updateCurrentSearchResults();
+                    // Update the select all checkbox state
+                    updateSelectAllCheckbox();
                 }
             });
 
             // Update statistics
             updateTotalCount();
             updateExportCount();
+            updateSelectedCount(); // Update the selected count display
         }
 
         // Load CSV from GitHub
@@ -1767,6 +2000,11 @@ PCCOE, Pune`
             console.log('Total records found in CSV:', data.length);
             
             data.forEach((row, index) => {
+                // Debug: Log column names from first row
+                if (index === 0) {
+                    console.log('Available columns:', Object.keys(row));
+                }
+                
                 // Map CSV columns to our data structure with new columns
                 const student = {
                     sr_no: row['Sr. No.'] || row['sr_no'] || row['Sr No'] || index + 1,
@@ -1778,16 +2016,26 @@ PCCOE, Pune`
                     name: row['Student Name'] || row['name'] || row['Student_Name'] || row['Name'] || '',
                     student_mobile: row['Student Mobile Number'] || row['student_mobile'] || row['Student Mobile'] || row['Student_Mobile'] || row['Mobile'] || '',
                     parent_mobile: row['Parent Mobile Number'] || row['parent_mobile'] || row['Parent Mobile'] || row['Parent_Mobile'] || row['Parent Phone'] || '',
-                    email: row['Student Email ID'] || row['email'] || row['Student Email'] || row['Student_Email'] || row['Email'] || ''
+                    // Try multiple possible column names for email
+                    email: row['Email ID'] || row['email'] || row['Email'] || row['Student Email ID'] || 
+                           row['Student Email'] || row['Student_Email'] || row['Email Address'] || row['email_address'] || ''
                 };
                 
-                // Only add student if they have at least a PRN or Name
+                // Log if email is found
+                if (!student.email && (student.prn || student.name)) {
+                    console.warn('No email found for student:', student.name, student.prn);
+                }
+                
                 if (student.prn || student.name) {
+                    // Add unique ID for selection
+                    student._id = index;
+                    student._selected = false;
                     allStudents.push(student);
                 }
             });
             
             console.log('Processed students:', allStudents.length);
+            console.log('Sample student with email:', allStudents[0] ? allStudents[0].email : 'No data');
             
             // Initialize DataTable with the data
             initDataTable(allStudents);
@@ -1819,6 +2067,11 @@ PCCOE, Pune`
 
         // Main search function
         function searchTable() {
+            // Clear selected students on new search
+            selectedStudents.clear();
+            updateSelectedCount();
+            updateSelectAllCheckbox();
+            
             const prnSearch = document.getElementById('searchPRN').value.trim();
             const nameSearch = document.getElementById('searchName').value.trim();
             const divisionSearch = document.getElementById('searchDivision').value.trim();
@@ -1938,6 +2191,11 @@ PCCOE, Pune`
 
         // Search multiple PRNs
         function searchMultiplePRNs() {
+            // Clear selected students on new search
+            selectedStudents.clear();
+            updateSelectedCount();
+            updateSelectAllCheckbox();
+            
             const multiPRNInput = document.getElementById('multiPRNSearch').value.trim();
             
             // Clear single search fields
@@ -2046,6 +2304,11 @@ PCCOE, Pune`
             
             // Hide PRN badges
             document.getElementById('prnBadgesContainer').style.display = 'none';
+            
+            // Clear selected students
+            selectedStudents.clear();
+            updateSelectedCount();
+            updateSelectAllCheckbox();
             
             // Clear search results
             clearSearchResults();
@@ -2607,6 +2870,10 @@ PCCOE, Pune`
                 email: email
             };
             
+            // Add unique ID for selection
+            newStudent._id = allStudents.length;
+            newStudent._selected = false;
+            
             // Add to array
             allStudents.push(newStudent);
             
@@ -2667,7 +2934,9 @@ PCCOE, Pune`
                 name: document.getElementById('editName').value.trim(),
                 student_mobile: document.getElementById('editStudentMobile').value.trim(),
                 parent_mobile: document.getElementById('editParentMobile').value.trim() || 'NA',
-                email: document.getElementById('editEmail').value.trim()
+                email: document.getElementById('editEmail').value.trim(),
+                _id: student._id,
+                _selected: student._selected
             };
             
             // Validation
@@ -2801,6 +3070,137 @@ PCCOE, Pune`
                     document.head.removeChild(style);
                 }
             }, 2000);
+        }
+
+        // Selection Functions
+        function toggleStudentSelection(studentId) {
+            if (selectedStudents.has(studentId)) {
+                selectedStudents.delete(studentId);
+            } else {
+                selectedStudents.add(studentId);
+            }
+            updateSelectedCount();
+            updateSelectAllCheckbox();
+        }
+
+        function toggleSelectAll() {
+            const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+            const checkboxes = document.querySelectorAll('.student-checkbox');
+            
+            if (selectAllCheckbox.checked) {
+                // Select all displayed students
+                currentSearchResults.forEach(student => {
+                    selectedStudents.add(student._id);
+                });
+                checkboxes.forEach(cb => cb.checked = true);
+            } else {
+                // Deselect all
+                checkboxes.forEach(cb => {
+                    const studentId = parseInt(cb.getAttribute('data-id'));
+                    selectedStudents.delete(studentId);
+                    cb.checked = false;
+                });
+            }
+            
+            updateSelectedCount();
+        }
+
+        function updateSelectAllCheckbox() {
+            const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+            const checkboxes = document.querySelectorAll('.student-checkbox');
+            
+            if (checkboxes.length === 0) {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = false;
+                return;
+            }
+            
+            const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+            
+            if (checkedCount === 0) {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = false;
+            } else if (checkedCount === checkboxes.length) {
+                selectAllCheckbox.checked = true;
+                selectAllCheckbox.indeterminate = false;
+            } else {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = true;
+            }
+        }
+
+        function updateSelectedCount() {
+            const selectedCount = selectedStudents.size;
+            document.getElementById('selectedCount').textContent = selectedCount;
+            
+            // Enable/disable email button
+            const emailDraftBtn = document.getElementById('emailDraftBtn');
+            if (emailDraftBtn) {
+                if (selectedCount > 0) {
+                    emailDraftBtn.disabled = false;
+                } else {
+                    emailDraftBtn.disabled = true;
+                }
+            }
+        }
+
+        function toggleEmailDropdown() {
+            const dropdown = document.getElementById('emailDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('emailDropdown');
+            const button = document.getElementById('emailDraftBtn');
+            if (dropdown && button && !dropdown.contains(event.target) && !button.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        function sendEmailWithDraft(draftType) {
+            if (selectedStudents.size === 0) {
+                showCopySuccess('Please select at least one student to send email.', 'error');
+                return;
+            }
+            
+            // Get selected students' emails
+            const selectedEmails = [];
+            allStudents.forEach(student => {
+                if (selectedStudents.has(student._id)) {
+                    const email = student.email || '';
+                    if (email && email.includes('@')) {
+                        selectedEmails.push(email);
+                    }
+                }
+            });
+            
+            if (selectedEmails.length === 0) {
+                showCopySuccess('No valid email addresses found for selected students.', 'error');
+                return;
+            }
+            
+            // Get email draft
+            const draft = EMAIL_DRAFTS[draftType];
+            if (!draft) {
+                showCopySuccess('Email draft not found.', 'error');
+                return;
+            }
+            
+            // Create Gmail URL with recipients, subject, and body
+            const emailString = selectedEmails.join(',');
+            const subject = encodeURIComponent(draft.subject);
+            const body = encodeURIComponent(draft.body);
+            const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${emailString}&su=${subject}&body=${body}`;
+            
+            // Open Gmail in new tab
+            window.open(gmailUrl, '_blank');
+            
+            // Close dropdown
+            document.getElementById('emailDropdown').classList.remove('show');
+            
+            // Show confirmation
+            showCopySuccess(`Opening Gmail with ${selectedEmails.length} recipient(s) using ${draftType} draft`, 'success');
         }
 
         // Initialize on page load
