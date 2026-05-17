@@ -3,279 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PCCOE Student Directory with Photos</title>
+    <title>PCCOE Student Directory | External CSV</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --pccoe-blue: #1a237e;
-            --pccoe-red: #d32f2f;
-            --pccoe-green: #2e7d32;
-            --pccoe-gold: #ff9800;
-        }
-        body {
-            background-color: #f5f7fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .login-container {
-            max-width: 450px;
-            width: 100%;
-            padding: 20px;
-        }
-        .login-box {
-            background: white;
-            border-radius: 15px;
-            padding: 2.5rem;
-            box-shadow: 0 10px 30px rgba(26, 35, 126, 0.2);
-            border-top: 5px solid var(--pccoe-blue);
-        }
-        .login-logo { text-align: center; margin-bottom: 1.5rem; color: var(--pccoe-blue); }
-        .login-btn {
-            background: var(--pccoe-green);
-            border: none;
-            padding: 12px;
-            font-weight: 600;
-            width: 100%;
-            color: white;
-            border-radius: 8px;
-        }
-        .login-btn:hover { background: #1b5e20; transform: translateY(-2px); }
+        :root { --pccoe-blue: #1a237e; --pccoe-green: #2e7d32; }
+        body { background-color: #f0f2f5; font-family: 'Segoe UI', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .login-container { max-width: 450px; width: 100%; }
+        .login-box { background: white; border-radius: 24px; padding: 2rem; box-shadow: 0 20px 35px rgba(26,35,126,0.2); border-top: 5px solid var(--pccoe-blue); }
+        .login-btn { background: var(--pccoe-green); border: none; padding: 12px; font-weight: 600; width: 100%; border-radius: 40px; }
         .main-container { display: none; width: 100%; max-width: 1400px; margin: 0 auto; }
-        .directory-header {
-            background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
-            color: white;
-            padding: 0.8rem 1.2rem;
-            border-radius: 10px;
-            margin: 1.5rem 0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-        }
-        .header-content { flex: 1; text-align: center; }
-        .header-logo { height: 90px; width: auto; object-fit: contain; background: rgba(255,255,255,0.1); border-radius: 5px; }
-        .logout-btn {
-            background: rgba(255,255,255,0.15);
-            border: 1px solid rgba(255,255,255,0.3);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 5px;
-        }
-        .search-box {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            margin-bottom: 1.5rem;
-        }
-        .search-btn { background: var(--pccoe-blue); border: none; padding: 8px 20px; }
-        .data-table { background: white; border-radius: 10px; overflow-x: auto; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-bottom: 2rem; }
-        .table { font-size: 0.85rem; }
-        .table th { background-color: var(--pccoe-blue); color: white; padding: 10px 8px; }
-        .student-photo {
-            width: 45px;
-            height: 45px;
-            object-fit: cover;
-            border-radius: 50%;
-            border: 1px solid #ddd;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .student-photo:hover { transform: scale(1.1); }
-        .photo-placeholder {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background-color: #e9ecef;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #6c757d;
-            font-size: 1.2rem;
-            cursor: pointer;
-        }
-        .stats-card {
-            background: white;
-            border-radius: 8px;
-            padding: 1rem;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            border-left: 4px solid var(--pccoe-blue);
-            margin-bottom: 1rem;
-        }
-        .footer {
-            background-color: var(--pccoe-blue);
-            color: white;
-            text-align: center;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-top: 2rem;
-        }
-        .badge-prn { background-color: #5c6bc0; color: white; padding: 2px 6px; border-radius: 4px; font-family: monospace; }
-        .copy-icon-btn {
-            background: transparent;
-            border: 1px solid #6c757d;
-            border-radius: 4px;
-            width: 24px;
-            height: 24px;
-            cursor: pointer;
-        }
-        .send-email-btn {
-            background-color: #34a853;
-            color: white;
-            border: none;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.7rem;
-        }
-        .email-draft-btn {
-            background: linear-gradient(135deg, #34a853 0%, #4caf50 100%);
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 6px;
-        }
-        .selected-count { background: #4285F4; color: white; padding: 5px 10px; border-radius: 15px; margin-left: 10px; }
-        .select-all-btn, .clear-search-btn { padding: 8px 16px; border-radius: 6px; font-weight: 600; }
-        .select-all-btn { background: #f0f0f0; color: #333; }
-        .clear-search-btn { background: #ff9800; color: white; }
+        .directory-header { background: linear-gradient(135deg, #0d1757 0%, #1a237e 100%); color: white; padding: 0.8rem 1.5rem; border-radius: 30px; margin: 1rem 0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+        .header-logo { height: 70px; background: rgba(255,255,255,0.1); border-radius: 50%; padding: 5px; }
+        .logout-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 22px; border-radius: 40px; }
+        .search-box { background: white; padding: 1.5rem; border-radius: 24px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); margin-bottom: 1.8rem; }
+        .search-btn { background: var(--pccoe-blue); border: none; border-radius: 30px; padding: 8px 24px; }
+        .data-table { background: white; border-radius: 24px; overflow-x: auto; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
+        .table th { background-color: var(--pccoe-blue); color: white; }
+        .student-photo { width: 42px; height: 42px; object-fit: cover; border-radius: 50%; cursor: pointer; }
+        .photo-placeholder { width: 42px; height: 42px; border-radius: 50%; background: #eef2ff; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .stats-card { background: white; border-radius: 20px; padding: 1rem; text-align: center; border-left: 4px solid var(--pccoe-blue); }
+        .footer { background-color: var(--pccoe-blue); color: white; text-align: center; border-radius: 30px; padding: 1rem; margin-top: 2rem; }
+        .badge-prn { background: #e8eaf6; color: #1a237e; padding: 4px 8px; border-radius: 30px; font-family: monospace; }
+        .send-email-btn { background-color: #34a853; color: white; border: none; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; }
+        .email-draft-btn { background: linear-gradient(135deg, #1a237e, #283593); color: white; border-radius: 40px; padding: 8px 20px; }
+        .selected-count { background: #ff9800; color: #1a237e; padding: 2px 10px; border-radius: 40px; margin-left: 8px; }
+        .clear-search-btn { background: #ff9800; border: none; border-radius: 40px; padding: 8px 20px; }
         .email-dropdown { position: relative; display: inline-block; }
-        .email-dropdown-content {
-            display: none;
-            position: absolute;
-            background: white;
-            min-width: 200px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-            z-index: 1000;
-            border-radius: 8px;
-        }
+        .email-dropdown-content { display: none; position: absolute; background: white; min-width: 200px; box-shadow: 0 12px 28px rgba(0,0,0,0.15); border-radius: 16px; z-index: 1000; }
         .email-dropdown-content.show { display: block; }
-        .email-dropdown-item { padding: 10px 16px; cursor: pointer; }
-        .email-dropdown-item:hover { background: #f0f0f0; }
-        .checkbox-cell { width: 40px; text-align: center; }
-        .modal-photo-img { width: 100%; max-height: 80vh; object-fit: contain; }
-        @media (max-width: 768px) {
-            .directory-header { flex-direction: column; text-align: center; }
-            .header-logo { height: 60px; margin-bottom: 10px; }
-        }
+        .email-dropdown-item { padding: 12px 20px; cursor: pointer; }
+        .email-dropdown-item:hover { background: #f0f2ff; }
+        .checkbox-cell { width: 35px; text-align: center; }
+        @media (max-width: 768px) { .directory-header { flex-direction: column; gap: 10px; } }
     </style>
 </head>
 <body>
     <!-- Login Section -->
     <div class="login-container" id="loginSection">
         <div class="login-box">
-            <div class="login-logo">
-                <img src="https://raw.githubusercontent.com/dineshkute90/pccoe_fy_contact_details/main/pccoe_logo.png" alt="Logo" class="login-logo-img" style="height:80px">
-                <h2>PCCOE Student Directory</h2>
+            <div class="text-center mb-3">
+                <img src="https://raw.githubusercontent.com/dineshkute90/pccoe_fy_contact_details/main/pccoe_logo.png" alt="Logo" style="height:80px">
+                <h3>PCCOE Student Directory</h3>
             </div>
-            <div class="login-error text-danger mb-2" id="loginError" style="display:none">Invalid credentials</div>
+            <div id="loginError" class="text-danger text-center mb-2" style="display:none">Invalid credentials</div>
             <form id="loginForm">
-                <div class="mb-3"><input type="text" class="form-control" id="username" placeholder="Username" required></div>
-                <div class="mb-3"><input type="password" class="form-control" id="password" placeholder="Password" required></div>
+                <input type="text" id="username" class="form-control mb-3" placeholder="Username" required>
+                <input type="password" id="password" class="form-control mb-3" placeholder="Password" required>
                 <div class="mb-3 form-check"><input type="checkbox" id="rememberMe"> <label>Remember me</label></div>
                 <button type="submit" class="btn login-btn">Login</button>
             </form>
+            <div class="text-center mt-3 small">Demo: pccoeash / ashpccoe@2025 | admin / pccoe@admin</div>
         </div>
     </div>
 
-    <!-- Main Application -->
+    <!-- Main App -->
     <div class="main-container" id="mainSection">
         <div class="directory-header">
             <img src="https://raw.githubusercontent.com/dineshkute90/pccoe_fy_contact_details/main/pccoe_logo.png" class="header-logo" alt="PCCOE">
-            <div class="header-content"><h2>PCCOE Student Directory</h2><p>Department of Applied Sciences & Humanities | 2025-26</p></div>
+            <div class="text-center"><h2 class="mb-0">PCCOE Student Directory</h2><p>Department of Applied Sciences & Humanities | 2025-26</p></div>
             <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
-
-        <!-- Admin Panel -->
-        <div id="adminFeatures" class="admin-features p-3 mb-3 bg-light border rounded" style="display:none">
+        <div id="adminFeatures" class="bg-white p-3 mb-3 rounded-3 shadow-sm" style="display:none">
             <strong>Admin Controls</strong>
-            <button class="btn btn-sm btn-warning ms-2" onclick="showAllStudents()">View All</button>
-            <button class="btn btn-sm btn-warning" onclick="exportAllData()">Export DB</button>
-            <button class="btn btn-sm btn-warning" onclick="showAddStudentModal()">Add Student</button>
+            <button class="btn btn-sm btn-outline-primary ms-2" onclick="showAllStudents()">View All</button>
+            <button class="btn btn-sm btn-outline-primary" onclick="exportAllData()">Export DB</button>
+            <button class="btn btn-sm btn-outline-success" onclick="showAddStudentModal()">Add Student</button>
         </div>
 
-        <!-- Search Box -->
         <div class="search-box">
             <div class="row g-3">
-                <div class="col-md-4"><label>PRN</label><input type="text" class="form-control" id="searchPRN" placeholder="e.g., 125B1G001"></div>
-                <div class="col-md-4"><label>Student Name</label><input type="text" class="form-control" id="searchName" placeholder="Name"></div>
-                <div class="col-md-2"><label>Division</label><input type="text" class="form-control" id="searchDivision" placeholder="A, B"></div>
+                <div class="col-md-3"><label>PRN</label><input type="text" class="form-control" id="searchPRN" placeholder="PRN"></div>
+                <div class="col-md-3"><label>Name</label><input type="text" class="form-control" id="searchName" placeholder="Name"></div>
+                <div class="col-md-2"><label>Division</label><input type="text" class="form-control" id="searchDivision" placeholder="A/B/C"></div>
                 <div class="col-md-2"><button class="btn btn-primary search-btn w-100 mt-4" onclick="searchTable()">Search</button></div>
+                <div class="col-md-2"><button class="btn btn-secondary w-100 mt-4" onclick="clearSearch()">Reset</button></div>
             </div>
             <div class="mt-3">
-                <label>Multiple PRNs (comma, space, or newline separated)</label>
-                <textarea class="form-control" id="multiPRNSearch" rows="2" placeholder="125B1G001, 125B1G002"></textarea>
+                <label>Multiple PRNs (comma/space/newline)</label>
+                <textarea id="multiPRNSearch" class="form-control" rows="2" placeholder="125B1G001, 125B1G002"></textarea>
                 <button class="btn btn-success mt-2" onclick="searchMultiplePRNs()">Search Multiple PRNs</button>
             </div>
             <div class="mt-3 d-flex gap-2 flex-wrap">
-                <button class="select-all-btn btn" onclick="toggleSelectAll()">Select All</button>
+                <button class="btn btn-light border" onclick="toggleSelectAll()">Select All</button>
                 <div class="email-dropdown">
-                    <button class="email-draft-btn btn" id="emailDraftBtn" onclick="toggleEmailDropdown()">Send Email <span class="selected-count" id="selectedCount">0</span></button>
-                    <div class="email-dropdown-content" id="emailDropdown">
-                        <div class="email-dropdown-item" onclick="sendEmailWithDraft('openDay')">Open Day Email</div>
+                    <button class="email-draft-btn btn" onclick="toggleEmailDropdown()">Send Email <span id="selectedCount" class="selected-count">0</span></button>
+                    <div id="emailDropdown" class="email-dropdown-content">
+                        <div class="email-dropdown-item" onclick="sendEmailWithDraft('openDay')">Open Day Invitation</div>
                         <div class="email-dropdown-item" onclick="sendEmailWithDraft('faSchedule')">FA Schedule</div>
-                        <div class="email-dropdown-item" onclick="sendEmailWithDraft('custom')">Custom Email</div>
+                        <div class="email-dropdown-item" onclick="sendEmailWithDraft('custom')">Custom Message</div>
                     </div>
                 </div>
-                <button class="clear-search-btn btn" onclick="clearSearch()">Clear Search</button>
+                <button class="clear-search-btn btn" onclick="clearSearch()">Clear Filters</button>
                 <button class="btn btn-outline-secondary" onclick="exportSearchResults()">Export Results</button>
             </div>
         </div>
 
-        <!-- Stats -->
-        <div class="row mb-3">
-            <div class="col-md-3"><div class="stats-card"><i class="fas fa-users"></i><h5 id="totalStudents">0</h5><small>Total</small></div></div>
-            <div class="col-md-3"><div class="stats-card"><i class="fas fa-search"></i><h5 id="searchResults">0</h5><small>Found</small></div></div>
+        <div class="row mb-4 g-3">
+            <div class="col-md-3 col-6"><div class="stats-card"><i class="fas fa-users fa-2x text-primary"></i><h3 id="totalStudents">0</h3><small>Total Students</small></div></div>
+            <div class="col-md-3 col-6"><div class="stats-card"><i class="fas fa-filter fa-2x text-success"></i><h3 id="searchResults">0</h3><small>Filtered</small></div></div>
         </div>
 
-        <!-- Table -->
         <div class="data-table">
-            <table id="studentTable" class="table table-striped" style="width:100%">
-                <thead>
-                    <tr>
-                        <th class="checkbox-cell"><input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll()"></th>
-                        <th>#</th><th>Year</th><th>PRN</th><th>Div</th><th>Batch</th><th>Program</th><th>Name</th><th>Photo</th><th>Student Mobile</th><th>Parent Mobile</th><th>Email</th>
-                        <th id="actionCol">Actions</th>
-                    </tr>
-                </thead>
+            <table id="studentTable" class="table table-hover align-middle" style="width:100%">
+                <thead><tr><th class="checkbox-cell"><input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll()"></th><th>#</th><th>Year</th><th>PRN</th><th>Div</th><th>Batch</th><th>Program</th><th>Name</th><th>Photo</th><th>Student Mobile</th><th>Parent Mobile</th><th>Email</th><th id="actionCol">Actions</th></tr></thead>
                 <tbody></tbody>
             </table>
         </div>
-        <div class="footer">Developed by Mr. Dinesh Kute | Data source: CSV + Photos folder</div>
+        <div class="footer">Developed by Mr. Dinesh Kute | Data source: contact_testing_csv.csv (external file)</div>
     </div>
 
-    <!-- Photo Modal -->
-    <div class="modal fade" id="photoModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header"><h5 class="modal-title">Student Photo</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-                <div class="modal-body text-center"><img id="fullPhoto" src="" class="modal-photo-img" alt="Student photo"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add Student Modal -->
-    <div class="modal fade" id="addStudentModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header"><h5>Add Student</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-                <div class="modal-body">
-                    <input class="form-control mb-2" id="addPRN" placeholder="PRN">
-                    <input class="form-control mb-2" id="addName" placeholder="Name">
-                    <input class="form-control mb-2" id="addPhoto" placeholder="Photo path (e.g., photos/125B1G001.jpg)">
-                    <input class="form-control mb-2" id="addEmail" placeholder="Email">
-                    <input class="form-control mb-2" id="addMobile" placeholder="Mobile">
-                </div>
-                <div class="modal-footer"><button class="btn btn-primary" onclick="addNewStudent()">Save</button></div>
-            </div>
-        </div>
-    </div>
+    <!-- Modals -->
+    <div class="modal fade" id="photoModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><h5>Student Photo</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><img id="fullPhoto" class="img-fluid" style="max-height:70vh"></div></div></div></div>
+    <div class="modal fade" id="addStudentModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5>Add Student</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input id="addPRN" class="form-control mb-2" placeholder="PRN"><input id="addName" class="form-control mb-2" placeholder="Name"><input id="addPhoto" class="form-control mb-2" placeholder="Photo path"><input id="addEmail" class="form-control mb-2" placeholder="Email"><input id="addMobile" class="form-control mb-2" placeholder="Mobile"></div><div class="modal-footer"><button class="btn btn-primary" onclick="addNewStudent()">Save</button></div></div></div></div>
 
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -286,468 +127,145 @@
 
     <script>
         // ======================== CONFIGURATION ========================
-        const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/dineshkute90/pccoe_fy_contact_details/main/';
-        // Cache-busting timestamp appended to avoid GitHub CDN stale responses
-        const CSV_URL = GITHUB_RAW_BASE + 'contact_testing_csv.csv?t=' + Date.now();
+        // Change this to your CSV file location (relative or absolute URL)
+        const CSV_PATH = './contact_testing_csv.csv';   // Place the CSV file in the same folder
+        // Alternative GitHub raw URL (uncomment if needed):
+        // const CSV_PATH = 'https://raw.githubusercontent.com/dineshkute90/pccoe_fy_contact_details/main/contact_testing_csv.csv?t=' + Date.now();
+
         const VALID_CREDENTIALS = { 'pccoeash': 'ashpccoe@2025', 'admin': 'pccoe@admin' };
-
-        let allStudents = [];
-        let dataTable = null;
-        let isLoggedIn = false;
-        let isAdmin = false;
+        let allStudents = [], dataTable = null, isLoggedIn = false, isAdmin = false;
         let selectedStudents = new Set();
-        let currentSearchResults = [];
+        let activeFilterFn = null;  // custom filter function
 
-        // ---- FIX: Single named custom filter slot ----
-        // Instead of blindly push/pop (which corrupts the filter stack),
-        // we register ONE permanent named filter and update its state variable.
-        let activeFilterFn = null; // null = show all, function = apply filter
-
-        // Register the permanent custom filter once (at script load time)
+        // Register permanent custom filter once
         $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-            if (typeof activeFilterFn === 'function') {
-                return activeFilterFn(settings, data, dataIndex);
-            }
-            return true; // no filter active → show all rows
+            if (typeof activeFilterFn === 'function') return activeFilterFn(settings, data, dataIndex);
+            return true;
         });
 
-        // Email drafts
-        const EMAIL_DRAFTS = {
-            openDay: { subject: "Open Day Schedule", body: "Dear Student,\n\nOpen Day on ..." },
-            faSchedule: { subject: "FA Schedule", body: "Formative Assessment schedule attached." },
-            custom: { subject: "Announcement", body: "Your message here." }
-        };
+        const EMAIL_DRAFTS = { openDay: { subject: "Open Day Schedule", body: "Dear Student,\n\nYou are invited to the Open Day on Saturday." }, faSchedule: { subject: "FA Schedule", body: "Formative Assessment schedule attached." }, custom: { subject: "Announcement", body: "Your custom message here." } };
 
-        // ======================== HELPER FUNCTIONS ========================
+        // Helper: get photo URL (supports relative paths)
         function getPhotoUrl(path) {
             if (!path) return null;
             if (path.startsWith('http')) return path;
-            return GITHUB_RAW_BASE + path.replace(/^\/+/, '');
+            const base = 'https://raw.githubusercontent.com/dineshkute90/pccoe_fy_contact_details/main/';
+            return base + path.replace(/^\/+/, '');
         }
 
         function renderPhotoCell(photoPath, studentId) {
             const url = getPhotoUrl(photoPath);
-            if (url) {
-                return `<img src="${url}" class="student-photo" data-student-id="${studentId}" data-photo-url="${url}" alt="Photo" onclick="openPhotoModal('${url}')" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'photo-placeholder\\'>📷</div>';">`;
-            }
-            return `<div class="photo-placeholder">📷</div>`;
+            if (url) return `<img src="${url}" class="student-photo" data-id="${studentId}" onclick="openPhotoModal('${url}')" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'photo-placeholder\\'>📷</div>';">`;
+            return `<div class="photo-placeholder" onclick="openPhotoModal('')">📷</div>`;
         }
 
-        function openPhotoModal(imgUrl) {
-            const modal = new bootstrap.Modal(document.getElementById('photoModal'));
-            const imgElem = document.getElementById('fullPhoto');
-            if (imgUrl) {
-                imgElem.src = imgUrl;
-                imgElem.onerror = () => { imgElem.src = ''; imgElem.alt = 'Image not found'; };
-            } else {
-                imgElem.src = '';
-                imgElem.alt = 'No photo available';
-            }
-            modal.show();
+        function openPhotoModal(imgUrl) { 
+            const modal = new bootstrap.Modal(document.getElementById('photoModal')); 
+            document.getElementById('fullPhoto').src = imgUrl || ''; 
+            modal.show(); 
         }
+        function copyToClipboard(text, label) { navigator.clipboard.writeText(text).then(() => showToast(`${label} copied`)); }
+        function showToast(msg, type='success') { let t=document.createElement('div'); t.className=`position-fixed bottom-0 end-0 m-3 p-2 text-white rounded bg-${type==='error'?'danger':'success'}`; t.innerText=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),2500); }
+        function sendSingleEmail(email) { if(email) window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}`); else showToast('No email','error'); }
 
-        function copyToClipboard(text, label) {
-            navigator.clipboard.writeText(text).then(() => showToast(`${label} copied`));
-        }
-
-        function showToast(msg, type = 'success') {
-            const toast = document.createElement('div');
-            toast.className = `position-fixed bottom-0 end-0 m-3 p-2 text-white rounded bg-${type === 'error' ? 'danger' : 'success'}`;
-            toast.style.zIndex = 9999;
-            toast.innerText = msg;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 2500);
-        }
-
-        function sendSingleEmail(email) {
-            if (email) window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}`, '_blank');
-            else showToast('No email', 'error');
-        }
-
-        // ======================== SELECTION ========================
-        function toggleStudentSelection(id) {
-            if (selectedStudents.has(id)) selectedStudents.delete(id);
-            else selectedStudents.add(id);
-            updateSelectedCount();
-            updateSelectAllCheckbox();
-        }
-
-        function toggleSelectAll() {
-            const cb = document.getElementById('selectAllCheckbox');
-            const checkboxes = document.querySelectorAll('.student-checkbox');
-            checkboxes.forEach(chk => {
-                const sid = parseInt(chk.dataset.id);
-                if (cb.checked) { selectedStudents.add(sid); chk.checked = true; }
-                else { selectedStudents.delete(sid); chk.checked = false; }
-            });
-            updateSelectedCount();
-        }
-
-        function updateSelectedCount() {
-            document.getElementById('selectedCount').innerText = selectedStudents.size;
-        }
-
-        function updateSelectAllCheckbox() {
-            const checkboxes = document.querySelectorAll('.student-checkbox');
-            if (checkboxes.length === 0) return;
-            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-            const someChecked = Array.from(checkboxes).some(cb => cb.checked);
-            const cbAll = document.getElementById('selectAllCheckbox');
-            cbAll.checked = allChecked;
-            cbAll.indeterminate = (someChecked && !allChecked);
-        }
-
-        function toggleEmailDropdown() {
-            document.getElementById('emailDropdown').classList.toggle('show');
-        }
-
-        function sendEmailWithDraft(draftType) {
-            const emails = [];
-            allStudents.forEach(s => { if (selectedStudents.has(s._id) && s.email) emails.push(s.email); });
-            if (emails.length === 0) { showToast('No students selected', 'error'); return; }
-            const draft = EMAIL_DRAFTS[draftType];
-            const url = `https://mail.google.com/mail/?view=cm&fs=1&to=${emails.join(',')}&su=${encodeURIComponent(draft.subject)}&body=${encodeURIComponent(draft.body)}`;
-            window.open(url, '_blank');
-            document.getElementById('emailDropdown').classList.remove('show');
-        }
-
-        // ======================== EXPORT ========================
-        function exportSearchResults() {
-            const rows = dataTable ? dataTable.rows({ search: 'applied' }).data().toArray() : [];
-            if (rows.length === 0) { showToast('No data to export', 'error'); return; }
-            const data = rows.map(s => ({
-                PRN: s.prn, Name: s.name, Division: s.division, Batch: s.batch,
-                Program: s.program, 'Student Mobile': s.student_mobile,
-                'Parent Mobile': s.parent_mobile, Email: s.email, Photo: s.photo || ''
-            }));
-            const ws = XLSX.utils.json_to_sheet(data);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, 'Students');
-            XLSX.writeFile(wb, `students_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.xlsx`);
-        }
-
-        // ======================== ADMIN ========================
+        function toggleStudentSelection(id) { selectedStudents.has(id) ? selectedStudents.delete(id) : selectedStudents.add(id); updateSelectedCount(); updateSelectAllCheckbox(); }
+        function toggleSelectAll() { let cb = document.getElementById('selectAllCheckbox'); document.querySelectorAll('.student-checkbox').forEach(chk => { let sid = parseInt(chk.dataset.id); if(cb.checked) { selectedStudents.add(sid); chk.checked=true; } else { selectedStudents.delete(sid); chk.checked=false; } }); updateSelectedCount(); }
+        function updateSelectedCount() { let count = selectedStudents.size; document.getElementById('selectedCount').innerText = count; document.getElementById('selectedStats').innerText = count; }
+        function updateSelectAllCheckbox() { let cbs = document.querySelectorAll('.student-checkbox'); if(!cbs.length) return; let allChecked = Array.from(cbs).every(cb=>cb.checked); let anyChecked = Array.from(cbs).some(cb=>cb.checked); let cbAll = document.getElementById('selectAllCheckbox'); cbAll.checked = allChecked; cbAll.indeterminate = (anyChecked && !allChecked); }
+        function toggleEmailDropdown() { document.getElementById('emailDropdown').classList.toggle('show'); }
+        function sendEmailWithDraft(draftType) { let emails = []; allStudents.forEach(s=>{ if(selectedStudents.has(s._id) && s.email) emails.push(s.email); }); if(emails.length===0) { showToast('No students selected','error'); return; } let draft = EMAIL_DRAFTS[draftType]; window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${emails.join(',')}&su=${encodeURIComponent(draft.subject)}&body=${encodeURIComponent(draft.body)}`); document.getElementById('emailDropdown').classList.remove('show'); }
+        function exportSearchResults() { let rows = dataTable ? dataTable.rows({search:'applied'}).data().toArray() : []; if(rows.length===0) { showToast('No data to export','error'); return; } let ws = XLSX.utils.json_to_sheet(rows.map(s=>({PRN:s.prn,Name:s.name,Division:s.division,Email:s.email,'Mobile':s.student_mobile}))); let wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'Students'); XLSX.writeFile(wb,`students_${new Date().toISOString().slice(0,19).replace(/:/g,'-')}.xlsx`); }
         function showAllStudents() { clearSearch(); }
-        function exportAllData() {
-            const orig = dataTable.rows({ search: 'applied' });
-            exportSearchResults();
-        }
+        function exportAllData() { exportSearchResults(); }
         function showAddStudentModal() { new bootstrap.Modal(document.getElementById('addStudentModal')).show(); }
-        function addNewStudent() {
-            const newStudent = {
-                _id: allStudents.length,
-                prn: document.getElementById('addPRN').value.trim(),
-                name: document.getElementById('addName').value.trim(),
-                photo: document.getElementById('addPhoto').value.trim(),
-                email: document.getElementById('addEmail').value.trim(),
-                student_mobile: document.getElementById('addMobile').value.trim(),
-                offering_year: '2025-26', division: '', batch: '', program: '', parent_mobile: ''
-            };
-            allStudents.push(newStudent);
-            dataTable.row.add(newStudent).draw();
-            bootstrap.Modal.getInstance(document.getElementById('addStudentModal')).hide();
-            updateTotalCount();
-            showToast('Student added');
-        }
+        function addNewStudent() { let newStudent = { _id: allStudents.length, prn: document.getElementById('addPRN').value.trim(), name: document.getElementById('addName').value.trim(), photo: document.getElementById('addPhoto').value.trim(), email: document.getElementById('addEmail').value.trim(), student_mobile: document.getElementById('addMobile').value.trim(), offering_year: '2025-26', division: '', batch: '', program: '', parent_mobile: '' }; allStudents.push(newStudent); dataTable.row.add(newStudent).draw(); bootstrap.Modal.getInstance(document.getElementById('addStudentModal')).hide(); updateTotalCount(); showToast('Student added'); }
 
-        // ======================== DATATABLE ========================
         function initDataTable(data) {
-            if (dataTable) { dataTable.destroy(); dataTable = null; }
+            if(dataTable) dataTable.destroy();
             $('#studentTable tbody').empty();
-
-            const columns = [
-                {
-                    data: null, orderable: false,
-                    render: (d, t, r) => `<input type="checkbox" class="student-checkbox" data-id="${r._id}" onchange="toggleStudentSelection(${r._id})">`
-                },
-                { data: null, render: (d, t, r, i) => i.row + 1 },
-                { data: 'offering_year', defaultContent: '2025-26' },
-                { data: 'prn', render: d => `<span class="badge-prn">${d || ''}</span>` },
-                { data: 'division', defaultContent: '' },
-                { data: 'batch', defaultContent: '' },
-                { data: 'program', defaultContent: '' },
-                { data: 'name', defaultContent: '' },
-                { data: 'photo', render: (photo, t, row) => renderPhotoCell(photo, row._id) },
-                {
-                    data: 'student_mobile', defaultContent: '',
-                    render: d => `<div class="d-flex gap-1 align-items-center"><span>${d || ''}</span><button class="copy-icon-btn" onclick="copyToClipboard('${d || ''}','Mobile')"><i class="far fa-copy fa-xs"></i></button></div>`
-                },
-                {
-                    data: 'parent_mobile', defaultContent: '',
-                    render: d => `<div class="d-flex gap-1 align-items-center"><span>${d || ''}</span><button class="copy-icon-btn" onclick="copyToClipboard('${d || ''}','Parent Mobile')"><i class="far fa-copy fa-xs"></i></button></div>`
-                },
-                {
-                    data: 'email', defaultContent: '',
-                    render: e => `<div class="d-flex gap-1 align-items-center"><span>${e || ''}</span><button class="send-email-btn" onclick="sendSingleEmail('${e || ''}')">Send</button></div>`
-                },
-                {
-                    data: null, defaultContent: '',
-                    render: (d, t, r, i) => isAdmin ? `<button class="btn btn-sm btn-info" onclick="editStudent(${i.row})">Edit</button>` : ''
-                }
-            ];
-
             dataTable = $('#studentTable').DataTable({
                 data: data,
-                columns: columns,
+                columns: [
+                    { data: null, orderable: false, render: (d,t,r) => `<input type="checkbox" class="student-checkbox" data-id="${r._id}" onchange="toggleStudentSelection(${r._id})">` },
+                    { data: null, render: (d,t,r,i) => i.row+1 },
+                    { data: 'offering_year', defaultContent: '2025-26' },
+                    { data: 'prn', render: d => `<span class="badge-prn">${d||''}</span>` },
+                    { data: 'division', defaultContent: '' },
+                    { data: 'batch', defaultContent: '' },
+                    { data: 'program', defaultContent: '' },
+                    { data: 'name', defaultContent: '' },
+                    { data: 'photo', render: (p,t,r) => renderPhotoCell(p, r._id) },
+                    { data: 'student_mobile', render: d => `<div class="d-flex gap-1"><span>${d||''}</span><button class="copy-icon-btn btn-sm" onclick="copyToClipboard('${d||''}','Mobile')"><i class="far fa-copy"></i></button></div>` },
+                    { data: 'parent_mobile', render: d => `<div class="d-flex gap-1"><span>${d||''}</span><button class="copy-icon-btn btn-sm" onclick="copyToClipboard('${d||''}','Parent')"><i class="far fa-copy"></i></button></div>` },
+                    { data: 'email', render: e => `<div class="d-flex gap-1"><span>${e||''}</span><button class="send-email-btn btn-sm" onclick="sendSingleEmail('${e||''}')">Send</button></div>` },
+                    { data: null, render: (d,t,r,i) => isAdmin ? `<button class="btn btn-sm btn-info" onclick="editStudent(${i.row})">Edit</button>` : '' }
+                ],
                 pageLength: 10,
-                language: { search: "Filter:" },
-                drawCallback: function () {
-                    updateSelectAllCheckbox();
-                    const filtered = dataTable.rows({ search: 'applied' }).data().toArray();
-                    currentSearchResults = filtered;
-                    document.getElementById('searchResults').innerText = filtered.length;
-                }
+                drawCallback: function() { updateSelectAllCheckbox(); let filtered = dataTable.rows({search:'applied'}).data().toArray(); document.getElementById('searchResults').innerText = filtered.length; }
             });
-
-            // Show/hide action column header
             document.getElementById('actionCol').style.display = isAdmin ? '' : 'none';
             updateTotalCount();
         }
+        function updateTotalCount() { document.getElementById('totalStudents').innerText = allStudents.length; }
+        function searchTable() { let prn = $('#searchPRN').val().trim().toLowerCase(), name = $('#searchName').val().trim().toLowerCase(), div = $('#searchDivision').val().trim().toLowerCase(); $('#multiPRNSearch').val(''); if(!prn && !name && !div) activeFilterFn = null; else activeFilterFn = (settings,data,idx) => { let s = allStudents[idx]; if(!s) return false; if(prn && !(s.prn||'').toLowerCase().includes(prn)) return false; if(name && !(s.name||'').toLowerCase().includes(name)) return false; if(div && !(s.division||'').toLowerCase().includes(div)) return false; return true; }; dataTable.draw(); }
+        function searchMultiplePRNs() { let input = $('#multiPRNSearch').val().trim(); if(!input) { showToast('Enter PRNs','error'); return; } let prns = input.split(/[\s,;]+/).map(p=>p.trim().toUpperCase()).filter(p=>p); $('#searchPRN,#searchName,#searchDivision').val(''); activeFilterFn = (settings,data,idx) => { let s = allStudents[idx]; if(!s) return false; return prns.includes((s.prn||'').toUpperCase()); }; dataTable.draw(); let matched = dataTable.rows({search:'applied'}).data().toArray().length; showToast(matched ? `Found ${matched} student(s)` : 'No matches', matched?'success':'error'); }
+        function clearSearch() { $('#searchPRN,#searchName,#searchDivision,#multiPRNSearch').val(''); activeFilterFn = null; dataTable.search('').draw(); showToast('All filters cleared'); }
 
-        function updateTotalCount() {
-            document.getElementById('totalStudents').innerText = allStudents.length;
-        }
-
-        // ======================== FIXED SEARCH FUNCTIONS ========================
-
-        /**
-         * FIX: searchTable — uses the permanent activeFilterFn slot.
-         * No more push/pop that corrupts the filter stack.
-         */
-        function searchTable() {
-            const prnVal = $('#searchPRN').val().trim().toLowerCase();
-            const nameVal = $('#searchName').val().trim().toLowerCase();
-            const divVal = $('#searchDivision').val().trim().toLowerCase();
-
-            // Clear multi-PRN textarea to avoid conflicting intent
-            $('#multiPRNSearch').val('');
-
-            if (!prnVal && !nameVal && !divVal) {
-                // Nothing entered — show all
-                activeFilterFn = null;
-            } else {
-                activeFilterFn = function (settings, data, dataIndex) {
-                    const student = allStudents[dataIndex];
-                    if (!student) return false;
-                    if (prnVal && !(student.prn || '').toLowerCase().includes(prnVal)) return false;
-                    if (nameVal && !(student.name || '').toLowerCase().includes(nameVal)) return false;
-                    if (divVal && !(student.division || '').toLowerCase().includes(divVal)) return false;
-                    return true;
-                };
-            }
-
-            dataTable.draw();
-        }
-
-        /**
-         * FIX: searchMultiplePRNs — sets activeFilterFn (doesn't push/pop).
-         * The filter stays active until clearSearch() or another search.
-         */
-        function searchMultiplePRNs() {
-            const input = $('#multiPRNSearch').val().trim();
-            if (!input) { showToast('Enter at least one PRN', 'error'); return; }
-
-            // Parse PRNs split by comma, semicolon, or whitespace
-            const prns = input.split(/[\s,;]+/).map(p => p.trim().toUpperCase()).filter(p => p.length > 0);
-            if (prns.length === 0) { showToast('No valid PRNs found', 'error'); return; }
-
-            // Clear normal search inputs to avoid confusion
-            $('#searchPRN, #searchName, #searchDivision').val('');
-
-            activeFilterFn = function (settings, data, dataIndex) {
-                const student = allStudents[dataIndex];
-                if (!student) return false;
-                return prns.includes((student.prn || '').toUpperCase());
-            };
-
-            dataTable.draw();
-
-            // After draw, report results
-            const matched = dataTable.rows({ search: 'applied' }).data().toArray().length;
-            if (matched === 0) showToast('No matching PRNs found', 'error');
-            else showToast(`Found ${matched} student(s)`);
-        }
-
-        /**
-         * FIX: clearSearch — resets activeFilterFn and DataTable built-in search.
-         */
-        function clearSearch() {
-            $('#searchPRN, #searchName, #searchDivision, #multiPRNSearch').val('');
-            activeFilterFn = null;                 // clear our named filter
-            dataTable.search('').draw();           // clear DataTable's own search box too
-            currentSearchResults = allStudents;
-            document.getElementById('searchResults').innerText = allStudents.length;
-            showToast('All filters cleared');
-        }
-
-        // ======================== CSV LOADING ========================
-        /**
-         * FIX: CSV load — added no-cache headers, a CORS proxy fallback,
-         * and robust column-name trimming to handle BOM / extra spaces
-         * that commonly occur in exported CSV files.
-         */
+        // CSV loading from external file
         async function loadCSVData() {
-            showToast('Loading student data…', 'success');
+            showToast('Loading student data from external CSV...', 'success');
             try {
-                // Attempt 1: direct fetch with cache-bust + no-cache header
-                let csvText = null;
-                try {
-                    const response = await fetch(CSV_URL, {
-                        method: 'GET',
-                        headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
-                    });
-                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                    csvText = await response.text();
-                } catch (directErr) {
-                    console.warn('Direct fetch failed, trying CORS proxy…', directErr);
-                    // Attempt 2: CORS proxy (useful when running from local file or non-GitHub Pages)
-                    const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(
-                        GITHUB_RAW_BASE + 'contact_testing_csv.csv'
-                    );
-                    const proxyResp = await fetch(proxyUrl);
-                    if (!proxyResp.ok) throw new Error(`Proxy HTTP ${proxyResp.status}`);
-                    csvText = await proxyResp.text();
-                }
-
-                parseAndRenderCSV(csvText);
-
-            } catch (err) {
-                console.error('CSV load error:', err);
-                showToast('Failed to load CSV. Check your internet connection and the CSV file URL.', 'error');
+                const response = await fetch(CSV_PATH + '?t=' + Date.now(), { cache: 'no-store' });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const csvText = await response.text();
+                Papa.parse(csvText, {
+                    header: true,
+                    skipEmptyLines: true,
+                    transformHeader: h => h.trim().replace(/^\uFEFF/, ''),
+                    complete: (results) => {
+                        if(results.errors.length) console.warn('CSV warnings', results.errors);
+                        allStudents = [];
+                        results.data.forEach((row, idx) => {
+                            let trimmed = {};
+                            Object.keys(row).forEach(k => { trimmed[k] = (row[k] || '').trim(); });
+                            if(trimmed['PRN'] || trimmed['Student Name']) {
+                                allStudents.push({
+                                    _id: idx,
+                                    offering_year: trimmed['Offering Year'] || '2025-26',
+                                    prn: trimmed['PRN'] || '',
+                                    division: trimmed['Division'] || '',
+                                    batch: trimmed['Batch'] || '',
+                                    program: trimmed['Program'] || '',
+                                    name: trimmed['Student Name'] || '',
+                                    student_mobile: trimmed['Student Mobile'] || trimmed['Student Mobile Number'] || '',
+                                    parent_mobile: trimmed['Parent Mobile'] || '',
+                                    email: trimmed['Email ID'] || trimmed['email'] || trimmed['Email'] || '',
+                                    photo: trimmed['Photo'] || ''
+                                });
+                            }
+                        });
+                        if(allStudents.length === 0) { showToast('No student rows found. Check CSV columns.', 'error'); return; }
+                        initDataTable(allStudents);
+                        updateTotalCount();
+                        document.getElementById('searchResults').innerText = allStudents.length;
+                        showToast(`Loaded ${allStudents.length} students from external CSV`);
+                    },
+                    error: (err) => { console.error(err); showToast('CSV parsing failed', 'error'); }
+                });
+            } catch(err) {
+                console.error(err);
+                showToast(`Failed to load CSV from ${CSV_PATH}. Ensure the file exists in the same folder.`, 'error');
             }
         }
 
-        function parseAndRenderCSV(csvText) {
-            Papa.parse(csvText, {
-                header: true,
-                skipEmptyLines: true,
-                transformHeader: h => h.trim().replace(/^\uFEFF/, ''), // strip BOM + whitespace from headers
-                complete: (results) => {
-                    if (results.errors && results.errors.length) {
-                        console.warn('CSV parse warnings:', results.errors);
-                    }
+        // Login / Logout
+        function handleLogin(e) { e.preventDefault(); let u = $('#username').val().trim(), p = $('#password').val(); if(VALID_CREDENTIALS[u] && VALID_CREDENTIALS[u]===p) { isLoggedIn=true; isAdmin=(u==='admin'); if($('#rememberMe').is(':checked')) localStorage.setItem('pccoeLogin', JSON.stringify({loggedIn:true,isAdmin,expiry:Date.now()+7*86400000})); else sessionStorage.setItem('pccoeSession', JSON.stringify({loggedIn:true,isAdmin})); showMainApp(); } else { $('#loginError').show().fadeOut(2000); } }
+        function logout() { isLoggedIn=false; isAdmin=false; localStorage.removeItem('pccoeLogin'); sessionStorage.removeItem('pccoeSession'); activeFilterFn=null; if(dataTable) dataTable.destroy(); allStudents=[]; selectedStudents.clear(); $('#loginSection').show(); $('#mainSection').hide(); }
+        function showMainApp() { $('#loginSection').hide(); $('#mainSection').show(); if(isAdmin) $('#adminFeatures').show(); else $('#adminFeatures').hide(); if(!allStudents.length) loadCSVData(); }
+        function checkLoginStatus() { let saved = localStorage.getItem('pccoeLogin'); if(saved) { try { let data=JSON.parse(saved); if(data.loggedIn && data.expiry>Date.now()) { isLoggedIn=true; isAdmin=data.isAdmin; showMainApp(); return; } } catch(e){} } let sess = sessionStorage.getItem('pccoeSession'); if(sess) { try { let data=JSON.parse(sess); if(data.loggedIn) { isLoggedIn=true; isAdmin=data.isAdmin; showMainApp(); return; } } catch(e){} } $('#loginSection').show(); $('#mainSection').hide(); }
 
-                    allStudents = [];
-                    results.data.forEach((row, idx) => {
-                        // Trim all values to avoid whitespace issues
-                        const trimmed = {};
-                        Object.keys(row).forEach(k => { trimmed[k] = (row[k] || '').trim(); });
-
-                        if (trimmed['PRN'] || trimmed['Student Name']) {
-                            allStudents.push({
-                                _id: idx,
-                                offering_year: trimmed['Offering Year'] || '2025-26',
-                                prn: trimmed['PRN'] || '',
-                                division: trimmed['Division'] || '',
-                                batch: trimmed['Batch'] || '',
-                                program: trimmed['Program'] || '',
-                                name: trimmed['Student Name'] || '',
-                                student_mobile: trimmed['Student Mobile'] || trimmed['Student Mobile Number'] || '',
-                                parent_mobile: trimmed['Parent Mobile'] || '',
-                                email: trimmed['Email ID'] || trimmed['email'] || trimmed['Email'] || '',
-                                photo: trimmed['Photo'] || ''
-                            });
-                        }
-                    });
-
-                    if (allStudents.length === 0) {
-                        showToast('CSV loaded but no student rows found. Check column names.', 'error');
-                        console.warn('Available columns:', results.meta.fields);
-                        return;
-                    }
-
-                    initDataTable(allStudents);
-                    updateTotalCount();
-                    currentSearchResults = allStudents;
-                    document.getElementById('searchResults').innerText = allStudents.length;
-                    showToast(`Loaded ${allStudents.length} students`);
-                },
-                error: (err) => {
-                    console.error('PapaParse error:', err);
-                    showToast('Failed to parse CSV', 'error');
-                }
-            });
-        }
-
-        // ======================== LOGIN / LOGOUT ========================
-        function handleLogin(e) {
-            e.preventDefault();
-            const u = $('#username').val().trim();
-            const p = $('#password').val();
-            if (VALID_CREDENTIALS[u] && VALID_CREDENTIALS[u] === p) {
-                isLoggedIn = true;
-                isAdmin = (u === 'admin');
-                if ($('#rememberMe').is(':checked')) {
-                    localStorage.setItem('pccoeLogin', JSON.stringify({ loggedIn: true, isAdmin, expiry: Date.now() + 7 * 86400000 }));
-                } else {
-                    sessionStorage.setItem('pccoeSession', JSON.stringify({ loggedIn: true, isAdmin }));
-                }
-                showMainApp();
-            } else {
-                $('#loginError').show().fadeOut(2000);
-            }
-        }
-
-        function logout() {
-            isLoggedIn = false;
-            isAdmin = false;
-            localStorage.removeItem('pccoeLogin');
-            sessionStorage.removeItem('pccoeSession');
-            activeFilterFn = null;
-            if (dataTable) { dataTable.destroy(); dataTable = null; }
-            allStudents = [];
-            selectedStudents.clear();
-            $('#loginSection').show();
-            $('#mainSection').hide();
-        }
-
-        function showMainApp() {
-            $('#loginSection').hide();
-            $('#mainSection').show();
-            if (isAdmin) $('#adminFeatures').show();
-            else $('#adminFeatures').hide();
-            if (!allStudents.length) loadCSVData();
-        }
-
-        function checkLoginStatus() {
-            const saved = localStorage.getItem('pccoeLogin');
-            if (saved) {
-                try {
-                    const data = JSON.parse(saved);
-                    if (data.loggedIn && data.expiry > Date.now()) {
-                        isLoggedIn = true;
-                        isAdmin = data.isAdmin;
-                        showMainApp();
-                        return;
-                    }
-                } catch (e) { localStorage.removeItem('pccoeLogin'); }
-            }
-            const sess = sessionStorage.getItem('pccoeSession');
-            if (sess) {
-                try {
-                    const data = JSON.parse(sess);
-                    if (data.loggedIn) {
-                        isLoggedIn = true;
-                        isAdmin = data.isAdmin;
-                        showMainApp();
-                        return;
-                    }
-                } catch (e) { sessionStorage.removeItem('pccoeSession'); }
-            }
-            $('#loginSection').show();
-            $('#mainSection').hide();
-        }
-
-        $(document).ready(() => {
-            $('#loginForm').on('submit', handleLogin);
-            checkLoginStatus();
-            // Close dropdown on outside click
-            $(document).on('click', function (e) {
-                if (!$(e.target).closest('.email-dropdown').length) {
-                    $('.email-dropdown-content').removeClass('show');
-                }
-            });
-        });
+        $(document).ready(() => { $('#loginForm').on('submit', handleLogin); checkLoginStatus(); $(document).on('click', function(e) { if(!$(e.target).closest('.email-dropdown').length) $('.email-dropdown-content').removeClass('show'); }); });
+        window.editStudent = (idx) => { alert('Edit feature: implement as needed'); };
     </script>
 </body>
 </html>
