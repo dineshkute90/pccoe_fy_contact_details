@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PCCOE Student Directory with Photos</title>
+    <title>PCCOE Student Contact Search</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -13,7 +13,9 @@
             --pccoe-red: #d32f2f;
             --pccoe-green: #2e7d32;
             --pccoe-gold: #ff9800;
+            --pccoe-light: #e8eaf6;
         }
+        
         body {
             background-color: #f5f7fa;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -23,11 +25,13 @@
             justify-content: center;
             padding: 20px;
         }
+        
         .login-container {
             max-width: 450px;
             width: 100%;
             padding: 20px;
         }
+        
         .login-box {
             background: white;
             border-radius: 15px;
@@ -35,38 +39,140 @@
             box-shadow: 0 10px 30px rgba(26, 35, 126, 0.2);
             border-top: 5px solid var(--pccoe-blue);
         }
-        .login-logo { text-align: center; margin-bottom: 1.5rem; color: var(--pccoe-blue); }
+        
+        .login-logo {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: var(--pccoe-blue);
+        }
+        
+        .app-title {
+            color: var(--pccoe-blue);
+            text-align: center;
+            margin: 1.5rem 0;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        .app-title span {
+            color: var(--pccoe-red);
+        }
+        
         .login-btn {
             background: var(--pccoe-green);
             border: none;
             padding: 12px;
             font-weight: 600;
+            transition: all 0.3s;
             width: 100%;
             color: white;
+            letter-spacing: 0.5px;
             border-radius: 8px;
         }
-        .login-btn:hover { background: #1b5e20; transform: translateY(-2px); }
-        .main-container { display: none; width: 100%; max-width: 1400px; margin: 0 auto; }
+        
+        .login-btn:hover {
+            background: #1b5e20;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 125, 50, 0.3);
+            color: white;
+        }
+        
+        .main-container {
+            display: none;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
         .directory-header {
             background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
             color: white;
             padding: 0.8rem 1.2rem;
             border-radius: 10px;
             margin: 1.5rem 0;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(26, 35, 126, 0.2);
+            border-left: 6px solid #ff9800;
+            border-right: 6px solid #ff9800;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            flex-wrap: wrap;
+            min-height: 100px;
         }
-        .header-content { flex: 1; text-align: center; }
-        .header-logo { height: 90px; width: auto; object-fit: contain; background: rgba(255,255,255,0.1); border-radius: 5px; }
+        
+        .header-content {
+            flex: 1;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .directory-header h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0.3rem 0;
+            color: white;
+        }
+        
+        .directory-header h2 span {
+            color: #ffcc80;
+        }
+        
+        .directory-header p {
+            margin: 0.2rem 0;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .academic-year {
+            background: rgba(255, 152, 0, 0.9);
+            color: #1a237e;
+            padding: 0.3rem 1.5rem;
+            border-radius: 20px;
+            font-weight: 700;
+            display: inline-block;
+            margin-top: 0.5rem;
+            font-size: 1.1rem;
+        }
+        
         .logout-btn {
-            background: rgba(255,255,255,0.15);
-            border: 1px solid rgba(255,255,255,0.3);
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             color: white;
             padding: 8px 20px;
             border-radius: 5px;
+            transition: all 0.3s;
+            font-weight: 500;
+            margin-left: auto;
+            white-space: nowrap;
         }
+        
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+        
+        .header-logo {
+            height: 90px;
+            width: auto;
+            object-fit: contain;
+            padding: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .login-logo-img {
+            height: 80px;
+            width: auto;
+            margin-bottom: 15px;
+        }
+        
         .search-box {
             background: white;
             padding: 1.5rem;
@@ -74,32 +180,49 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             margin-bottom: 1.5rem;
         }
-        .search-btn { background: var(--pccoe-blue); border: none; padding: 8px 20px; }
-        .data-table { background: white; border-radius: 10px; overflow-x: auto; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-bottom: 2rem; }
-        .table { font-size: 0.85rem; }
-        .table th { background-color: var(--pccoe-blue); color: white; padding: 10px 8px; }
-        .student-photo {
-            width: 45px;
-            height: 45px;
-            object-fit: cover;
-            border-radius: 50%;
-            border: 1px solid #ddd;
-            cursor: pointer;
-            transition: transform 0.2s;
+        
+        .search-btn {
+            background: var(--pccoe-blue);
+            border: none;
+            padding: 8px 20px;
+            transition: all 0.3s;
         }
-        .student-photo:hover { transform: scale(1.1); }
-        .photo-placeholder {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background-color: #e9ecef;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #6c757d;
-            font-size: 1.2rem;
-            cursor: pointer;
+        
+        .search-btn:hover {
+            background: #283593;
+            transform: translateY(-1px);
         }
+        
+        .data-table {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        /* Smaller font for table */
+        .table {
+            font-size: 0.85rem;
+        }
+        
+        .table th {
+            background-color: var(--pccoe-blue);
+            color: white;
+            border: none;
+            padding: 10px 8px;
+            font-size: 0.9rem;
+        }
+        
+        .table td {
+            padding: 8px;
+            vertical-align: middle;
+        }
+        
+        .highlight {
+            background-color: #fff9c4 !important;
+        }
+        
         .stats-card {
             background: white;
             border-radius: 8px;
@@ -109,23 +232,313 @@
             border-left: 4px solid var(--pccoe-blue);
             margin-bottom: 1rem;
         }
+        
         .footer {
+            margin-top: auto;
+            padding: 1rem;
             background-color: var(--pccoe-blue);
             color: white;
             text-align: center;
             border-radius: 8px;
-            padding: 1rem;
             margin-top: 2rem;
         }
-        .badge-prn { background-color: #5c6bc0; color: white; padding: 2px 6px; border-radius: 4px; font-family: monospace; }
-        .copy-icon-btn {
-            background: transparent;
-            border: 1px solid #6c757d;
+        
+        .badge-prn {
+            background-color: #5c6bc0;
+            color: white;
+            padding: 2px 6px;
             border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+        
+        #loading {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .action-btn {
+            padding: 3px 6px;
+            margin: 0 2px;
+            font-size: 0.75rem;
+        }
+        
+        .dataTables_wrapper {
+            padding: 0 10px;
+        }
+        
+        .mobile-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 5px;
+        }
+        
+        .mobile-text {
+            flex-grow: 1;
+            font-size: 0.8rem;
+        }
+        
+        .copy-icon-btn {
+            background-color: transparent;
+            border: 1px solid #6c757d;
+            color: #6c757d;
             width: 24px;
             height: 24px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            font-size: 0.75rem;
         }
+        
+        .copy-icon-btn:hover {
+            background-color: #6c757d;
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .email-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 5px;
+        }
+        
+        .email-text {
+            flex-grow: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 0.8rem;
+        }
+        
+        .error-message {
+            color: #dc3545;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .login-error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .multi-search-container {
+            border-top: 1px dashed #dee2e6;
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .multi-prn-help {
+            font-size: 0.75rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+        
+        .prn-badge {
+            background-color: #e3f2fd;
+            color: #1976d2;
+            border: 1px solid #bbdefb;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            margin-right: 0.2rem;
+            margin-bottom: 0.2rem;
+            display: inline-block;
+        }
+        
+        .export-btn {
+            background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .export-btn:hover {
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(46, 125, 50, 0.3);
+            color: white;
+        }
+        
+        .export-btn:disabled {
+            background: #6c757d;
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .export-options {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .export-option-label {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #1a237e;
+        }
+        
+        .search-results-header {
+            background: #e8eaf6;
+            border-left: 4px solid var(--pccoe-blue);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .results-count {
+            font-weight: 600;
+            color: var(--pccoe-blue);
+        }
+        
+        .no-results-message {
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: none;
+        }
+        
+        /* Hide the "Show entries" dropdown */
+        .dataTables_length {
+            display: none !important;
+        }
+        
+        .paste-info {
+            font-size: 0.7rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+        
+        .admin-features {
+            background: #fff3e0;
+            border-left: 4px solid var(--pccoe-gold);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .admin-badge {
+            background: linear-gradient(135deg, var(--pccoe-gold) 0%, #ffb74d 100%);
+            color: #1a237e;
+            padding: 2px 8px;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            margin-left: 10px;
+        }
+        
+        .admin-controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .admin-btn {
+            background: linear-gradient(135deg, var(--pccoe-gold) 0%, #ffb74d 100%);
+            border: none;
+            color: #1a237e;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.85rem;
+        }
+        
+        .admin-btn:hover {
+            background: linear-gradient(135deg, #f57c00 0%, var(--pccoe-gold) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 152, 0, 0.3);
+            color: #1a237e;
+        }
+        
+        .edit-btn {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            transition: all 0.2s;
+        }
+        
+        .edit-btn:hover {
+            background: #0d8bf2;
+            transform: scale(1.05);
+        }
+        
+        .delete-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            transition: all 0.2s;
+        }
+        
+        .delete-btn:hover {
+            background: #e53935;
+            transform: scale(1.05);
+        }
+        
+        .modal-content {
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .modal-header {
+            background: var(--pccoe-blue);
+            color: white;
+            border-radius: 10px 10px 0 0;
+        }
+        
+        .modal-title {
+            font-weight: 600;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: #1a237e;
+        }
+        
+        /* Email-specific styles */
+        .email-actions {
+            display: flex;
+            gap: 4px;
+            margin-top: 5px;
+        }
+        
         .send-email-btn {
             background-color: #34a853;
             color: white;
@@ -133,44 +546,336 @@
             padding: 2px 6px;
             border-radius: 4px;
             font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            white-space: nowrap;
         }
-        .email-draft-btn {
-            background: linear-gradient(135deg, #34a853 0%, #4caf50 100%);
+        
+        .send-email-btn:hover {
+            background-color: #2e8b47;
+            transform: scale(1.05);
+        }
+        
+        .send-email-btn i {
+            font-size: 0.65rem;
+        }
+        
+        .bulk-email-btn {
+            background: linear-gradient(135deg, #ea4335 0%, #fbbc05 100%);
             color: white;
             border: none;
-            padding: 8px 20px;
+            padding: 6px 10px;
             border-radius: 6px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+            font-size: 0.85rem;
         }
-        .selected-count { background: #4285F4; color: white; padding: 5px 10px; border-radius: 15px; margin-left: 10px; }
-        .select-all-btn, .clear-search-btn { padding: 8px 16px; border-radius: 6px; font-weight: 600; }
-        .select-all-btn { background: #f0f0f0; color: #333; }
-        .clear-search-btn { background: #ff9800; color: white; }
-        .email-dropdown { position: relative; display: inline-block; }
+        
+        .bulk-email-btn:hover {
+            background: linear-gradient(135deg, #d62516 0%, #e6a700 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(234, 67, 53, 0.3);
+        }
+        
+        .template-badge {
+            background-color: #e8f0fe;
+            color: #1967d2;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 0.65rem;
+            margin-left: 5px;
+            font-weight: 500;
+        }
+        
+        /* Email Modal Styles */
+        .email-modal-body {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .template-preview {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 12px;
+            margin-bottom: 12px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .template-preview h6 {
+            color: #1a237e;
+            border-bottom: 2px solid #1a237e;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .template-item {
+            padding: 8px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .template-item:hover {
+            background-color: #e8eaf6;
+            border-color: #1a237e;
+        }
+        
+        .template-item.active {
+            background-color: #e8eaf6;
+            border-color: #1a237e;
+            border-left: 4px solid #1a237e;
+        }
+        
+        .template-subject {
+            font-weight: 600;
+            color: #1a237e;
+            margin-bottom: 4px;
+            font-size: 0.9rem;
+        }
+        
+        .template-content {
+            font-size: 0.8rem;
+            color: #495057;
+            white-space: pre-line;
+        }
+        
+        /* Progress indicator */
+        .email-progress {
+            display: none;
+            margin-top: 15px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: linear-gradient(90deg, #34a853, #4285f4);
+        }
+        
+        /* New column styles */
+        .division-badge {
+            background-color: #e8f5e8;
+            color: #2e7d32;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+        
+        .batch-badge {
+            background-color: #e3f2fd;
+            color: #1565c0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+        
+        .program-badge {
+            background-color: #f3e5f5;
+            color: #7b1fa2;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+        
+        /* Checkbox and Email Dropdown Styles from first code */
+        .checkbox-cell {
+            width: 40px;
+            text-align: center;
+        }
+        
+        .checkbox-cell input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        .email-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
         .email-dropdown-content {
             display: none;
             position: absolute;
-            background: white;
-            min-width: 200px;
+            background-color: white;
+            min-width: 250px;
             box-shadow: 0 8px 16px rgba(0,0,0,0.2);
             z-index: 1000;
             border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #dee2e6;
         }
-        .email-dropdown-content.show { display: block; }
-        .email-dropdown-item { padding: 10px 16px; cursor: pointer; }
-        .email-dropdown-item:hover { background: #f0f0f0; }
-        .checkbox-cell { width: 40px; text-align: center; }
-        .modal-photo-img { width: 100%; max-height: 80vh; object-fit: contain; }
-        .upload-area {
-            background: #f8f9fa;
-            border: 2px dashed #ccc;
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-            margin-top: 15px;
+        
+        .email-dropdown-content.show {
+            display: block;
         }
+        
+        .email-dropdown-item {
+            padding: 12px 16px;
+            display: block;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #333;
+        }
+        
+        .email-dropdown-item:hover {
+            background-color: #f5f5f5;
+            color: #1a237e;
+        }
+        
+        .email-dropdown-item i {
+            margin-right: 8px;
+            color: #5c6bc0;
+        }
+        
+        .email-draft-btn {
+            background: linear-gradient(135deg, #34a853 0%, #4caf50 100%);
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+        }
+        
+        .email-draft-btn:hover {
+            background: linear-gradient(135deg, #2e8b47 0%, #45a049 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(52, 168, 83, 0.3);
+            color: white;
+        }
+        
+        .email-draft-btn:disabled {
+            background: #6c757d;
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .selected-count {
+            background: #4285F4;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        
+        .select-all-btn {
+            background: #f0f0f0;
+            color: #333;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+        }
+        
+        .select-all-btn:hover {
+            background: #e0e0e0;
+        }
+        
+        .clear-search-btn {
+            background: #ff9800;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+        }
+        
+        .clear-search-btn:hover {
+            background: #e68900;
+        }
+        
+        .action-buttons {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
         @media (max-width: 768px) {
-            .directory-header { flex-direction: column; text-align: center; }
-            .header-logo { height: 60px; margin-bottom: 10px; }
+            .directory-header {
+                flex-direction: column;
+                padding: 1rem;
+                text-align: center;
+            }
+            
+            .header-logo {
+                height: 60px;
+                margin-bottom: 10px;
+            }
+            
+            .header-content {
+                padding: 10px 0;
+            }
+            
+            .directory-header h2 {
+                font-size: 1.5rem;
+            }
+            
+            .directory-header p {
+                font-size: 1rem;
+            }
+            
+            .logout-btn {
+                margin-top: 10px;
+                margin-left: 0;
+            }
+            
+            .search-results-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+            
+            .admin-controls {
+                flex-direction: column;
+            }
+            
+            .email-actions {
+                flex-wrap: wrap;
+            }
+            
+            /* Even smaller font on mobile */
+            .table {
+                font-size: 0.8rem;
+            }
+            
+            .table th {
+                padding: 8px 5px;
+                font-size: 0.85rem;
+            }
+            
+            .table td {
+                padding: 6px 5px;
+            }
         }
     </style>
 </head>
@@ -179,106 +884,551 @@
     <div class="login-container" id="loginSection">
         <div class="login-box">
             <div class="login-logo">
-                <img src="https://raw.githubusercontent.com/dineshkute90/pccoe_fy_contact_details/main/pccoe_logo.png" alt="Logo" class="login-logo-img" style="height:80px">
+                <!-- PCCOE Logo -->
+                <img src="https://raw.githubusercontent.com/dineshkute90/pccoe_fy_contact_details/main/pccoe_logo.png" 
+                     alt="PCCOE Logo" 
+                     class="login-logo-img">
                 <h2>PCCOE Student Directory</h2>
+                <p class="text-muted mb-0">Department of Applied Sciences & Humanities</p>
             </div>
-            <div class="login-error text-danger mb-2" id="loginError" style="display:none">Invalid credentials</div>
+            
+            <div class="login-error" id="loginError">
+                <i class="fas fa-exclamation-circle"></i> Invalid username or password
+            </div>
+            
             <form id="loginForm">
-                <div class="mb-3"><input type="text" class="form-control" id="username" placeholder="Username" required></div>
-                <div class="mb-3"><input type="password" class="form-control" id="password" placeholder="Password" required></div>
-                <div class="mb-3 form-check"><input type="checkbox" id="rememberMe"> <label>Remember me</label></div>
-                <button type="submit" class="btn login-btn">Login</button>
+                <div class="mb-3">
+                    <label for="username" class="form-label">
+                        <i class="fas fa-user"></i> Username
+                    </label>
+                    <input type="text" class="form-control" id="username" 
+                           placeholder="Enter username" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="password" class="form-label">
+                        <i class="fas fa-lock"></i> Password
+                    </label>
+                    <input type="password" class="form-control" id="password" 
+                           placeholder="Enter password" required>
+                </div>
+                
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="rememberMe">
+                    <label class="form-check-label" for="rememberMe">Remember me</label>
+                </div>
+                
+                <button type="submit" class="btn login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                
+                <div class="text-center mt-3">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle"></i> Admin: Mr. Dinesh Kute
+                    </small>
+                </div>
             </form>
         </div>
     </div>
 
-    <!-- Main Application -->
+    <!-- Main Application Section -->
     <div class="main-container" id="mainSection">
         <div class="directory-header">
-            <img src="https://raw.githubusercontent.com/dineshkute90/pccoe_fy_contact_details/main/pccoe_logo.png" class="header-logo" alt="PCCOE">
-            <div class="header-content"><h2>PCCOE Student Directory</h2><p>Department of Applied Sciences & Humanities | 2025-26</p></div>
-            <button class="logout-btn" onclick="logout()">Logout</button>
-        </div>
-
-        <!-- Admin Panel (hidden for non-admin) -->
-        <div id="adminFeatures" class="admin-features p-3 mb-3 bg-light border rounded" style="display:none">
-            <strong>Admin Controls</strong>
-            <button class="btn btn-sm btn-warning ms-2" onclick="showAllStudents()">View All</button>
-            <button class="btn btn-sm btn-warning" onclick="exportAllData()">Export DB</button>
-            <button class="btn btn-sm btn-warning" onclick="showAddStudentModal()">Add Student</button>
-        </div>
-
-        <!-- Search Box -->
-        <div class="search-box">
-            <div class="row g-3">
-                <div class="col-md-4"><label>PRN</label><input type="text" class="form-control" id="searchPRN" placeholder="e.g., 125B1G001"></div>
-                <div class="col-md-4"><label>Student Name</label><input type="text" class="form-control" id="searchName" placeholder="Name"></div>
-                <div class="col-md-2"><label>Division</label><input type="text" class="form-control" id="searchDivision" placeholder="A, B"></div>
-                <div class="col-md-2"><button class="btn btn-primary search-btn w-100 mt-4" onclick="searchTable()">Search</button></div>
-            </div>
-            <div class="mt-3">
-                <label>Multiple PRNs (comma, space, newline)</label>
-                <textarea class="form-control" id="multiPRNSearch" rows="2" placeholder="125B1G001, 125B1G002"></textarea>
-                <button class="btn btn-success mt-2" onclick="searchMultiplePRNs()">Search Multiple PRNs</button>
-            </div>
-            <div class="mt-3 d-flex gap-2 flex-wrap">
-                <button class="select-all-btn" onclick="toggleSelectAll()">Select All</button>
-                <div class="email-dropdown">
-                    <button class="email-draft-btn" id="emailDraftBtn" onclick="toggleEmailDropdown()">Send Email <span class="selected-count" id="selectedCount">0</span></button>
-                    <div class="email-dropdown-content" id="emailDropdown">
-                        <div class="email-dropdown-item" onclick="sendEmailWithDraft('openDay')">Open Day Email</div>
-                        <div class="email-dropdown-item" onclick="sendEmailWithDraft('faSchedule')">FA Schedule</div>
-                        <div class="email-dropdown-item" onclick="sendEmailWithDraft('custom')">Custom Email</div>
-                    </div>
-                </div>
-                <button class="clear-search-btn" onclick="clearSearch()">Clear Search</button>
-                <button class="btn btn-outline-secondary" onclick="exportSearchResults()">Export Results</button>
+            <!-- PCCOE Logo in header -->
+            <div class="logo-container">
+                <img src="https://raw.githubusercontent.com/dineshkute90/pccoe_fy_contact_details/main/pccoe_logo.png" 
+                     alt="PCCOE Logo" 
+                     class="header-logo">
             </div>
             
-            <!-- Manual CSV Upload Fallback -->
-            <div class="upload-area mt-3">
-                <label><i class="fas fa-upload"></i> <strong>CSV not loading? Upload manually:</strong></label>
-                <input type="file" id="csvFileInput" accept=".csv" class="form-control mt-2">
-                <button class="btn btn-info mt-2" onclick="uploadCSV()">Load from File</button>
-                <small class="text-muted d-block mt-1">Select your CSV file (must contain columns: PRN, Student Name, Email ID, Photo, etc.)</small>
+            <!-- Center Content -->
+            <div class="header-content">
+                <h1><i class="fas fa-graduation-cap"></i> PCCOE Student Directory</h1>
+                <p>Department of Applied Sciences & Humanities</p>
+                <p>2025-26</p>
+            </div>
+            
+            <!-- Logout Button -->
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+        
+        <!-- Admin Features Section (Visible only to admin) -->
+        <div class="admin-features" id="adminFeatures" style="display: none;">
+            <div class="d-flex align-items-center mb-3">
+                <h5 class="mb-0"><i class="fas fa-user-shield"></i> Admin Controls</h5>
+                <span class="admin-badge">ADMIN MODE</span>
+            </div>
+            <div class="admin-controls">
+                <button class="admin-btn" onclick="showAllStudents()">
+                    <i class="fas fa-list"></i> View All Students
+                </button>
+                <button class="admin-btn" onclick="exportAllData()">
+                    <i class="fas fa-download"></i> Download Entire Database
+                </button>
+                <button class="admin-btn" onclick="showAddStudentModal()">
+                    <i class="fas fa-user-plus"></i> Add New Student
+                </button>
+                <button class="admin-btn" onclick="openBulkEmailModal()">
+                    <i class="fas fa-envelope-open-text"></i> Send Bulk Email
+                </button>
+                <button class="admin-btn" onclick="clearSearch()">
+                    <i class="fas fa-times"></i> Clear All Filters
+                </button>
+            </div>
+            <small class="text-muted">
+                <i class="fas fa-info-circle"></i> Admin privileges: Edit/Delete students, View all data, Export complete database
+            </small>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-box">
+            <!-- Single Search Section -->
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label for="searchPRN" class="form-label">
+                        <i class="fas fa-id-card"></i> Search by PRN (Single)
+                    </label>
+                    <input type="text" class="form-control" id="searchPRN" 
+                           placeholder="e.g., 123B1G035">
+                </div>
+                <div class="col-md-4">
+                    <label for="searchName" class="form-label">
+                        <i class="fas fa-user"></i> Search by Name
+                    </label>
+                    <input type="text" class="form-control" id="searchName" 
+                           placeholder="Enter student name">
+                </div>
+                <div class="col-md-2">
+                    <label for="searchDivision" class="form-label">
+                        <i class="fas fa-layer-group"></i> Division
+                    </label>
+                    <input type="text" class="form-control" id="searchDivision" 
+                           placeholder="e.g., A, B">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button class="btn btn-primary search-btn w-100" onclick="searchTable()">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Multi-PRN Search Section -->
+            <div class="multi-search-container">
+                <div class="row g-3">
+                    <div class="col-md-10">
+                        <label for="multiPRNSearch" class="form-label">
+                            <i class="fas fa-list-check"></i> Search Multiple PRNs
+                        </label>
+                        <textarea class="form-control" id="multiPRNSearch" 
+                               placeholder="Paste PRNs from Excel or enter separated by commas, spaces, or semicolons&#10;e.g., 123B1G035, 123B1G036 123B1G037; 123B1G038"
+                               rows="3"></textarea>
+                        <div class="multi-prn-help">
+                            <i class="fas fa-info-circle"></i> Supports: commas (,), spaces, semicolons (;), tabs, or new lines
+                        </div>
+                        <div class="paste-info">
+                            <i class="fas fa-paste"></i> You can directly paste a column of PRNs from Excel
+                        </div>
+                        <div id="prnBadgesContainer" class="mt-2" style="display: none;">
+                            <small>Searching for:</small>
+                            <div id="prnBadges"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn btn-success w-100" onclick="searchMultiplePRNs()">
+                            <i class="fas fa-magnifying-glass"></i> Search PRNs
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Export Options -->
+            <div class="export-options">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <button class="btn export-btn w-100" onclick="exportSearchResults()" id="exportSearchBtn">
+                            <i class="fas fa-file-excel"></i> Export Search Results
+                        </button>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" id="exportFormat">
+                            <option value="xlsx">Excel (.xlsx)</option>
+                            <option value="csv">CSV (.csv)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-check mt-2">
+                            <input class="form-check-input" type="checkbox" id="includeTimestamp" checked>
+                            <label class="form-check-label" for="includeTimestamp">
+                                Include timestamp in filename
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-12">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle"></i> Note: Only exports current search results for data security
+                        </small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons (Checkbox selection and Email) -->
+            <div class="action-buttons">
+                <button class="select-all-btn" onclick="toggleSelectAll()">
+                    <i class="fas fa-check-square"></i> Select All
+                </button>
+                
+                <!-- Email Draft Dropdown -->
+                <div class="email-dropdown">
+                    <button class="email-draft-btn" id="emailDraftBtn" onclick="toggleEmailDropdown()">
+                        <i class="fas fa-envelope"></i> Send Email to Selected
+                        <span class="selected-count" id="selectedCount">0</span>
+                        <i class="fas fa-caret-down" style="margin-left: 5px;"></i>
+                    </button>
+                    <div class="email-dropdown-content" id="emailDropdown">
+                        <a class="email-dropdown-item" onclick="sendEmailWithDraft('openDay')">
+                            <i class="fas fa-calendar-day"></i> Open Day Email
+                        </a>
+                        <a class="email-dropdown-item" onclick="sendEmailWithDraft('faSchedule')">
+                            <i class="fas fa-calendar-alt"></i> FA Schedule Email
+                        </a>
+                        <a class="email-dropdown-item" onclick="sendEmailWithDraft('custom')">
+                            <i class="fas fa-edit"></i> Custom Email
+                        </a>
+                    </div>
+                </div>
+                
+                <button class="clear-search-btn" onclick="clearSearch()">
+                    <i class="fas fa-times"></i> Clear Search
+                </button>
+            </div>
+            
+            <!-- Additional Filters -->
+            <div class="row g-2 mt-3">
+                <div class="col-md-4">
+                    <button class="btn btn-outline-secondary w-100" onclick="clearSearch()">
+                        <i class="fas fa-times"></i> Clear Filters
+                    </button>
+                </div>
+                <div class="col-md-4">
+                    <button class="btn btn-outline-info w-100" onclick="loadCSVData()">
+                        <i class="fas fa-sync"></i> Reload Data
+                    </button>
+                </div>
+                <div class="col-md-4">
+                    <select class="form-select" id="filterColumn" onchange="searchTable()">
+                        <option value="all">Search in All Columns</option>
+                        <option value="1">PRN</option>
+                        <option value="2">Student Name</option>
+                        <option value="3">Division</option>
+                        <option value="4">Batch</option>
+                        <option value="5">Program</option>
+                        <option value="6">Student Mobile</option>
+                        <option value="7">Parent Mobile</option>
+                        <option value="8">Email</option>
+                        <option value="9">Offering Year</option>
+                    </select>
+                </div>
             </div>
         </div>
 
         <!-- Stats -->
-        <div class="row mb-3">
-            <div class="col-md-3"><div class="stats-card"><i class="fas fa-users"></i><h5 id="totalStudents">0</h5><small>Total</small></div></div>
-            <div class="col-md-3"><div class="stats-card"><i class="fas fa-search"></i><h5 id="searchResults">0</h5><small>Found</small></div></div>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <i class="fas fa-users"></i>
+                    <h5 id="totalStudents">0</h5>
+                    <small>Total Students</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <i class="fas fa-database"></i>
+                    <h5 id="dataStatus">Loading...</h5>
+                    <small>Data Status</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <i class="fas fa-search"></i>
+                    <h5 id="searchResults">0</h5>
+                    <small>Search Results</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <i class="fas fa-download"></i>
+                    <h5 id="exportCount">0</h5>
+                    <small>Ready to Export</small>
+                </div>
+            </div>
         </div>
 
-        <!-- Table -->
-        <div class="data-table">
+        <!-- Loading Indicator -->
+        <div id="loading" class="text-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading student data from CSV...</p>
+        </div>
+
+        <!-- No Results Message -->
+        <div class="no-results-message" id="noResultsMessage">
+            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+            <h5>Search Students</h5>
+            <p class="text-muted">Enter search criteria above to find students.</p>
+            <p class="text-muted small">Search results will be displayed here and available for export.</p>
+        </div>
+
+        <!-- Search Results Header -->
+        <div class="search-results-header" id="searchResultsHeader" style="display: none;">
+            <div>
+                <h6 class="mb-0"><i class="fas fa-search me-2"></i>Search Results</h6>
+                <p class="mb-0 mt-1">
+                    Found <span class="results-count" id="resultsCount">0</span> student(s) 
+                    <span id="searchCriteria" class="text-muted"></span>
+                </p>
+            </div>
+            <button class="btn export-btn" onclick="exportSearchResults()" id="exportHeaderBtn">
+                <i class="fas fa-file-excel"></i> Export Results
+            </button>
+        </div>
+
+        <!-- Data Table -->
+        <div class="data-table" id="dataTableContainer">
             <table id="studentTable" class="table table-striped" style="width:100%">
                 <thead>
                     <tr>
-                        <th class="checkbox-cell"><input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll()"></th>
-                        <th>#</th><th>Year</th><th>PRN</th><th>Div</th><th>Batch</th><th>Program</th><th>Name</th><th>Photo</th><th>Student Mobile</th><th>Parent Mobile</th><th>Email</th>
-                        <th id="actionCol">Actions</th>
+                        <th class="checkbox-cell">
+                            <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll()">
+                        </th>
+                        <th>Sr. No.</th>
+                        <th>Offering Year</th>
+                        <th>PRN</th>
+                        <th>Division</th>
+                        <th>Batch</th>
+                        <th>Program</th>
+                        <th>Student Name</th>
+                        <th>Student Mobile</th>
+                        <th>Parent Mobile</th>
+                        <th>Email ID</th>
+                        <th id="actionColumnHeader" style="display: none;">Actions</th>
                     </tr>
                 </thead>
-                <tbody></tbody>
+                <tbody>
+                    <!-- Data will be loaded by DataTable -->
+                </tbody>
             </table>
         </div>
-        <div class="footer">Developed by Mr. Dinesh Kute | Data source: CSV + Photos folder</div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p class="mb-1">
+                <i class="fas fa-laptop-code"></i> PCCOE Student Directory developed by Mr. Dinesh Kute
+            </p>
+            <small>CSV File: contact_testing_csv.csv | Updated: <span id="currentDate"></span></small>
+        </div>
     </div>
 
-    <!-- Photo Modal -->
-    <div class="modal fade" id="photoModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
+    <!-- Add Student Modal -->
+    <div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header"><h5 class="modal-title">Student Photo</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-                <div class="modal-body text-center"><img id="fullPhoto" src="" class="modal-photo-img" alt="Student photo"></div>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addStudentModalLabel">
+                        <i class="fas fa-user-plus"></i> Add New Student
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addStudentForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="addPRN" class="form-label">PRN *</label>
+                                <input type="text" class="form-control" id="addPRN" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="addName" class="form-label">Student Name *</label>
+                                <input type="text" class="form-control" id="addName" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="addDivision" class="form-label">Division</label>
+                                <input type="text" class="form-control" id="addDivision" placeholder="e.g., A">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="addBatch" class="form-label">Batch</label>
+                                <input type="text" class="form-control" id="addBatch" placeholder="e.g., B1">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="addProgram" class="form-label">Program</label>
+                                <input type="text" class="form-control" id="addProgram" placeholder="e.g., Engineering">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="addOfferingYear" class="form-label">Offering Year</label>
+                                <input type="text" class="form-control" id="addOfferingYear" value="2025-26">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="addStudentMobile" class="form-label">Student Mobile *</label>
+                                <input type="tel" class="form-control" id="addStudentMobile" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="addParentMobile" class="form-label">Parent Mobile</label>
+                                <input type="tel" class="form-control" id="addParentMobile">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="addEmail" class="form-label">Email ID *</label>
+                                <input type="email" class="form-control" id="addEmail" required>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="addNewStudent()">
+                        <i class="fas fa-save"></i> Save Student
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Add Student Modal (simplified) -->
-    <div class="modal fade" id="addStudentModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5>Add Student</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input class="form-control mb-2" id="addPRN" placeholder="PRN"><input class="form-control mb-2" id="addName" placeholder="Name"><input class="form-control mb-2" id="addPhoto" placeholder="Photo path (e.g., photos/125B1G001.jpg)"><input class="form-control mb-2" id="addEmail" placeholder="Email"><input class="form-control mb-2" id="addMobile" placeholder="Mobile"></div><div class="modal-footer"><button class="btn btn-primary" onclick="addNewStudent()">Save</button></div></div></div></div>
+    <!-- Edit Student Modal -->
+    <div class="modal fade" id="editStudentModal" tabindex="-1" aria-labelledby="editStudentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editStudentModalLabel">
+                        <i class="fas fa-edit"></i> Edit Student Information
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editStudentForm">
+                        <input type="hidden" id="editStudentIndex">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="editPRN" class="form-label">PRN *</label>
+                                <input type="text" class="form-control" id="editPRN" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editName" class="form-label">Student Name *</label>
+                                <input type="text" class="form-control" id="editName" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="editDivision" class="form-label">Division</label>
+                                <input type="text" class="form-control" id="editDivision">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="editBatch" class="form-label">Batch</label>
+                                <input type="text" class="form-control" id="editBatch">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="editProgram" class="form-label">Program</label>
+                                <input type="text" class="form-control" id="editProgram">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editOfferingYear" class="form-label">Offering Year</label>
+                                <input type="text" class="form-control" id="editOfferingYear">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editStudentMobile" class="form-label">Student Mobile *</label>
+                                <input type="tel" class="form-control" id="editStudentMobile" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editParentMobile" class="form-label">Parent Mobile</label>
+                                <input type="tel" class="form-control" id="editParentMobile">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editEmail" class="form-label">Email ID *</label>
+                                <input type="email" class="form-control" id="editEmail" required>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" onclick="deleteCurrentStudent()">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveStudentChanges()">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- Bulk Email Modal -->
+    <div class="modal fade" id="bulkEmailModal" tabindex="-1" aria-labelledby="bulkEmailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="background: linear-gradient(135deg, #ea4335 0%, #fbbc05 100%); color: white;">
+                    <h5 class="modal-title" id="bulkEmailModalLabel">
+                        <i class="fas fa-envelope"></i> Send Bulk Email
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body email-modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Email Template</label>
+                        <div class="template-preview">
+                            <h6>Selected Template Preview</h6>
+                            <div id="templatePreview">
+                                <p class="text-muted">Select a template to preview</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Choose Template</label>
+                        <div class="template-list" id="templateList">
+                            <!-- Templates will be loaded here -->
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Selected Students</label>
+                        <div class="alert alert-info">
+                            <i class="fas fa-users"></i> 
+                            <span id="selectedStudentsCount">0</span> student(s) selected for email
+                        </div>
+                        <div id="selectedStudentsEmails" class="small text-muted mt-2">
+                            <!-- Emails will be listed here -->
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i> 
+                        <strong>Note:</strong> This will open Gmail in separate tabs for each student. 
+                        You may need to allow popups for this site.
+                    </div>
+                    
+                    <!-- Progress indicator -->
+                    <div class="email-progress" id="emailProgress">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Sending emails...</span>
+                            <span id="emailProgressText">0/0</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                 id="emailProgressBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="sendBulkEmails()" id="sendBulkEmailsBtn">
+                        <i class="fas fa-paper-plane"></i> Send Emails
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
@@ -287,401 +1437,1827 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <script>
-        // ======================== CONFIGURATION ========================
-        // !!! UPDATE THIS URL TO YOUR ACTUAL CSV FILE LOCATION !!!
-        const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/dineshkute90/pccoe_fy_contact_details/main/';
-        const CSV_URL = GITHUB_RAW_BASE + 'contact_testing_csv.csv';
+        // Login credentials
+        const VALID_CREDENTIALS = {
+            'pccoeash': 'ashpccoe@2025',  // Regular user
+            'admin': 'pccoe@admin'        // Admin user
+        };
         
-        const VALID_CREDENTIALS = { 'pccoeash': 'ashpccoe@2025', 'admin': 'pccoe@admin' };
-        
-        let allStudents = [];
         let dataTable = null;
+        let allStudents = [];
         let isLoggedIn = false;
-        let isAdmin = false;
-        let selectedStudents = new Set();
         let currentSearchResults = [];
+        let lastSearchCriteria = '';
+        let isAdmin = false;
+        let editModal = null;
+        let addModal = null;
+        let selectedStudents = new Set(); // Track selected student IDs
 
-        // Email drafts (simplified)
+        // Email Drafts for Selected Students (from first code)
         const EMAIL_DRAFTS = {
-            openDay: { subject: "Open Day Schedule", body: "Dear Student,\n\nOpen Day on ..." },
-            faSchedule: { subject: "FA Schedule", body: "Formative Assessment schedule attached." },
-            custom: { subject: "Announcement", body: "Your message here." }
+            openDay: {
+                subject: "Open Day Schedule for Examination",
+                body: `Dear Students,
+
+This is to inform you that the Open Day of the Examination has been scheduled as per the
+details given below:
+
+- Examination: SA / Re-SA / Summer  
+- Course Name:   
+- Course Code:   
+- Date:   
+- Time:   
+- Course Teacher:
+
+Students are advised to attend the open day as scheduled. Please note that no queries
+regarding marks will be entertained after the open day.
+
+Thanking you.
+
+ASH Department – Examination Section`
+            },
+            faSchedule: {
+                subject: "Formative Assessment Schedule",
+                body: `Dear Students,
+
+This is to inform you that the Formative Assessment (FA) schedule is as detailed below. Students are requested to take note of the same.
+
+• Course Name: {Enter your course name}
+• Course Code: {Enter your course code}
+• Course Teacher: {Name of Course Teacher}
+
+Details of FA I / FA II
+- Tool:	{Mention FA I/ FA II Tool}
+- Syllabus: {Mention unit number}
+- Max Marks: {Mention marks}
+- Date:	{Date of Exam}
+- Time:	{Time of Exam}
+- Location:	{Exam Location}
+
+Students are advised to appear for the Formative Assessment examinations strictly as per the above schedule.
+
+Thanking you.
+ASH Department – Examination Section`
+            },
+            custom: {
+                subject: "Important Announcement",
+                body: `Dear Students,
+
+[Your custom message here]
+
+Best regards,
+ASH Department`
+            }
         };
 
-        // ======================== HELPER FUNCTIONS ========================
-        function getPhotoUrl(path) {
-            if (!path) return null;
-            if (path.startsWith('http')) return path;
-            return GITHUB_RAW_BASE + path.replace(/^\/+/, '');
-        }
+        // Email Templates
+        const EMAIL_TEMPLATES = {
+            'defaulter': {
+                name: 'Defaulter Student Notice',
+                subject: 'Important Notice Regarding Your Academic Standing - PCCOE',
+                body: `Dear [Student Name],
 
-        function renderPhotoCell(photoPath, studentId) {
-            const url = getPhotoUrl(photoPath);
-            if (url) {
-                return `<img src="${url}" class="student-photo" data-student-id="${studentId}" data-photo-url="${url}" alt="Photo" onclick="openPhotoModal('${url}')" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'photo-placeholder\\' onclick=\\'openPhotoModal(null)\\'>📷</div>';">`;
-            } else {
-                return `<div class="photo-placeholder" onclick="openPhotoModal(null)">📷</div>`;
+This is regarding your academic performance in the current semester. Our records indicate that you are falling behind in the following areas:
+
+- Attendance requirements
+- Assignment submissions
+- Internal assessments
+
+You are requested to meet your faculty advisor immediately to discuss your academic progress and create a plan for improvement.
+
+Please bring this to the attention of your parents/guardians as well.
+
+PRN: [PRN]
+Student Name: [Student Name]
+Division: [Division]
+Batch: [Batch]
+
+Best regards,
+Department of Applied Sciences & Humanities
+PCCOE, Pune`
+            },
+            'exam_performance': {
+                name: 'Exam Performance Review',
+                subject: 'Discussion on Your Recent Exam Performance - PCCOE',
+                body: `Dear [Student Name],
+
+This email is to discuss your performance in the recent Summative Assessments. Our analysis shows room for improvement in your scores.
+
+Key Observations:
+- Below-average performance in recent exams
+- Need for focused preparation
+- Regular revision required
+
+We recommend that you:
+1. Meet with your subject faculty for guidance
+2. Join remedial classes if available
+3. Follow a structured study schedule
+
+We believe with proper guidance and effort, you can significantly improve your performance.
+
+PRN: [PRN]
+Student Name: [Student Name]
+Division: [Division]
+Batch: [Batch]
+
+Sincerely,
+Examination Cell
+PCCOE, Pune`
+            },
+            'attendance': {
+                name: 'Low Attendance Alert',
+                subject: 'Urgent: Low Attendance Alert - PCCOE',
+                body: `Dear [Student Name],
+
+This is to inform you that your attendance percentage has fallen below the required minimum (75%) for the current semester.
+
+Current Attendance: [Attendance]%
+Required Minimum: 75%
+
+As per university norms, students with less than 75% attendance may be debarred from appearing for the end-semester examinations.
+
+Immediate Actions Required:
+1. Start attending all classes regularly
+2. Submit leave applications for any absences with valid reasons
+3. Meet your class coordinator to discuss this matter
+
+Please ensure regular attendance henceforth to avoid any academic consequences.
+
+PRN: [PRN]
+Student Name: [Student Name]
+Division: [Division]
+Batch: [Batch]
+
+Regards,
+Department of Applied Sciences & Humanities
+PCCOE, Pune`
+            },
+            'exam_schedule': {
+                name: 'SA Exam Schedule',
+                subject: 'Summative Assessment (SA) Examination Schedule - PCCOE',
+                body: `Dear Student,
+
+Please find below the schedule for the upcoming Summative Assessment (SA) Examinations:
+
+**Exam Schedule:**
+- Date: [Date Range]
+- Time: As per seating arrangement
+- Venue: PCCOE Examination Halls
+
+**Important Guidelines:**
+1. Carry your college ID card and hall ticket
+2. Reach the examination center 30 minutes before the exam
+3. Follow all examination rules and regulations
+4. Electronic devices are strictly prohibited
+
+Seating arrangement will be displayed on the notice boards one week before the exams.
+
+For any queries, please contact the examination cell.
+
+PRN: [PRN]
+Student Name: [Student Name]
+Division: [Division]
+Batch: [Batch]
+
+Best wishes,
+Examination Cell
+PCCOE, Pune`
+            },
+            'parent_meeting': {
+                name: 'Parent-Teacher Meeting',
+                subject: 'Invitation for Parent-Teacher Meeting - PCCOE',
+                body: `Respected Parents,
+
+You are cordially invited to attend the Parent-Teacher Meeting scheduled as per details below:
+
+**Meeting Details:**
+- Date: [Date]
+- Time: [Time]
+- Venue: PCCOE Campus, Department of Applied Sciences & Humanities
+
+**Agenda:**
+1. Discussion of your ward's academic performance
+2. Attendance and behavioral aspects
+3. Future planning and guidance
+4. One-on-one interaction with faculty
+
+Your presence is highly valued and will help us work together for the betterment of your ward's academic journey.
+
+Student Details:
+PRN: [PRN]
+Student Name: [Student Name]
+Division: [Division]
+Batch: [Batch]
+
+We look forward to your participation.
+
+Warm regards,
+Department of Applied Sciences & Humanities
+PCCOE, Pune`
+            }
+        };
+
+        // Check if user is already logged in
+        function checkLoginStatus() {
+            const savedLogin = localStorage.getItem('pccoeLogin');
+            if (savedLogin) {
+                const loginData = JSON.parse(savedLogin);
+                if (loginData.loggedIn && loginData.expiry > Date.now()) {
+                    isLoggedIn = true;
+                    isAdmin = loginData.isAdmin || false;
+                    showMainApp();
+                }
             }
         }
 
-        function openPhotoModal(imgUrl) {
-            const modal = new bootstrap.Modal(document.getElementById('photoModal'));
-            const imgElem = document.getElementById('fullPhoto');
-            if (imgUrl) {
-                imgElem.src = imgUrl;
-                imgElem.onerror = () => { imgElem.src = ''; imgElem.alt = 'Image not found'; };
+        // Handle login
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+            const loginError = document.getElementById('loginError');
+            
+            // Clear previous error
+            loginError.style.display = 'none';
+            
+            // Validate credentials
+            if (VALID_CREDENTIALS[username] && VALID_CREDENTIALS[username] === password) {
+                isLoggedIn = true;
+                isAdmin = (username === 'admin');
+                
+                // Save login if "Remember me" is checked
+                if (rememberMe) {
+                    const loginData = {
+                        loggedIn: true,
+                        isAdmin: isAdmin,
+                        expiry: Date.now() + (7 * 24 * 60 * 60 * 1000) // 7 days
+                    };
+                    localStorage.setItem('pccoeLogin', JSON.stringify(loginData));
+                } else {
+                    // Session only
+                    sessionStorage.setItem('pccoeSession', JSON.stringify({ loggedIn: true, isAdmin: isAdmin }));
+                }
+                
+                showMainApp();
             } else {
-                imgElem.src = '';
-                imgElem.alt = 'No photo available';
+                loginError.style.display = 'block';
+                document.getElementById('password').value = '';
             }
-            modal.show();
         }
 
+        // Logout function
+        function logout() {
+            isLoggedIn = false;
+            isAdmin = false;
+            localStorage.removeItem('pccoeLogin');
+            sessionStorage.removeItem('pccoeSession');
+            showLogin();
+        }
+
+        // Show login screen
+        function showLogin() {
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('mainSection').style.display = 'none';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('loginError').style.display = 'none';
+            document.getElementById('username').focus();
+        }
+
+        // Show main application
+        function showMainApp() {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('mainSection').style.display = 'block';
+            
+            // Set current date
+            document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-IN', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
+            
+            // Show/hide admin features
+            if (isAdmin) {
+                document.getElementById('adminFeatures').style.display = 'block';
+            } else {
+                document.getElementById('adminFeatures').style.display = 'none';
+            }
+            
+            // Hide elements initially
+            document.getElementById('noResultsMessage').style.display = 'block';
+            document.getElementById('searchResultsHeader').style.display = 'none';
+            
+            // Initialize modals
+            editModal = new bootstrap.Modal(document.getElementById('editStudentModal'));
+            addModal = new bootstrap.Modal(document.getElementById('addStudentModal'));
+            
+            // Load CSV data
+            loadCSVData();
+        }
+
+        // Initialize DataTable
+        function initDataTable(data) {
+            if (dataTable) {
+                dataTable.destroy();
+                $('#studentTable').empty();
+            }
+
+            // Show/hide action column based on admin status
+            const actionColumn = isAdmin ? {
+                data: null,
+                render: function(data, type, row, meta) {
+                    return `
+                        <button class="edit-btn" onclick="editStudent(${meta.row})" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="delete-btn" onclick="deleteStudent(${meta.row})" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    `;
+                }
+            } : null;
+
+            const columns = [
+                {
+                    data: null,
+                    orderable: false,
+                    render: function(data, type, row, meta) {
+                        const isChecked = selectedStudents.has(row._id);
+                        return `<input type="checkbox" class="student-checkbox" data-id="${row._id}" ${isChecked ? 'checked' : ''} onchange="toggleStudentSelection(${row._id})">`;
+                    }
+                },
+                { 
+                    data: null,
+                    render: function(data, type, row, meta) {
+                        return meta.row + 1;
+                    }
+                },
+                { 
+                    data: 'offering_year',
+                    render: function(data) {
+                        return data || '2022-2025';
+                    }
+                },
+                { 
+                    data: 'prn',
+                    render: function(data) {
+                        return `<span class="badge-prn">${data}</span>`;
+                    }
+                },
+                { 
+                    data: 'division',
+                    render: function(data) {
+                        return data ? `<span class="division-badge">${data}</span>` : '';
+                    }
+                },
+                { 
+                    data: 'batch',
+                    render: function(data) {
+                        return data ? `<span class="batch-badge">${data}</span>` : '';
+                    }
+                },
+                { 
+                    data: 'program',
+                    render: function(data) {
+                        return data ? `<span class="program-badge">${data}</span>` : '';
+                    }
+                },
+                { data: 'name' },
+                { 
+                    data: 'student_mobile',
+                    render: function(data) {
+                        return `
+                            <div class="mobile-container">
+                                <div class="mobile-text">
+                                    <i class="fas fa-phone text-success me-1"></i>${data}
+                                </div>
+                                <button class="copy-icon-btn" onclick="copyToClipboard('${data}', 'Student mobile number')" title="Copy Student Mobile">
+                                    <i class="far fa-copy"></i>
+                                </button>
+                            </div>
+                        `;
+                    }
+                },
+                { 
+                    data: 'parent_mobile',
+                    render: function(data) {
+                        return `
+                            <div class="mobile-container">
+                                <div class="mobile-text">
+                                    <i class="fas fa-user-friends text-primary me-1"></i>${data}
+                                </div>
+                                <button class="copy-icon-btn" onclick="copyToClipboard('${data}', 'Parent mobile number')" title="Copy Parent Mobile">
+                                    <i class="far fa-copy"></i>
+                                </button>
+                            </div>
+                        `;
+                    }
+                },
+                { 
+                    data: 'email',
+                    render: function(data, type, row, meta) {
+                        const email = data || '';
+                        const studentName = row.name || '';
+                        const prn = row.prn || '';
+                        const division = row.division || '';
+                        const batch = row.batch || '';
+                        
+                        return `
+                            <div class="email-container">
+                                <div class="email-text">
+                                    <i class="fas fa-envelope text-danger me-1"></i>${email}
+                                </div>
+                                <div class="d-flex gap-1">
+                                    <button class="copy-icon-btn" onclick="copyToClipboard('${email}', 'Email address')" title="Copy Email">
+                                        <i class="far fa-copy"></i>
+                                    </button>
+                                    <button class="send-email-btn" onclick="sendSingleEmail('${email}', '${studentName}', '${prn}')" title="Send Email">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="email-actions">
+                                <button class="btn btn-sm btn-outline-primary" onclick="sendTemplateEmail('${email}', '${studentName}', '${prn}', '${division}', '${batch}', 'defaulter')">
+                                    Defaulter
+                                </button>
+                                <button class="btn btn-sm btn-outline-warning" onclick="sendTemplateEmail('${email}', '${studentName}', '${prn}', '${division}', '${batch}', 'exam_performance')">
+                                    Exam
+                                </button>
+                                <button class="btn btn-sm btn-outline-info" onclick="sendTemplateEmail('${email}', '${studentName}', '${prn}', '${division}', '${batch}', 'attendance')">
+                                    Attendance
+                                </button>
+                            </div>
+                        `;
+                    }
+                }
+            ];
+
+            // Add action column for admin
+            if (actionColumn) {
+                columns.push(actionColumn);
+                document.getElementById('actionColumnHeader').style.display = '';
+            } else {
+                document.getElementById('actionColumnHeader').style.display = 'none';
+            }
+
+            dataTable = $('#studentTable').DataTable({
+                data: data,
+                columns: columns,
+                pageLength: 10,
+                lengthMenu: [], // Empty array to hide the "Show entries" dropdown
+                language: {
+                    search: "Search in results:",
+                    info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                    infoEmpty: "No entries found",
+                    infoFiltered: "(filtered from _MAX_ total entries)"
+                },
+                drawCallback: function() {
+                    // Update export count after each draw
+                    updateExportCount();
+                    updateCurrentSearchResults();
+                    // Update the select all checkbox state
+                    updateSelectAllCheckbox();
+                }
+            });
+
+            // Update statistics
+            updateTotalCount();
+            updateExportCount();
+            updateSelectedCount(); // Update the selected count display
+        }
+
+        // Load CSV from GitHub
+        async function loadCSVData() {
+            if (!isLoggedIn) return;
+            
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('dataStatus').textContent = 'Loading...';
+            document.getElementById('noResultsMessage').style.display = 'none';
+            disableExportButtons();
+            
+            try {
+                // Your CSV file URL on GitHub
+                const csvUrl = 'https://raw.githubusercontent.com/dineshkute90/pccoe_fy_contact_details/main/contact_testing_csv.csv';
+                
+                const response = await fetch(csvUrl);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const csvText = await response.text();
+                
+                Papa.parse(csvText, {
+                    header: true,
+                    skipEmptyLines: true,
+                    dynamicTyping: false,
+                    complete: function(results) {
+                        if (results.errors.length > 0) {
+                            console.warn('CSV parsing errors:', results.errors);
+                        }
+                        
+                        processCSVData(results.data);
+                        document.getElementById('loading').style.display = 'none';
+                        document.getElementById('dataStatus').textContent = 'Loaded';
+                        document.getElementById('noResultsMessage').style.display = 'block';
+                        enableExportButtons();
+                    },
+                    error: function(error) {
+                        console.error('CSV parsing error:', error);
+                        document.getElementById('dataStatus').textContent = 'Error';
+                        document.getElementById('loading').style.display = 'none';
+                        document.getElementById('noResultsMessage').style.display = 'block';
+                        disableExportButtons();
+                        showCopySuccess('Error loading CSV file. Please check console for details.', 'error');
+                    }
+                });
+            } catch (error) {
+                console.error('Failed to fetch CSV:', error);
+                document.getElementById('dataStatus').textContent = 'Failed';
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('noResultsMessage').style.display = 'block';
+                disableExportButtons();
+                showCopySuccess('Failed to load CSV file. Please check if the file exists.', 'error');
+            }
+        }
+
+        // Process CSV data
+        function processCSVData(data) {
+            allStudents = [];
+            
+            // Check if data is empty
+            if (!data || data.length === 0) {
+                console.error('No data found in CSV');
+                showCopySuccess('No data found in CSV file', 'error');
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('noResultsMessage').style.display = 'block';
+                disableExportButtons();
+                return;
+            }
+            
+            console.log('Total records found in CSV:', data.length);
+            
+            data.forEach((row, index) => {
+                // Debug: Log column names from first row
+                if (index === 0) {
+                    console.log('Available columns:', Object.keys(row));
+                }
+                
+                // Map CSV columns to our data structure with new columns
+                const student = {
+                    sr_no: row['Sr. No.'] || row['sr_no'] || row['Sr No'] || index + 1,
+                    offering_year: row['Offering Year'] || row['offering_year'] || row['Offering_Year'] || '2022-2025',
+                    prn: row['PRN'] || row['prn'] || row['PRN Number'] || '',
+                    division: row['Division'] || row['division'] || '',
+                    batch: row['Batch'] || row['batch'] || '',
+                    program: row['Program'] || row['program'] || '',
+                    name: row['Student Name'] || row['name'] || row['Student_Name'] || row['Name'] || '',
+                    student_mobile: row['Student Mobile Number'] || row['student_mobile'] || row['Student Mobile'] || row['Student_Mobile'] || row['Mobile'] || '',
+                    parent_mobile: row['Parent Mobile Number'] || row['parent_mobile'] || row['Parent Mobile'] || row['Parent_Mobile'] || row['Parent Phone'] || '',
+                    // Try multiple possible column names for email
+                    email: row['Email ID'] || row['email'] || row['Email'] || row['Student Email ID'] || 
+                           row['Student Email'] || row['Student_Email'] || row['Email Address'] || row['email_address'] || ''
+                };
+                
+                // Log if email is found
+                if (!student.email && (student.prn || student.name)) {
+                    console.warn('No email found for student:', student.name, student.prn);
+                }
+                
+                if (student.prn || student.name) {
+                    // Add unique ID for selection
+                    student._id = index;
+                    student._selected = false;
+                    allStudents.push(student);
+                }
+            });
+            
+            console.log('Processed students:', allStudents.length);
+            console.log('Sample student with email:', allStudents[0] ? allStudents[0].email : 'No data');
+            
+            // Initialize DataTable with the data
+            initDataTable(allStudents);
+            
+            // Force update of total count
+            updateTotalCount();
+            updateExportCount();
+            enableExportButtons();
+        }
+
+        // Parse PRN input with multiple separators
+        function parsePRNInput(input) {
+            if (!input) return [];
+            
+            // Replace various separators with comma
+            let normalized = input
+                .replace(/;/g, ',')   // Replace semicolons with commas
+                .replace(/\t/g, ',')  // Replace tabs with commas
+                .replace(/\n/g, ',')  // Replace new lines with commas
+                .replace(/\s+/g, ','); // Replace multiple spaces with comma
+            
+            // Split by comma and clean up
+            return normalized
+                .split(',')
+                .map(prn => prn.trim())
+                .filter(prn => prn.length > 0)
+                .filter((prn, index, self) => self.indexOf(prn) === index); // Remove duplicates
+        }
+
+        // Main search function
+        function searchTable() {
+            // Clear selected students on new search
+            selectedStudents.clear();
+            updateSelectedCount();
+            updateSelectAllCheckbox();
+            
+            const prnSearch = document.getElementById('searchPRN').value.trim();
+            const nameSearch = document.getElementById('searchName').value.trim();
+            const divisionSearch = document.getElementById('searchDivision').value.trim();
+            const filterColumn = document.getElementById('filterColumn').value;
+            
+            // Clear multi-PRN search
+            document.getElementById('multiPRNSearch').value = '';
+            document.getElementById('prnBadgesContainer').style.display = 'none';
+            
+            if (!dataTable) return;
+            
+            // Reset search
+            dataTable.search('').draw();
+            
+            if (!prnSearch && !nameSearch && !divisionSearch) {
+                // No search terms, show all data initially
+                clearSearchResults();
+                return;
+            }
+            
+            // Store search criteria for display
+            let searchCriteria = '';
+            if (prnSearch) searchCriteria = `PRN: ${prnSearch}`;
+            if (nameSearch) searchCriteria = searchCriteria ? `${searchCriteria}, Name: ${nameSearch}` : `Name: ${nameSearch}`;
+            if (divisionSearch) searchCriteria = searchCriteria ? `${searchCriteria}, Division: ${divisionSearch}` : `Division: ${divisionSearch}`;
+            lastSearchCriteria = searchCriteria;
+            
+            // Custom filtering
+            $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+                if (settings.nTable.id !== 'studentTable') return true;
+                
+                const student = allStudents[dataIndex];
+                if (!student) return false;
+                
+                const studentPRN = (student.prn || '').toLowerCase();
+                const studentName = (student.name || '').toLowerCase();
+                const studentDivision = (student.division || '').toLowerCase();
+                const studentBatch = (student.batch || '').toLowerCase();
+                const studentProgram = (student.program || '').toLowerCase();
+                const studentMobile = (student.student_mobile || '').toLowerCase();
+                const parentMobile = (student.parent_mobile || '').toLowerCase();
+                const studentEmail = (student.email || '').toLowerCase();
+                const offeringYear = (student.offering_year || '').toLowerCase();
+                
+                if (filterColumn === 'all') {
+                    // Search in all columns
+                    const searchTerm = (prnSearch || nameSearch || divisionSearch).toLowerCase();
+                    if (!searchTerm) return true;
+                    
+                    return (
+                        studentPRN.includes(searchTerm) ||
+                        studentName.includes(searchTerm) ||
+                        studentDivision.includes(searchTerm) ||
+                        studentBatch.includes(searchTerm) ||
+                        studentProgram.includes(searchTerm) ||
+                        studentMobile.includes(searchTerm) ||
+                        parentMobile.includes(searchTerm) ||
+                        studentEmail.includes(searchTerm) ||
+                        offeringYear.includes(searchTerm)
+                    );
+                } else {
+                    // Search in specific column
+                    let searchTerm = '';
+                    if (filterColumn === '1') searchTerm = prnSearch;
+                    else if (filterColumn === '2') searchTerm = nameSearch;
+                    else if (filterColumn === '3') searchTerm = divisionSearch;
+                    else if (filterColumn === '4') searchTerm = prnSearch; // For batch, use same as PRN search
+                    else if (filterColumn === '5') searchTerm = prnSearch; // For program, use same as PRN search
+                    else if (filterColumn === '6') searchTerm = prnSearch; // For mobile, use same as PRN search
+                    else if (filterColumn === '7') searchTerm = prnSearch; // For parent mobile, use same as PRN search
+                    else if (filterColumn === '8') searchTerm = prnSearch; // For email, use same as PRN search
+                    else if (filterColumn === '9') searchTerm = prnSearch; // For offering year, use same as PRN search
+                    
+                    searchTerm = searchTerm.toLowerCase();
+                    if (!searchTerm) return true;
+                    
+                    switch(filterColumn) {
+                        case '1': return studentPRN.includes(searchTerm);
+                        case '2': return studentName.includes(searchTerm);
+                        case '3': return studentDivision.includes(searchTerm);
+                        case '4': return studentBatch.includes(searchTerm);
+                        case '5': return studentProgram.includes(searchTerm);
+                        case '6': return studentMobile.includes(searchTerm);
+                        case '7': return parentMobile.includes(searchTerm);
+                        case '8': return studentEmail.includes(searchTerm);
+                        case '9': return offeringYear.includes(searchTerm);
+                        default: return true;
+                    }
+                }
+            });
+            
+            dataTable.draw();
+            
+            // Remove the custom filter function
+            $.fn.dataTable.ext.search.pop();
+            
+            // Update search results
+            updateCurrentSearchResults();
+            updateSearchResultsDisplay();
+            
+            // Show/hide appropriate elements
+            const resultsCount = currentSearchResults.length;
+            if (resultsCount > 0) {
+                document.getElementById('searchResultsHeader').style.display = 'flex';
+                document.getElementById('noResultsMessage').style.display = 'none';
+            } else {
+                document.getElementById('searchResultsHeader').style.display = 'none';
+                document.getElementById('noResultsMessage').style.display = 'block';
+                document.getElementById('noResultsMessage').innerHTML = `
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h5>No Results Found</h5>
+                    <p class="text-muted">No students found matching: <strong>${lastSearchCriteria}</strong></p>
+                    <p class="text-muted small">Please try different search criteria.</p>
+                `;
+            }
+        }
+
+        // Search multiple PRNs
+        function searchMultiplePRNs() {
+            // Clear selected students on new search
+            selectedStudents.clear();
+            updateSelectedCount();
+            updateSelectAllCheckbox();
+            
+            const multiPRNInput = document.getElementById('multiPRNSearch').value.trim();
+            
+            // Clear single search fields
+            document.getElementById('searchPRN').value = '';
+            document.getElementById('searchName').value = '';
+            document.getElementById('searchDivision').value = '';
+            document.getElementById('filterColumn').value = 'all';
+            
+            if (!dataTable) return;
+            
+            if (!multiPRNInput) {
+                // If no PRNs, clear results
+                clearSearchResults();
+                return;
+            }
+            
+            // Parse PRNs using the enhanced parser
+            const prnList = parsePRNInput(multiPRNInput);
+            
+            if (prnList.length === 0) {
+                showCopySuccess('No valid PRNs found in input. Please check your input.', 'error');
+                return;
+            }
+            
+            // Store search criteria for display
+            lastSearchCriteria = `${prnList.length} PRN(s): ${prnList.slice(0, 5).join(', ')}${prnList.length > 5 ? '...' : ''}`;
+            
+            // Display PRN badges (show first 10 only to avoid clutter)
+            const badgesContainer = document.getElementById('prnBadges');
+            badgesContainer.innerHTML = '';
+            
+            const displayPrns = prnList.slice(0, 10);
+            displayPrns.forEach(prn => {
+                const badge = document.createElement('span');
+                badge.className = 'prn-badge';
+                badge.textContent = prn;
+                badgesContainer.appendChild(badge);
+            });
+            
+            if (prnList.length > 10) {
+                const moreBadge = document.createElement('span');
+                moreBadge.className = 'prn-badge';
+                moreBadge.textContent = `+${prnList.length - 10} more`;
+                moreBadge.style.backgroundColor = '#ff9800';
+                moreBadge.style.color = '#1a237e';
+                badgesContainer.appendChild(moreBadge);
+            }
+            
+            document.getElementById('prnBadgesContainer').style.display = 'block';
+            
+            // Custom filtering for multiple PRNs
+            $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+                if (settings.nTable.id !== 'studentTable') return true;
+                
+                const student = allStudents[dataIndex];
+                if (!student) return false;
+                
+                const studentPRN = (student.prn || '').toLowerCase();
+                
+                // Check if this student's PRN matches any in our list
+                for (const searchPRN of prnList) {
+                    if (studentPRN === searchPRN.toLowerCase()) {
+                        return true;
+                    }
+                }
+                
+                return false;
+            });
+            
+            dataTable.draw();
+            
+            // Remove the custom filter function
+            $.fn.dataTable.ext.search.pop();
+            
+            // Update search results
+            updateCurrentSearchResults();
+            updateSearchResultsDisplay();
+            
+            // Show/hide appropriate elements
+            const resultsCount = currentSearchResults.length;
+            if (resultsCount > 0) {
+                document.getElementById('searchResultsHeader').style.display = 'flex';
+                document.getElementById('noResultsMessage').style.display = 'none';
+                showCopySuccess(`Found ${resultsCount} student(s) matching ${prnList.length} PRN(s)`, 'success');
+            } else {
+                document.getElementById('searchResultsHeader').style.display = 'none';
+                document.getElementById('noResultsMessage').style.display = 'block';
+                document.getElementById('noResultsMessage').innerHTML = `
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h5>No Results Found</h5>
+                    <p class="text-muted">No students found matching the ${prnList.length} PRN(s) provided.</p>
+                    <p class="text-muted small">Please check the PRN numbers and try again.</p>
+                `;
+                showCopySuccess(`No students found for the ${prnList.length} PRN(s) provided`, 'error');
+            }
+        }
+
+        // Clear all search
+        function clearSearch() {
+            // Clear all search fields
+            document.getElementById('searchPRN').value = '';
+            document.getElementById('searchName').value = '';
+            document.getElementById('searchDivision').value = '';
+            document.getElementById('multiPRNSearch').value = '';
+            document.getElementById('filterColumn').value = 'all';
+            
+            // Hide PRN badges
+            document.getElementById('prnBadgesContainer').style.display = 'none';
+            
+            // Clear selected students
+            selectedStudents.clear();
+            updateSelectedCount();
+            updateSelectAllCheckbox();
+            
+            // Clear search results
+            clearSearchResults();
+        }
+
+        // Clear search results display
+        function clearSearchResults() {
+            if (dataTable) {
+                dataTable.search('').draw();
+                currentSearchResults = [];
+                updateCurrentSearchResults();
+                document.getElementById('searchResultsHeader').style.display = 'none';
+                document.getElementById('noResultsMessage').style.display = 'block';
+                document.getElementById('noResultsMessage').innerHTML = `
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h5>Search Students</h5>
+                    <p class="text-muted">Enter search criteria above to find students.</p>
+                    <p class="text-muted small">Search results will be displayed here and available for export.</p>
+                `;
+            }
+        }
+
+        // Update current search results array
+        function updateCurrentSearchResults() {
+            if (!dataTable) return;
+            
+            const filteredIndices = dataTable.rows({ search: 'applied' }).indexes().toArray();
+            currentSearchResults = filteredIndices.map(index => allStudents[index]);
+            updateExportCount();
+        }
+
+        // Update search results display
+        function updateSearchResultsDisplay() {
+            const resultsCount = currentSearchResults.length;
+            document.getElementById('resultsCount').textContent = resultsCount;
+            document.getElementById('searchResults').textContent = resultsCount;
+            
+            // Update search criteria display
+            if (lastSearchCriteria) {
+                document.getElementById('searchCriteria').textContent = `(${lastSearchCriteria})`;
+            } else {
+                document.getElementById('searchCriteria').textContent = '';
+            }
+        }
+
+        // Update export count
+        function updateExportCount() {
+            if (!dataTable) {
+                document.getElementById('exportCount').textContent = '0';
+                return;
+            }
+            
+            const filteredCount = dataTable.rows({ search: 'applied' }).count();
+            document.getElementById('exportCount').textContent = filteredCount;
+        }
+
+        // Disable export buttons
+        function disableExportButtons() {
+            document.getElementById('exportSearchBtn').disabled = true;
+            document.getElementById('exportHeaderBtn').disabled = true;
+        }
+
+        // Enable export buttons
+        function enableExportButtons() {
+            document.getElementById('exportSearchBtn').disabled = false;
+            document.getElementById('exportHeaderBtn').disabled = false;
+        }
+
+        // Export search results
+        function exportSearchResults() {
+            if (!isLoggedIn) {
+                showLogin();
+                return;
+            }
+            
+            if (currentSearchResults.length === 0) {
+                showCopySuccess('No search results to export. Please search first.', 'error');
+                return;
+            }
+            
+            const includeTimestamp = document.getElementById('includeTimestamp').checked;
+            const format = document.getElementById('exportFormat').value;
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+            
+            let fileName = 'PCCOE_Search_Results';
+            
+            if (includeTimestamp) {
+                fileName += `_${timestamp}`;
+            }
+            
+            fileName += `.${format}`;
+            
+            // Prepare worksheet data
+            const worksheetData = [
+                ['PCCOE Student Directory - Department of Applied Sciences & Humanities'],
+                ['Exported on: ' + new Date().toLocaleString('en-IN')],
+                ['Search Criteria: ' + (lastSearchCriteria || 'All Students')],
+                ['Total Records: ' + currentSearchResults.length],
+                [''], // Empty row
+                ['Sr. No.', 'Offering Year', 'PRN', 'Division', 'Batch', 'Program', 'Student Name', 'Student Mobile', 'Parent Mobile', 'Email ID']
+            ];
+            
+            // Add student data
+            currentSearchResults.forEach((student, index) => {
+                worksheetData.push([
+                    index + 1,
+                    student.offering_year || '2022-2025',
+                    student.prn || '',
+                    student.division || '',
+                    student.batch || '',
+                    student.program || '',
+                    student.name || '',
+                    student.student_mobile || '',
+                    student.parent_mobile || '',
+                    student.email || ''
+                ]);
+            });
+            
+            // Create workbook
+            const workbook = XLSX.utils.book_new();
+            const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+            
+            // Set column widths
+            const colWidths = [
+                { wch: 8 },   // Sr. No.
+                { wch: 12 },  // Offering Year
+                { wch: 12 },  // PRN
+                { wch: 10 },  // Division
+                { wch: 10 },  // Batch
+                { wch: 15 },  // Program
+                { wch: 20 },  // Student Name
+                { wch: 15 },  // Student Mobile
+                { wch: 15 },  // Parent Mobile
+                { wch: 25 }   // Email ID
+            ];
+            worksheet['!cols'] = colWidths;
+            
+            // Add worksheet to workbook
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Students');
+            
+            try {
+                if (format === 'xlsx') {
+                    XLSX.writeFile(workbook, fileName);
+                } else {
+                    // For CSV, convert to CSV string
+                    const csv = XLSX.utils.sheet_to_csv(worksheet);
+                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                    const link = document.createElement('a');
+                    const url = URL.createObjectURL(blob);
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', fileName);
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                }
+                
+                showCopySuccess(`Exported ${currentSearchResults.length} search results to ${fileName}`, 'success');
+            } catch (error) {
+                console.error('Export error:', error);
+                showCopySuccess('Error exporting file. Please try again.', 'error');
+            }
+        }
+
+        // Email sending functions
+        function sendSingleEmail(email, studentName, prn) {
+            if (!isLoggedIn) {
+                showLogin();
+                return;
+            }
+            
+            if (!email) {
+                showCopySuccess('No email address available for this student', 'error');
+                return;
+            }
+            
+            // Open Gmail with blank email
+            const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent('Message from PCCOE')}`;
+            window.open(gmailUrl, '_blank');
+        }
+
+        function sendTemplateEmail(email, studentName, prn, division, batch, templateKey) {
+            if (!isLoggedIn) {
+                showLogin();
+                return;
+            }
+            
+            if (!email) {
+                showCopySuccess('No email address available for this student', 'error');
+                return;
+            }
+            
+            const template = EMAIL_TEMPLATES[templateKey];
+            if (!template) {
+                showCopySuccess('Template not found', 'error');
+                return;
+            }
+            
+            // Replace placeholders in template
+            let subject = template.subject;
+            let body = template.body;
+            
+            subject = subject.replace('[Student Name]', studentName);
+            body = body.replace(/\[Student Name\]/g, studentName)
+                       .replace(/\[PRN\]/g, prn)
+                       .replace(/\[Division\]/g, division)
+                       .replace(/\[Batch\]/g, batch);
+            
+            // Open Gmail with pre-filled draft
+            const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            window.open(gmailUrl, '_blank');
+            
+            showCopySuccess(`Opening Gmail for ${studentName} with ${template.name}`, 'success');
+        }
+
+        // Bulk email functions
+        function openBulkEmailModal() {
+            if (!isAdmin) {
+                showCopySuccess('Admin access required', 'error');
+                return;
+            }
+            
+            if (currentSearchResults.length === 0) {
+                showCopySuccess('No students in search results. Please search for students first.', 'error');
+                return;
+            }
+            
+            // Update selected students count
+            document.getElementById('selectedStudentsCount').textContent = currentSearchResults.length;
+            
+            // Update email list
+            const emailList = document.getElementById('selectedStudentsEmails');
+            emailList.innerHTML = '';
+            
+            currentSearchResults.slice(0, 10).forEach(student => {
+                const emailItem = document.createElement('div');
+                emailItem.className = 'text-truncate';
+                emailItem.title = `${student.name} - ${student.email}`;
+                emailItem.textContent = `${student.name}: ${student.email}`;
+                emailList.appendChild(emailItem);
+            });
+            
+            if (currentSearchResults.length > 10) {
+                const moreItem = document.createElement('div');
+                moreItem.className = 'text-muted';
+                moreItem.textContent = `...and ${currentSearchResults.length - 10} more students`;
+                emailList.appendChild(moreItem);
+            }
+            
+            // Load templates
+            const templateList = document.getElementById('templateList');
+            templateList.innerHTML = '';
+            
+            Object.keys(EMAIL_TEMPLATES).forEach(key => {
+                const template = EMAIL_TEMPLATES[key];
+                const templateDiv = document.createElement('div');
+                templateDiv.className = 'template-item';
+                templateDiv.dataset.templateKey = key;
+                templateDiv.onclick = function() {
+                    // Remove active class from all
+                    document.querySelectorAll('.template-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    // Add active to clicked
+                    this.classList.add('active');
+                    // Show preview
+                    showTemplatePreview(key);
+                };
+                
+                templateDiv.innerHTML = `
+                    <div class="template-subject">${template.name}</div>
+                    <div class="template-content">${template.subject}</div>
+                `;
+                
+                templateList.appendChild(templateDiv);
+            });
+            
+            // Show first template by default
+            if (Object.keys(EMAIL_TEMPLATES).length > 0) {
+                const firstKey = Object.keys(EMAIL_TEMPLATES)[0];
+                document.querySelector(`[data-template-key="${firstKey}"]`).classList.add('active');
+                showTemplatePreview(firstKey);
+            }
+            
+            // Reset progress
+            document.getElementById('emailProgress').style.display = 'none';
+            document.getElementById('sendBulkEmailsBtn').disabled = false;
+            
+            // Show modal
+            const bulkEmailModal = new bootstrap.Modal(document.getElementById('bulkEmailModal'));
+            bulkEmailModal.show();
+        }
+
+        function showTemplatePreview(templateKey) {
+            const template = EMAIL_TEMPLATES[templateKey];
+            const previewDiv = document.getElementById('templatePreview');
+            
+            previewDiv.innerHTML = `
+                <div class="template-subject">Subject: ${template.subject}</div>
+                <div class="template-content">${template.body.replace(/\n/g, '<br>')}</div>
+            `;
+        }
+
+        function sendBulkEmails() {
+            const activeTemplate = document.querySelector('.template-item.active');
+            if (!activeTemplate) {
+                showCopySuccess('Please select a template first', 'error');
+                return;
+            }
+            
+            const templateKey = activeTemplate.dataset.templateKey;
+            const template = EMAIL_TEMPLATES[templateKey];
+            
+            // Disable send button and show progress
+            const sendBtn = document.getElementById('sendBulkEmailsBtn');
+            sendBtn.disabled = true;
+            
+            const progressDiv = document.getElementById('emailProgress');
+            const progressBar = document.getElementById('emailProgressBar');
+            const progressText = document.getElementById('emailProgressText');
+            
+            progressDiv.style.display = 'block';
+            
+            // Filter students with valid email
+            const studentsWithEmail = currentSearchResults.filter(student => 
+                student.email && student.email.includes('@')
+            );
+            
+            if (studentsWithEmail.length === 0) {
+                showCopySuccess('No students with valid email addresses found', 'error');
+                sendBtn.disabled = false;
+                progressDiv.style.display = 'none';
+                return;
+            }
+            
+            let sentCount = 0;
+            const totalCount = studentsWithEmail.length;
+            
+            progressText.textContent = `${sentCount}/${totalCount}`;
+            progressBar.style.width = '0%';
+            
+            // Send emails one by one with delay to avoid popup blocking
+            function sendNextEmail(index) {
+                if (index >= totalCount) {
+                    // All emails sent
+                    sendBtn.disabled = false;
+                    showCopySuccess(`Opened Gmail for ${sentCount} student(s)`, 'success');
+                    
+                    // Close modal after delay
+                    setTimeout(() => {
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('bulkEmailModal'));
+                        if (modal) modal.hide();
+                    }, 2000);
+                    
+                    return;
+                }
+                
+                const student = studentsWithEmail[index];
+                
+                // Prepare personalized email
+                let subject = template.subject;
+                let body = template.body;
+                
+                subject = subject.replace('[Student Name]', student.name || 'Student');
+                body = body.replace(/\[Student Name\]/g, student.name || 'Student')
+                           .replace(/\[PRN\]/g, student.prn || '')
+                           .replace(/\[Division\]/g, student.division || '')
+                           .replace(/\[Batch\]/g, student.batch || '')
+                           .replace(/\[Attendance\]/g, 'To be updated');
+                
+                // Open Gmail in new tab
+                const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(student.email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                window.open(gmailUrl, '_blank');
+                
+                sentCount++;
+                
+                // Update progress
+                progressText.textContent = `${sentCount}/${totalCount}`;
+                progressBar.style.width = `${(sentCount / totalCount) * 100}%`;
+                
+                // Send next email after delay (to avoid popup blocking)
+                setTimeout(() => sendNextEmail(index + 1), 1000);
+            }
+            
+            // Start sending emails
+            sendNextEmail(0);
+        }
+
+        // ADMIN FUNCTIONS
+
+        // Show all students (admin only)
+        function showAllStudents() {
+            if (!isAdmin) {
+                showCopySuccess('Admin access required', 'error');
+                return;
+            }
+            
+            clearSearch();
+            document.getElementById('searchResultsHeader').style.display = 'flex';
+            document.getElementById('resultsCount').textContent = allStudents.length;
+            document.getElementById('searchCriteria').textContent = '(All Students)';
+            document.getElementById('noResultsMessage').style.display = 'none';
+            
+            showCopySuccess(`Displaying all ${allStudents.length} students`, 'success');
+        }
+
+        // Export entire database (admin only)
+        function exportAllData() {
+            if (!isAdmin) {
+                showCopySuccess('Admin access required', 'error');
+                return;
+            }
+            
+            const includeTimestamp = document.getElementById('includeTimestamp').checked;
+            const format = document.getElementById('exportFormat').value;
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+            
+            let fileName = 'PCCOE_Complete_Database';
+            
+            if (includeTimestamp) {
+                fileName += `_${timestamp}`;
+            }
+            
+            fileName += `.${format}`;
+            
+            // Prepare worksheet data
+            const worksheetData = [
+                ['PCCOE Student Directory - Department of Applied Sciences & Humanities'],
+                ['Exported on: ' + new Date().toLocaleString('en-IN')],
+                ['Complete Database Export - Admin Access'],
+                ['Total Records: ' + allStudents.length],
+                [''], // Empty row
+                ['Sr. No.', 'Offering Year', 'PRN', 'Division', 'Batch', 'Program', 'Student Name', 'Student Mobile', 'Parent Mobile', 'Email ID']
+            ];
+            
+            // Add all student data
+            allStudents.forEach((student, index) => {
+                worksheetData.push([
+                    index + 1,
+                    student.offering_year || '2022-2025',
+                    student.prn || '',
+                    student.division || '',
+                    student.batch || '',
+                    student.program || '',
+                    student.name || '',
+                    student.student_mobile || '',
+                    student.parent_mobile || '',
+                    student.email || ''
+                ]);
+            });
+            
+            // Create workbook
+            const workbook = XLSX.utils.book_new();
+            const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+            
+            // Set column widths
+            const colWidths = [
+                { wch: 8 },   // Sr. No.
+                { wch: 12 },  // Offering Year
+                { wch: 12 },  // PRN
+                { wch: 10 },  // Division
+                { wch: 10 },  // Batch
+                { wch: 15 },  // Program
+                { wch: 20 },  // Student Name
+                { wch: 15 },  // Student Mobile
+                { wch: 15 },  // Parent Mobile
+                { wch: 25 }   // Email ID
+            ];
+            worksheet['!cols'] = colWidths;
+            
+            // Add worksheet to workbook
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Students');
+            
+            try {
+                if (format === 'xlsx') {
+                    XLSX.writeFile(workbook, fileName);
+                } else {
+                    // For CSV, convert to CSV string
+                    const csv = XLSX.utils.sheet_to_csv(worksheet);
+                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                    const link = document.createElement('a');
+                    const url = URL.createObjectURL(blob);
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', fileName);
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                }
+                
+                showCopySuccess(`Exported complete database (${allStudents.length} records) to ${fileName}`, 'success');
+            } catch (error) {
+                console.error('Export error:', error);
+                showCopySuccess('Error exporting file. Please try again.', 'error');
+            }
+        }
+
+        // Show add student modal
+        function showAddStudentModal() {
+            if (!isAdmin) {
+                showCopySuccess('Admin access required', 'error');
+                return;
+            }
+            
+            // Clear form
+            document.getElementById('addPRN').value = '';
+            document.getElementById('addName').value = '';
+            document.getElementById('addDivision').value = '';
+            document.getElementById('addBatch').value = '';
+            document.getElementById('addProgram').value = '';
+            document.getElementById('addOfferingYear').value = '2025-26';
+            document.getElementById('addStudentMobile').value = '';
+            document.getElementById('addParentMobile').value = '';
+            document.getElementById('addEmail').value = '';
+            
+            addModal.show();
+        }
+
+        // Add new student
+        function addNewStudent() {
+            if (!isAdmin) {
+                showCopySuccess('Admin access required', 'error');
+                return;
+            }
+            
+            const prn = document.getElementById('addPRN').value.trim();
+            const name = document.getElementById('addName').value.trim();
+            const division = document.getElementById('addDivision').value.trim();
+            const batch = document.getElementById('addBatch').value.trim();
+            const program = document.getElementById('addProgram').value.trim();
+            const offeringYear = document.getElementById('addOfferingYear').value.trim() || '2025-26';
+            const studentMobile = document.getElementById('addStudentMobile').value.trim();
+            const parentMobile = document.getElementById('addParentMobile').value.trim() || 'NA';
+            const email = document.getElementById('addEmail').value.trim();
+            
+            // Validation
+            if (!prn || !name || !studentMobile || !email) {
+                showCopySuccess('Please fill all required fields (PRN, Name, Mobile, Email)', 'error');
+                return;
+            }
+            
+            // Check if PRN already exists
+            if (allStudents.some(student => student.prn === prn)) {
+                showCopySuccess(`PRN ${prn} already exists. Please use a different PRN.`, 'error');
+                return;
+            }
+            
+            // Create new student object
+            const newStudent = {
+                sr_no: allStudents.length + 1,
+                offering_year: offeringYear,
+                prn: prn,
+                division: division,
+                batch: batch,
+                program: program,
+                name: name,
+                student_mobile: studentMobile,
+                parent_mobile: parentMobile,
+                email: email
+            };
+            
+            // Add unique ID for selection
+            newStudent._id = allStudents.length;
+            newStudent._selected = false;
+            
+            // Add to array
+            allStudents.push(newStudent);
+            
+            // Update DataTable
+            dataTable.row.add(newStudent).draw();
+            
+            // Update statistics
+            updateTotalCount();
+            
+            // Close modal
+            addModal.hide();
+            
+            showCopySuccess(`Student ${name} (${prn}) added successfully`, 'success');
+        }
+
+        // Edit student
+        function editStudent(index) {
+            if (!isAdmin) {
+                showCopySuccess('Admin access required', 'error');
+                return;
+            }
+            
+            const student = allStudents[index];
+            
+            // Fill form with student data
+            document.getElementById('editStudentIndex').value = index;
+            document.getElementById('editPRN').value = student.prn || '';
+            document.getElementById('editName').value = student.name || '';
+            document.getElementById('editDivision').value = student.division || '';
+            document.getElementById('editBatch').value = student.batch || '';
+            document.getElementById('editProgram').value = student.program || '';
+            document.getElementById('editOfferingYear').value = student.offering_year || '2025-26';
+            document.getElementById('editStudentMobile').value = student.student_mobile || '';
+            document.getElementById('editParentMobile').value = student.parent_mobile || '';
+            document.getElementById('editEmail').value = student.email || '';
+            
+            editModal.show();
+        }
+
+        // Save student changes
+        function saveStudentChanges() {
+            if (!isAdmin) {
+                showCopySuccess('Admin access required', 'error');
+                return;
+            }
+            
+            const index = parseInt(document.getElementById('editStudentIndex').value);
+            const student = allStudents[index];
+            
+            // Get updated values
+            const updatedStudent = {
+                sr_no: student.sr_no,
+                offering_year: document.getElementById('editOfferingYear').value.trim() || '2025-26',
+                prn: document.getElementById('editPRN').value.trim(),
+                division: document.getElementById('editDivision').value.trim(),
+                batch: document.getElementById('editBatch').value.trim(),
+                program: document.getElementById('editProgram').value.trim(),
+                name: document.getElementById('editName').value.trim(),
+                student_mobile: document.getElementById('editStudentMobile').value.trim(),
+                parent_mobile: document.getElementById('editParentMobile').value.trim() || 'NA',
+                email: document.getElementById('editEmail').value.trim(),
+                _id: student._id,
+                _selected: student._selected
+            };
+            
+            // Validation
+            if (!updatedStudent.prn || !updatedStudent.name || !updatedStudent.student_mobile || !updatedStudent.email) {
+                showCopySuccess('Please fill all required fields (PRN, Name, Mobile, Email)', 'error');
+                return;
+            }
+            
+            // Update in array
+            allStudents[index] = updatedStudent;
+            
+            // Update DataTable
+            dataTable.row(index).data(updatedStudent).draw();
+            
+            // Close modal
+            editModal.hide();
+            
+            showCopySuccess(`Student ${updatedStudent.name} (${updatedStudent.prn}) updated successfully`, 'success');
+        }
+
+        // Delete student from table
+        function deleteStudent(index) {
+            if (!isAdmin) {
+                showCopySuccess('Admin access required', 'error');
+                return;
+            }
+            
+            const student = allStudents[index];
+            
+            if (confirm(`Are you sure you want to delete student ${student.name} (${student.prn})?`)) {
+                // Remove from array
+                allStudents.splice(index, 1);
+                
+                // Update DataTable
+                dataTable.row(index).remove().draw();
+                
+                // Update statistics
+                updateTotalCount();
+                
+                showCopySuccess(`Student ${student.name} (${student.prn}) deleted successfully`, 'success');
+            }
+        }
+
+        // Delete current student from modal
+        function deleteCurrentStudent() {
+            if (!isAdmin) {
+                showCopySuccess('Admin access required', 'error');
+                return;
+            }
+            
+            const index = parseInt(document.getElementById('editStudentIndex').value);
+            deleteStudent(index);
+            editModal.hide();
+        }
+
+        // Update total count
+        function updateTotalCount() {
+            const totalCount = allStudents.length;
+            document.getElementById('totalStudents').textContent = totalCount;
+        }
+
+        // Generic copy to clipboard function
         function copyToClipboard(text, label) {
-            navigator.clipboard.writeText(text).then(() => showToast(`${label} copied`));
+            if (!isLoggedIn) {
+                showLogin();
+                return;
+            }
+            
+            navigator.clipboard.writeText(text).then(() => {
+                showCopySuccess(`${label} copied to clipboard`);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                // Fallback method
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showCopySuccess(`${label} copied to clipboard`);
+            });
         }
 
-        function showToast(msg, type='success') {
-            const toast = document.createElement('div');
-            toast.className = `position-fixed bottom-0 end-0 m-3 p-2 text-white rounded bg-${type === 'error' ? 'danger' : 'success'}`;
-            toast.innerText = msg;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 2000);
+        // Show copy success message
+        function showCopySuccess(message, type = 'success') {
+            const bgColor = type === 'error' ? '#dc3545' : '#28a745';
+            
+            // Create a temporary notification
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${bgColor};
+                color: white;
+                padding: 10px 20px;
+                border-radius: 5px;
+                z-index: 10000;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                animation: fadeInOut 2s ease-in-out;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                max-width: 300px;
+            `;
+            
+            // Add CSS for animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fadeInOut {
+                    0% { opacity: 0; transform: translateY(-20px); }
+                    10% { opacity: 1; transform: translateY(0); }
+                    90% { opacity: 1; transform: translateY(0); }
+                    100% { opacity: 0; transform: translateY(-20px); }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            notification.innerHTML = `
+                <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i>
+                <span>${message}</span>
+            `;
+            document.body.appendChild(notification);
+            
+            // Remove after 2 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    document.body.removeChild(notification);
+                }
+                if (style.parentNode) {
+                    document.head.removeChild(style);
+                }
+            }, 2000);
         }
 
-        function sendSingleEmail(email) {
-            if (email) window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}`, '_blank');
-            else showToast('No email','error');
-        }
-
-        // Selection management
-        function toggleStudentSelection(id) {
-            if (selectedStudents.has(id)) selectedStudents.delete(id);
-            else selectedStudents.add(id);
+        // Selection Functions
+        function toggleStudentSelection(studentId) {
+            if (selectedStudents.has(studentId)) {
+                selectedStudents.delete(studentId);
+            } else {
+                selectedStudents.add(studentId);
+            }
             updateSelectedCount();
             updateSelectAllCheckbox();
         }
 
         function toggleSelectAll() {
-            const cb = document.getElementById('selectAllCheckbox');
+            const selectAllCheckbox = document.getElementById('selectAllCheckbox');
             const checkboxes = document.querySelectorAll('.student-checkbox');
-            checkboxes.forEach(chk => {
-                const sid = parseInt(chk.dataset.id);
-                if (cb.checked) { selectedStudents.add(sid); chk.checked = true; }
-                else { selectedStudents.delete(sid); chk.checked = false; }
-            });
+            
+            if (selectAllCheckbox.checked) {
+                // Select all displayed students
+                currentSearchResults.forEach(student => {
+                    selectedStudents.add(student._id);
+                });
+                checkboxes.forEach(cb => cb.checked = true);
+            } else {
+                // Deselect all
+                checkboxes.forEach(cb => {
+                    const studentId = parseInt(cb.getAttribute('data-id'));
+                    selectedStudents.delete(studentId);
+                    cb.checked = false;
+                });
+            }
+            
             updateSelectedCount();
         }
 
-        function updateSelectedCount() {
-            document.getElementById('selectedCount').innerText = selectedStudents.size;
+        function updateSelectAllCheckbox() {
+            const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+            const checkboxes = document.querySelectorAll('.student-checkbox');
+            
+            if (checkboxes.length === 0) {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = false;
+                return;
+            }
+            
+            const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+            
+            if (checkedCount === 0) {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = false;
+            } else if (checkedCount === checkboxes.length) {
+                selectAllCheckbox.checked = true;
+                selectAllCheckbox.indeterminate = false;
+            } else {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = true;
+            }
         }
 
-        function updateSelectAllCheckbox() {
-            const checkboxes = document.querySelectorAll('.student-checkbox');
-            if (checkboxes.length === 0) return;
-            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-            const someChecked = Array.from(checkboxes).some(cb => cb.checked);
-            const cbAll = document.getElementById('selectAllCheckbox');
-            cbAll.checked = allChecked;
-            cbAll.indeterminate = (someChecked && !allChecked);
+        function updateSelectedCount() {
+            const selectedCount = selectedStudents.size;
+            document.getElementById('selectedCount').textContent = selectedCount;
+            
+            // Enable/disable email button
+            const emailDraftBtn = document.getElementById('emailDraftBtn');
+            if (emailDraftBtn) {
+                if (selectedCount > 0) {
+                    emailDraftBtn.disabled = false;
+                } else {
+                    emailDraftBtn.disabled = true;
+                }
+            }
         }
 
         function toggleEmailDropdown() {
-            document.getElementById('emailDropdown').classList.toggle('show');
+            const dropdown = document.getElementById('emailDropdown');
+            dropdown.classList.toggle('show');
         }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('emailDropdown');
+            const button = document.getElementById('emailDraftBtn');
+            if (dropdown && button && !dropdown.contains(event.target) && !button.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
 
         function sendEmailWithDraft(draftType) {
-            const emails = [];
-            allStudents.forEach(s => { if (selectedStudents.has(s._id) && s.email) emails.push(s.email); });
-            if (emails.length === 0) { showToast('No students selected','error'); return; }
+            if (selectedStudents.size === 0) {
+                showCopySuccess('Please select at least one student to send email.', 'error');
+                return;
+            }
+            
+            // Get selected students' emails
+            const selectedEmails = [];
+            allStudents.forEach(student => {
+                if (selectedStudents.has(student._id)) {
+                    const email = student.email || '';
+                    if (email && email.includes('@')) {
+                        selectedEmails.push(email);
+                    }
+                }
+            });
+            
+            if (selectedEmails.length === 0) {
+                showCopySuccess('No valid email addresses found for selected students.', 'error');
+                return;
+            }
+            
+            // Get email draft
             const draft = EMAIL_DRAFTS[draftType];
+            if (!draft) {
+                showCopySuccess('Email draft not found.', 'error');
+                return;
+            }
+            
+            // Create Gmail URL with recipients, subject, and body
+            const emailString = selectedEmails.join(',');
             const subject = encodeURIComponent(draft.subject);
             const body = encodeURIComponent(draft.body);
-            const url = `https://mail.google.com/mail/?view=cm&fs=1&to=${emails.join(',')}&su=${subject}&body=${body}`;
-            window.open(url, '_blank');
+            const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${emailString}&su=${subject}&body=${body}`;
+            
+            // Open Gmail in new tab
+            window.open(gmailUrl, '_blank');
+            
+            // Close dropdown
             document.getElementById('emailDropdown').classList.remove('show');
-        }
-
-        function exportSearchResults() {
-            const data = currentSearchResults.map(s => ({ PRN: s.prn, Name: s.name, Email: s.email, Photo: s.photo || '' }));
-            if (data.length === 0) { showToast('No data to export','error'); return; }
-            const ws = XLSX.utils.json_to_sheet(data);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, 'Students');
-            XLSX.writeFile(wb, `students_${new Date().toISOString().slice(0,19)}.xlsx`);
-        }
-
-        function showAllStudents() { clearSearch(); }
-        function exportAllData() { exportSearchResults(); }
-        function showAddStudentModal() { $('#addStudentModal').modal('show'); }
-        function addNewStudent() {
-            const newStudent = {
-                _id: allStudents.length,
-                prn: document.getElementById('addPRN').value,
-                name: document.getElementById('addName').value,
-                photo: document.getElementById('addPhoto').value,
-                email: document.getElementById('addEmail').value,
-                student_mobile: document.getElementById('addMobile').value,
-                offering_year: '2025-26', division: '', batch: '', program: '', parent_mobile: ''
-            };
-            allStudents.push(newStudent);
-            dataTable.row.add(newStudent).draw();
-            $('#addStudentModal').modal('hide');
-            updateTotalCount();
-            showToast('Student added');
-        }
-
-        // DataTable initialization
-        function initDataTable(data) {
-            if (dataTable) dataTable.destroy();
-            const columns = [
-                { data: null, orderable: false, render: (d,t,r) => `<input type="checkbox" class="student-checkbox" data-id="${r._id}" onchange="toggleStudentSelection(${r._id})">` },
-                { data: null, render: (d,t,r,i) => i.row+1 },
-                { data: 'offering_year', defaultContent: '2025-26' },
-                { data: 'prn', render: d => `<span class="badge-prn">${d}</span>` },
-                { data: 'division', defaultContent: '' },
-                { data: 'batch', defaultContent: '' },
-                { data: 'program', defaultContent: '' },
-                { data: 'name' },
-                { data: 'photo', render: (photo, t, row) => renderPhotoCell(photo, row._id) },
-                { data: 'student_mobile', render: d => `<div class="d-flex gap-1"><span>${d}</span><button class="copy-icon-btn" onclick="copyToClipboard('${d}','Mobile')"><i class="far fa-copy"></i></button></div>` },
-                { data: 'parent_mobile', render: d => `<div class="d-flex gap-1"><span>${d}</span><button class="copy-icon-btn" onclick="copyToClipboard('${d}','Parent Mobile')"><i class="far fa-copy"></i></button></div>` },
-                { data: 'email', render: e => `<div class="d-flex gap-1"><span>${e}</span><button class="send-email-btn" onclick="sendSingleEmail('${e}')">Send</button></div>` }
-            ];
-            if (isAdmin) {
-                columns.push({ data: null, render: (d,t,r,i) => `<button class="btn btn-sm btn-info" onclick="editStudent(${i.row})">Edit</button>` });
-                document.getElementById('actionCol').style.display = '';
-            } else {
-                document.getElementById('actionCol').style.display = 'none';
-            }
-            dataTable = $('#studentTable').DataTable({
-                data: data,
-                columns: columns,
-                pageLength: 10,
-                language: { search: "Filter:" },
-                drawCallback: function() {
-                    updateSelectAllCheckbox();
-                    updateTotalCount();
-                    const filtered = dataTable.rows({ search: 'applied' }).data().toArray();
-                    currentSearchResults = filtered;
-                    document.getElementById('searchResults').innerText = filtered.length;
-                }
-            });
-            updateTotalCount();
-        }
-
-        function updateTotalCount() {
-            document.getElementById('totalStudents').innerText = allStudents.length;
-        }
-
-        // Search functions
-        function applyCombinedFilter() {
-            const prnVal = $('#searchPRN').val().trim().toLowerCase();
-            const nameVal = $('#searchName').val().trim().toLowerCase();
-            const divVal = $('#searchDivision').val().trim().toLowerCase();
             
-            if (!prnVal && !nameVal && !divVal) {
-                $.fn.dataTable.ext.search.pop();
-                dataTable.draw();
-                return;
-            }
+            // Show confirmation
+            showCopySuccess(`Opening Gmail with ${selectedEmails.length} recipient(s) using ${draftType} draft`, 'success');
+        }
+
+        // Initialize on page load
+        $(document).ready(function() {
+            // Setup login form
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
             
-            $.fn.dataTable.ext.search.pop();
-            $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-                const student = allStudents[dataIndex];
-                if (!student) return false;
-                let match = true;
-                if (prnVal && !student.prn.toLowerCase().includes(prnVal)) match = false;
-                if (match && nameVal && !student.name.toLowerCase().includes(nameVal)) match = false;
-                if (match && divVal && !student.division.toLowerCase().includes(divVal)) match = false;
-                return match;
-            });
-            dataTable.draw();
-        }
-        
-        function searchTable() {
-            applyCombinedFilter();
-            $('#multiPRNSearch').val('');
-        }
-        
-        function searchMultiplePRNs() {
-            const input = document.getElementById('multiPRNSearch').value;
-            if (!input.trim()) { showToast('Enter PRNs', 'error'); return; }
-            const prns = input.split(/[\s,;]+/).map(p => p.trim()).filter(p => p.length > 0);
-            if (prns.length === 0) return;
-            
-            $.fn.dataTable.ext.search.pop();
-            $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-                const student = allStudents[dataIndex];
-                if (!student) return false;
-                return prns.includes(student.prn);
-            });
-            dataTable.draw();
-            $.fn.dataTable.ext.search.pop();
-            
-            const filtered = dataTable.rows({ filter: 'applied' }).data().toArray();
-            currentSearchResults = filtered;
-            document.getElementById('searchResults').innerText = filtered.length;
-            if (filtered.length === 0) showToast('No matching PRNs', 'error');
-            else showToast(`Found ${filtered.length} students`);
-            
-            $('#searchPRN, #searchName, #searchDivision').val('');
-        }
-        
-        function clearSearch() {
-            $('#searchPRN, #searchName, #searchDivision, #multiPRNSearch').val('');
-            $.fn.dataTable.ext.search.pop();
-            dataTable.search('').draw();
-            currentSearchResults = allStudents;
-            document.getElementById('searchResults').innerText = allStudents.length;
-            showToast('All filters cleared');
-        }
-
-        // ======================== CSV LOADING WITH FALLBACK ========================
-        function processCSVData(data) {
-            allStudents = [];
-            data.forEach((row, idx) => {
-                if (row['PRN'] || row['Student Name']) {
-                    allStudents.push({
-                        _id: idx,
-                        offering_year: row['Offering Year'] || '2025-26',
-                        prn: row['PRN'] || '',
-                        division: row['Division'] || '',
-                        batch: row['Batch'] || '',
-                        program: row['Program'] || '',
-                        name: row['Student Name'] || '',
-                        student_mobile: row['Student Mobile'] || row['Student Mobile Number'] || '',
-                        parent_mobile: row['Parent Mobile'] || '',
-                        email: row['Email ID'] || row['email'] || '',
-                        photo: row['Photo'] || ''
-                    });
-                }
-            });
-            if (allStudents.length === 0) {
-                showToast('No valid student records found in CSV', 'error');
-                return false;
-            }
-            initDataTable(allStudents);
-            updateTotalCount();
-            currentSearchResults = allStudents;
-            document.getElementById('searchResults').innerText = allStudents.length;
-            showToast(`Loaded ${allStudents.length} students`);
-            return true;
-        }
-
-        async function loadCSVData() {
-            try {
-                showToast('Loading CSV from GitHub...', 'success');
-                const response = await fetch(CSV_URL);
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                const csvText = await response.text();
-                Papa.parse(csvText, {
-                    header: true,
-                    skipEmptyLines: true,
-                    complete: (results) => {
-                        if (results.errors.length) console.warn(results.errors);
-                        if (results.data.length === 0) throw new Error('CSV is empty');
-                        processCSVData(results.data);
-                    },
-                    error: (err) => { throw err; }
-                });
-            } catch (err) {
-                console.error(err);
-                showToast(`Failed to load CSV from remote URL: ${err.message}. Please upload manually.`, 'error');
-                // Enable manual upload area
-                document.querySelector('.upload-area').style.display = 'block';
-            }
-        }
-
-        function uploadCSV() {
-            const fileInput = document.getElementById('csvFileInput');
-            const file = fileInput.files[0];
-            if (!file) {
-                showToast('Please select a CSV file first', 'error');
-                return;
-            }
-            Papa.parse(file, {
-                header: true,
-                skipEmptyLines: true,
-                complete: (results) => {
-                    if (results.data.length === 0) {
-                        showToast('CSV is empty', 'error');
-                        return;
-                    }
-                    processCSVData(results.data);
-                },
-                error: (err) => {
-                    showToast('Error parsing CSV: ' + err.message, 'error');
-                }
-            });
-        }
-
-        // Login / Logout
-        function handleLogin(e) {
-            e.preventDefault();
-            const u = $('#username').val();
-            const p = $('#password').val();
-            if (VALID_CREDENTIALS[u] && VALID_CREDENTIALS[u] === p) {
-                isLoggedIn = true;
-                isAdmin = (u === 'admin');
-                if ($('#rememberMe').is(':checked')) {
-                    localStorage.setItem('pccoeLogin', JSON.stringify({ loggedIn: true, isAdmin: isAdmin, expiry: Date.now() + 7*86400000 }));
-                } else {
-                    sessionStorage.setItem('pccoeSession', JSON.stringify({ loggedIn: true, isAdmin: isAdmin }));
-                }
-                showMainApp();
-            } else {
-                $('#loginError').show().fadeOut(2000);
-            }
-        }
-
-        function logout() {
-            isLoggedIn = false;
-            localStorage.removeItem('pccoeLogin');
-            sessionStorage.removeItem('pccoeSession');
-            $('#loginSection').show();
-            $('#mainSection').hide();
-        }
-
-        function showMainApp() {
-            $('#loginSection').hide();
-            $('#mainSection').show();
-            if (isAdmin) $('#adminFeatures').show();
-            else $('#adminFeatures').hide();
-            if (!allStudents.length) loadCSVData();
-        }
-
-        function checkLoginStatus() {
-            const saved = localStorage.getItem('pccoeLogin');
-            if (saved) {
-                const data = JSON.parse(saved);
-                if (data.loggedIn && data.expiry > Date.now()) {
-                    isLoggedIn = true;
-                    isAdmin = data.isAdmin;
-                    showMainApp();
-                    return;
-                }
-            }
-            const sess = sessionStorage.getItem('pccoeSession');
-            if (sess) {
-                const data = JSON.parse(sess);
-                if (data.loggedIn) {
-                    isLoggedIn = true;
-                    isAdmin = data.isAdmin;
-                    showMainApp();
-                    return;
-                }
-            }
-            $('#loginSection').show();
-            $('#mainSection').hide();
-        }
-
-        $(document).ready(() => {
-            $('#loginForm').on('submit', handleLogin);
+            // Check if user is already logged in
             checkLoginStatus();
-            $(document).click(function(e) {
-                if (!$(e.target).closest('.email-dropdown').length) $('.email-dropdown-content').removeClass('show');
+            
+            if (!isLoggedIn) {
+                showLogin();
+            }
+            
+            // Add enter key support for search
+            $(document).on('keypress', '#searchPRN, #searchName, #searchDivision, #multiPRNSearch', function(e) {
+                if (e.which === 13 && isLoggedIn) {
+                    if ($(this).attr('id') === 'multiPRNSearch') {
+                        searchMultiplePRNs();
+                    } else {
+                        searchTable();
+                    }
+                }
+            });
+            
+            // Auto-search after typing
+            let searchTimer;
+            $(document).on('keyup', '#searchPRN, #searchName, #searchDivision', function() {
+                if (isLoggedIn) {
+                    clearTimeout(searchTimer);
+                    searchTimer = setTimeout(searchTable, 300);
+                }
+            });
+            
+            // Auto-search for multi-PRN
+            let multiPRNTimer;
+            $(document).on('keyup', '#multiPRNSearch', function() {
+                if (isLoggedIn) {
+                    clearTimeout(multiPRNTimer);
+                    multiPRNTimer = setTimeout(function() {
+                        const input = document.getElementById('multiPRNSearch').value.trim();
+                        if (input) {
+                            searchMultiplePRNs();
+                        }
+                    }, 500);
+                }
+            });
+            
+            // Handle paste event for Excel data
+            document.getElementById('multiPRNSearch').addEventListener('paste', function(e) {
+                // Let the paste happen first
+                setTimeout(() => {
+                    // Auto-trigger search after paste
+                    if (this.value.trim()) {
+                        searchMultiplePRNs();
+                    }
+                }, 100);
             });
         });
     </script>
