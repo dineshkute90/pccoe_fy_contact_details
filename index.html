@@ -984,22 +984,11 @@ function initDataTable() {
         { data: 'batch' },
         { data: 'program' },
         {
-            {
-    data: 'photo',
-    render: (photo, type, row) => {
-        // 1. If an external URL is explicitly provided in the data sheet, use it.
-        // 2. Otherwise, automatically point to your hosted folder using the student's PRN: "photos/PRN.jpg"
-        const imageSrc = (photo && photo.trim()) ? photo : `photos/${row.prn}.jpg`;
-        
-        // The 'onerror' handle guarantees that if a specific student's image is missing from the folder,
-        // it gracefully displays the default user icon instead of showing a broken image link.
-        return `<img src="${imageSrc}" 
-                     class="student-photo-thumb" 
-                     onclick="openFullPhoto('${imageSrc}')" 
-                     onerror="this.onerror=null; this.outerHTML='<i class=\'fas fa-user-circle fa-2x\' style=\'color:#9fa8da;cursor:default\'></i>';" 
-                     alt="Photo">`;
-    }
-},
+            data: 'photo',
+            render: (photo) => photo
+                ? `<img src="${photo}" class="student-photo-thumb" onclick="openFullPhoto('${photo}')" alt="Photo">`
+                : `<i class="fas fa-user-circle fa-2x" style="color:#9fa8da;cursor:default"></i>`
+        },
         { data: 'student_mobile', render: (m) => `<div class="d-flex align-items-center gap-1"><span>${m}</span><button class="copy-icon-btn" onclick="copyToClipboard('${m}')" title="Copy"><i class="far fa-copy"></i></button></div>` },
         { data: 'parent_mobile',  render: (p) => `<div class="d-flex align-items-center gap-1"><span>${p}</span><button class="copy-icon-btn" onclick="copyToClipboard('${p}')" title="Copy"><i class="far fa-copy"></i></button></div>` },
         {
