@@ -551,14 +551,21 @@
         .select-all-warning.show { display: flex; }
 
         /* DataTable overrides */
-        .dataTables_wrapper .dataTables_filter input,
-        .dataTables_wrapper .dataTables_length select {
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            padding: 6px 10px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 0.83rem;
-        }
+        .dataTables_wrapper .dataTables_filter input {
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.83rem;
+}
+
+.dataTables_wrapper .dataTables_length select {
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 32px 6px 12px; /* Increased right padding to make room for the arrow */
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.83rem;
+}
 
         .dataTables_wrapper .dataTables_paginate .paginate_button {
             border-radius: 6px !important;
@@ -743,7 +750,6 @@
                         <th>Student Mobile</th>
                         <th>Parent Mobile</th>
                         <th>Email ID</th>
-                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -972,13 +978,7 @@ function initDataTable() {
                 <button class="copy-icon-btn" onclick="copyToClipboard('${email}')" title="Copy"><i class="far fa-copy"></i></button>
             </div>`
         },
-        {
-            data: null,
-            orderable: false,
-            render: (d) => isAdmin
-                ? `<button class="btn btn-sm btn-warning" style="border-radius:6px;font-size:0.75rem" onclick="editStudent(${d._id})"><i class="fas fa-edit"></i></button>`
-                : ''
-        }
+        
     ];
 
     dataTable = $('#studentTable').DataTable({
