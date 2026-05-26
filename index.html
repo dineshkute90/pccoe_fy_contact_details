@@ -612,8 +612,17 @@
         .photo-modal-img { max-width: 90vw; max-height: 80vh; border-radius: 8px; }
 
         @media (max-width: 768px) {
-            .directory-header { flex-direction: column; text-align: center; }
-        }
+    .directory-header { 
+        display: flex;
+        flex-direction: column; 
+        text-align: center; 
+        gap: 16px;
+    }
+    .header-title h2, 
+    .header-title p {
+        font-size: 1.6rem; /* Scaled down slightly for mobile screens to avoid clipping */
+    }
+}
     </style>
 </head>
 <body>
