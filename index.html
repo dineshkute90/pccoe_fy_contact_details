@@ -3,265 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>PCCOE Student Directory | Professional Contact Search</title>
+    <title>PCCOE Student Contact Search</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --pccoe-blue: #0b2b5c;
-            --pccoe-accent: #c7a500;
-            --pccoe-green: #1e6f3f;
-            --pccoe-red: #b22234;
+            --pccoe-blue: #1a237e;
+            --pccoe-red: #d32f2f;
+            --pccoe-green: #2e7d32;
+            --pccoe-gold: #ff9800;
         }
         body {
-            background: linear-gradient(145deg, #eef2f7 0%, #d9e0e8 100%);
-            font-family: 'Inter', 'Segoe UI', Roboto, system-ui, sans-serif;
+            background-color: #f5f7fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             padding: 20px;
-            min-height: 100vh;
         }
-        /* Professional login card */
         .login-container {
-            max-width: 480px;
+            max-width: 450px;
             width: 100%;
-            margin: 80px auto;
+            margin: 50px auto;
         }
         .login-box {
             background: white;
-            border-radius: 28px;
-            padding: 2.2rem 2rem;
-            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.25);
-            border: 1px solid rgba(255,255,255,0.3);
-            transition: all 0.2s;
-        }
-        .login-header {
-            text-align: center;
-            margin-bottom: 1.8rem;
-        }
-        .login-header img {
-            height: 70px;
-            margin-bottom: 12px;
-        }
-        .login-header h3 {
-            font-weight: 700;
-            color: var(--pccoe-blue);
-            letter-spacing: -0.3px;
-        }
-        .login-header p {
-            color: #5a6874;
-            font-size: 0.85rem;
-        }
-        .form-label {
-            font-weight: 600;
-            color: #1e2a3a;
-            margin-bottom: 6px;
-            font-size: 0.85rem;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(26,35,126,0.2);
+            border-top: 5px solid var(--pccoe-blue);
         }
         .login-btn {
             background: var(--pccoe-green);
             color: white;
             width: 100%;
-            padding: 12px;
-            border-radius: 40px;
+            padding: 10px;
+            border-radius: 8px;
             border: none;
-            font-weight: 700;
-            font-size: 1rem;
-            transition: 0.2s;
-        }
-        .login-btn:hover {
-            background: #0f5533;
-            transform: translateY(-1px);
+            font-weight: 600;
         }
         .main-container {
             display: none;
-            max-width: 1500px;
+            width: 100%;
+            max-width: 1400px;
             margin: 0 auto;
         }
         .directory-header {
-            background: linear-gradient(105deg, #0b2b5c 0%, #123e74 100%);
+            background: linear-gradient(135deg, #1a237e, #283593);
             color: white;
-            padding: 0.8rem 1.8rem;
-            border-radius: 28px;
+            padding: 0.8rem 1.2rem;
+            border-radius: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            box-shadow: 0 6px 14px rgba(0,0,0,0.08);
         }
         .header-logo {
-            height: 65px;
-            filter: brightness(0) invert(1);
+            height: 70px;
         }
         .logout-btn {
-            background: rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.15);
             border: 1px solid rgba(255,255,255,0.3);
             color: white;
-            padding: 8px 24px;
-            border-radius: 40px;
-            font-weight: 500;
+            padding: 8px 20px;
+            border-radius: 5px;
         }
         .search-box {
             background: white;
             padding: 1.5rem;
-            border-radius: 24px;
-            margin: 1.8rem 0;
-            box-shadow: 0 5px 12px rgba(0,0,0,0.05);
+            border-radius: 10px;
+            margin: 1.5rem 0;
         }
         .data-table {
             background: white;
-            border-radius: 20px;
+            border-radius: 10px;
             overflow-x: auto;
-            padding: 0 0.25rem;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            width: 100%;
         }
         .table {
+            min-width: 1200px;
             font-size: 0.85rem;
-            min-width: 1250px;
         }
         .table th {
             background-color: var(--pccoe-blue);
             color: white;
-            font-weight: 600;
-            border-bottom: none;
+            white-space: nowrap;
         }
         .student-photo-thumb {
-            width: 42px;
-            height: 42px;
+            width: 45px;
+            height: 45px;
             object-fit: cover;
-            border-radius: 10px;
+            border-radius: 6px;
             cursor: pointer;
-            border: 1px solid #ddd;
         }
-        .action-buttons .btn {
-            border-radius: 30px;
-            padding: 6px 18px;
-            font-weight: 500;
-        }
-        .email-dropdown {
-            position: relative;
-            display: inline-block;
+        .copy-icon-btn, .send-email-btn {
+            background: transparent;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
         }
         .email-dropdown-content {
             display: none;
             position: absolute;
             background: white;
-            min-width: 200px;
-            border-radius: 16px;
-            box-shadow: 0 12px 28px rgba(0,0,0,0.15);
-            z-index: 1100;
-            overflow: hidden;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            z-index: 1000;
         }
         .email-dropdown-content.show {
             display: block;
         }
-        .dropdown-item {
-            padding: 12px 18px;
-            cursor: pointer;
-            transition: 0.1s;
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
         }
-        .dropdown-item:hover {
-            background: #f0f2f5;
-        }
-        .badge-count {
-            background: #1e2a3a;
-            color: white;
-            border-radius: 40px;
-            padding: 2px 8px;
-            font-size: 0.7rem;
-        }
-        .footer {
-            font-size: 0.8rem;
-            background: #0b2b5c !important;
-        }
-        .card-counter {
-            background: white;
-            border-radius: 20px;
-            transition: 0.1s;
+        .photo-modal-img {
+            max-width: 90vw;
+            max-height: 85vh;
         }
         @media (max-width: 768px) {
             .directory-header { flex-direction: column; text-align: center; gap: 10px; }
-            .action-buttons { flex-wrap: wrap; }
         }
     </style>
 </head>
 <body>
-
-<!-- LOGIN SECTION with professional labels -->
 <div class="login-container" id="loginSection">
     <div class="login-box">
-        <div class="login-header">
-            <img src="https://raw.githubusercontent.com/dineshkute90/pccoe_fy_contact_details/main/pccoe_logo.png" alt="PCCOE Logo">
-            <h3>PCCOE Student Directory</h3>
-            <p>Knowledge brings freedom · Program Quality Excellence</p>
-        </div>
+        <div class="text-center"><img src="https://raw.githubusercontent.com/dineshkute90/pccoe_fy_contact_details/main/pccoe_logo.png" style="height:80px"></div>
+        <h4 class="text-center">PCCOE Student Directory</h4>
         <div id="loginError" class="alert alert-danger d-none"></div>
         <form id="loginForm">
-            <div class="mb-3">
-                <label class="form-label"><i class="fas fa-user me-1"></i> Username</label>
-                <input type="text" id="username" class="form-control" placeholder="Enter your username" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label"><i class="fas fa-lock me-1"></i> Password</label>
-                <input type="password" id="password" class="form-control" placeholder="Enter password" required>
-            </div>
-            <button type="submit" class="login-btn"><i class="fas fa-arrow-right-to-bracket me-2"></i>Sign In</button>
+            <input type="text" id="username" class="form-control mb-2" placeholder="Username" required>
+            <input type="password" id="password" class="form-control mb-2" placeholder="Password" required>
+            <button type="submit" class="login-btn">Login</button>
         </form>
-        <div class="text-center mt-3 small text-secondary">Authorized access only</div>
     </div>
 </div>
 
-<!-- MAIN DIRECTORY SECTION -->
 <div class="main-container" id="mainSection">
     <div class="directory-header">
-        <img src="https://raw.githubusercontent.com/dineshkute90/pccoe_fy_contact_details/main/pccoe_logo.png" class="header-logo" alt="logo">
-        <div class="text-center">
-            <h2 class="fw-bold mb-0">PCCOE Student Directory</h2>
-            <p class="mb-0">Department of Applied Sciences & Humanities | 2025-26</p>
-        </div>
-        <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt me-1"></i> Logout</button>
+        <img src="https://raw.githubusercontent.com/dineshkute90/pccoe_fy_contact_details/main/pccoe_logo.png" class="header-logo">
+        <div><h2>PCCOE Student Directory</h2><p>Department of Applied Sciences & Humanities | 2025-26</p></div>
+        <button class="logout-btn" onclick="logout()">Logout</button>
     </div>
 
     <div class="search-box">
-        <div class="row g-3">
-            <div class="col-md-3"><input type="text" id="searchPRN" class="form-control" placeholder="🔍 Search by PRN"></div>
-            <div class="col-md-3"><input type="text" id="searchName" class="form-control" placeholder="🔍 Search by Name"></div>
-            <div class="col-md-2"><input type="text" id="searchDivision" class="form-control" placeholder="Division (A/B/C)"></div>
-            <div class="col-md-2"><button class="btn btn-primary w-100" onclick="searchTable()"><i class="fas fa-search"></i> Search</button></div>
-            <div class="col-md-2"><button class="btn btn-secondary w-100" onclick="clearSearch()"><i class="fas fa-eraser"></i> Clear</button></div>
+        <div class="row g-2">
+            <div class="col-md-3"><input type="text" id="searchPRN" class="form-control" placeholder="Search by PRN"></div>
+            <div class="col-md-3"><input type="text" id="searchName" class="form-control" placeholder="Search by Name"></div>
+            <div class="col-md-2"><input type="text" id="searchDivision" class="form-control" placeholder="Division"></div>
+            <div class="col-md-2"><button class="btn btn-primary w-100" onclick="searchTable()">Search</button></div>
+            <div class="col-md-2"><button class="btn btn-secondary w-100" onclick="clearSearch()">Clear</button></div>
         </div>
-        <div class="row mt-3">
+        <div class="row mt-2">
             <div class="col-md-12">
-                <textarea id="multiPRNSearch" class="form-control" rows="2" placeholder="📋 Paste multiple PRNs (comma, space or new line separated)"></textarea>
-                <button class="btn btn-success mt-2" onclick="searchMultiplePRNs()"><i class="fas fa-list-ul"></i> Search Multiple PRNs</button>
+                <textarea id="multiPRNSearch" class="form-control" rows="2" placeholder="Paste multiple PRNs (comma, space or new line separated)"></textarea>
+                <button class="btn btn-success mt-2" onclick="searchMultiplePRNs()">Search Multiple PRNs</button>
             </div>
         </div>
-        <div class="action-buttons mt-4 d-flex flex-wrap gap-2 align-items-center">
-            <button class="btn btn-outline-primary" id="selectAllBtn" onclick="selectAllSearchResultsOnly(true)"><i class="fas fa-check-double"></i> Select All (Results)</button>
+        <div class="action-buttons mt-3">
+            <button class="btn btn-outline-primary" onclick="toggleSelectAll()">Select All</button>
             <div class="email-dropdown">
-                <button class="btn btn-success" id="emailDraftBtn" onclick="toggleEmailDropdown()"><i class="fas fa-envelope"></i> Send Email to Selected <span id="selectedCount" class="badge bg-dark rounded-pill ms-1">0</span></button>
+                <button class="btn btn-success" id="emailDraftBtn" onclick="toggleEmailDropdown()">Send Email to Selected <span id="selectedCount" class="badge bg-dark">0</span></button>
                 <div class="email-dropdown-content" id="emailDropdown">
-                    <div class="dropdown-item" onclick="sendEmailWithDraft('openDay')"><i class="fas fa-calendar-alt me-2"></i>📅 Open Day Email</div>
-                    <div class="dropdown-item" onclick="sendEmailWithDraft('faSchedule')"><i class="fas fa-clock me-2"></i>📝 FA Schedule Email</div>
-                    <div class="dropdown-item" onclick="sendEmailWithDraft('custom')"><i class="fas fa-pen me-2"></i>✏️ Custom Email</div>
+                    <div class="dropdown-item" onclick="sendEmailWithDraft('openDay')">📅 Open Day Email</div>
+                    <div class="dropdown-item" onclick="sendEmailWithDraft('faSchedule')">📝 FA Schedule Email</div>
+                    <div class="dropdown-item" onclick="sendEmailWithDraft('custom')">✏️ Custom Email</div>
                 </div>
             </div>
-            <button class="btn btn-warning" onclick="exportSearchResults()"><i class="fas fa-download"></i> Export Results</button>
+            <button class="btn btn-warning" onclick="exportSearchResults()">Export Results</button>
         </div>
     </div>
 
-    <!-- statistics cards -->
-    <div class="row text-center mb-4 g-3">
-        <div class="col-md-3"><div class="card card-counter p-2 shadow-sm"><h5 id="totalStudents" class="fw-bold text-primary">0</h5><small>Total Students</small></div></div>
-        <div class="col-md-3"><div class="card card-counter p-2 shadow-sm"><h5 id="dataStatus" class="fw-bold text-success">Loading...</h5><small>Data Status</small></div></div>
-        <div class="col-md-3"><div class="card card-counter p-2 shadow-sm"><h5 id="searchResults" class="fw-bold text-info">0</h5><small>Search Results</small></div></div>
-        <div class="col-md-3"><div class="card card-counter p-2 shadow-sm"><h5 id="exportCount" class="fw-bold text-secondary">0</h5><small>Export Ready</small></div></div>
+    <div class="row text-center mb-3">
+        <div class="col-md-3"><div class="card p-2"><h5 id="totalStudents">0</h5><small>Total Students</small></div></div>
+        <div class="col-md-3"><div class="card p-2"><h5 id="dataStatus">Loading...</h5><small>Status</small></div></div>
+        <div class="col-md-3"><div class="card p-2"><h5 id="searchResults">0</h5><small>Search Results</small></div></div>
+        <div class="col-md-3"><div class="card p-2"><h5 id="exportCount">0</h5><small>Export Ready</small></div></div>
     </div>
 
     <div class="data-table">
-        <table id="studentTable" class="table table-hover align-middle">
+        <table id="studentTable" class="table table-striped">
             <thead>
                 <tr>
-                    <th style="width: 40px"><input type="checkbox" id="selectAllHeaderCheckbox" onchange="handleHeaderSelectAll(this.checked)"></th>
+                    <th><input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll()"></th>
                     <th>#</th><th>PRN</th><th>Student Name</th><th>Division</th><th>Batch</th><th>Program</th>
                     <th>Photo</th><th>Student Mobile</th><th>Parent Mobile</th><th>Email ID</th><th>Action</th>
                 </tr>
@@ -269,13 +194,13 @@
             <tbody></tbody>
         </table>
     </div>
-    <div class="footer text-center p-3 rounded-3 mt-4">PCCOE Student Directory - Developed by Mr. Dinesh Kute | Secure Access</div>
+    <div class="footer text-center p-3 bg-dark text-white rounded mt-3">PCCOE Student Directory - Developed by Mr. Dinesh Kute</div>
 </div>
 
 <!-- Photo Modal -->
-<div class="modal fade" id="photoModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content bg-dark text-white"><div class="modal-header"><h5 class="text-white">Student Photo</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><img id="fullPhotoImg" class="img-fluid rounded" style="max-height: 70vh;"></div></div></div></div>
+<div class="modal fade" id="photoModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-xl"><div class="modal-content bg-dark"><div class="modal-header"><h5 class="text-white">Student Photo</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><img id="fullPhotoImg" class="photo-modal-img"></div></div></div></div>
 
-<!-- Add Student Modal (Admin) - simplified -->
+<!-- Add/Edit Modals (simplified) -->
 <div class="modal fade" id="addStudentModal"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5>Add Student</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input id="addPRN" class="form-control mb-2" placeholder="PRN"><input id="addName" class="form-control mb-2" placeholder="Name"><input id="addDivision" class="form-control mb-2" placeholder="Division"><input id="addBatch" class="form-control mb-2" placeholder="Batch"><input id="addProgram" class="form-control mb-2" placeholder="Program"><input id="addMobile" class="form-control mb-2" placeholder="Mobile"><input id="addEmail" class="form-control mb-2" placeholder="Email"><input id="addPhoto" class="form-control mb-2" placeholder="Photo URL"></div><div class="modal-footer"><button class="btn btn-primary" onclick="addNewStudent()">Save</button></div></div></div></div>
 
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
@@ -286,91 +211,70 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <script>
-    // ---------- CREDENTIALS (unchanged) ----------
     const CREDENTIALS = { 'pccoeash': 'ashpccoe@2025', 'admin': 'pccoe@admin' };
-    let dataTable = null;
-    let allStudents = [];         // master array
-    let currentSearchResults = []; // filtered list (search results)
-    let selectedStudents = new Set(); // stores _id of selected students
-    let isLoggedIn = false;
-    let isAdmin = false;
+    let dataTable, allStudents = [], isLoggedIn = false, isAdmin = false, currentSearchResults = [], selectedStudents = new Set();
+    let editModal, addModal;
 
-    // ---------- DOM elements ----------
-    const loginSection = document.getElementById('loginSection');
-    const mainSection = document.getElementById('mainSection');
-    const loginErrorDiv = document.getElementById('loginError');
-    
-    // ---------- LOGIC: login & session ----------
+    // Login logic
     document.getElementById('loginForm')?.addEventListener('submit', (e) => {
         e.preventDefault();
-        const user = document.getElementById('username').value.trim();
+        const user = document.getElementById('username').value;
         const pwd = document.getElementById('password').value;
         if (CREDENTIALS[user] && CREDENTIALS[user] === pwd) {
             isLoggedIn = true;
             isAdmin = (user === 'admin');
-            localStorage.setItem('pccoeLogin', JSON.stringify({ loggedIn: true, isAdmin, expiry: Date.now() + 7 * 86400000 }));
-            loginSection.style.display = 'none';
-            mainSection.style.display = 'block';
+            localStorage.setItem('pccoeLogin', JSON.stringify({ loggedIn: true, isAdmin, expiry: Date.now() + 7*86400000 }));
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('mainSection').style.display = 'block';
             loadCSVData();
         } else {
-            loginErrorDiv.classList.remove('d-none');
-            loginErrorDiv.innerText = 'Invalid username or password.';
+            const errDiv = document.getElementById('loginError');
+            errDiv.classList.remove('d-none');
+            errDiv.innerText = 'Invalid credentials';
         }
     });
-    
+
     function logout() {
         localStorage.removeItem('pccoeLogin');
         location.reload();
     }
-    
-    // auto login check
-    const saved = localStorage.getItem('pccoeLogin');
-    if (saved) {
-        try {
-            const data = JSON.parse(saved);
-            if (data.loggedIn && data.expiry > Date.now()) {
-                isLoggedIn = true;
-                isAdmin = data.isAdmin;
-                loginSection.style.display = 'none';
-                mainSection.style.display = 'block';
-                loadCSVData();
-            }
-        } catch(e) {}
-    }
-    
-    // ---------- LOAD CSV ----------
+
+    // Load CSV with column auto-detection
     async function loadCSVData() {
-        document.getElementById('dataStatus').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+        document.getElementById('dataStatus').innerText = 'Loading...';
         const csvUrl = 'https://raw.githubusercontent.com/dineshkute90/pccoe_fy_contact_details/main/contact_testing_csv.csv';
         try {
             const response = await fetch(csvUrl);
-            if (!response.ok) throw new Error();
+            if (!response.ok) throw new Error('Network error');
             const csvText = await response.text();
             Papa.parse(csvText, { header: true, skipEmptyLines: true, complete: (results) => {
-                if (results.data.length === 0) throw new Error();
+                if (results.data.length === 0) throw new Error('Empty CSV');
                 mapCSVToStudents(results.data);
-                document.getElementById('dataStatus').innerHTML = '<i class="fas fa-check-circle"></i> Loaded';
-            }, error: () => useSampleData() });
+                document.getElementById('dataStatus').innerText = 'Loaded';
+            }, error: (err) => { console.error(err); useSampleData(); } });
         } catch (err) {
-            console.warn("Using sample data");
+            console.error(err);
             useSampleData();
         }
     }
-    
+
     function mapCSVToStudents(rows) {
         allStudents = [];
+        // Find column indices by common keywords
         const sample = rows[0];
         const keys = Object.keys(sample);
         const findCol = (patterns) => keys.find(k => patterns.some(p => k.toLowerCase().includes(p))) || patterns[0];
-        const prnKey = findCol(['prn', 'PRN', 'roll']);
-        const nameKey = findCol(['student name', 'name', 'Student_Name']);
+        
+        const prnKey = findCol(['prn', 'PRN', 'roll', 'Roll No']);
+        const nameKey = findCol(['student name', 'name', 'Name', 'Student_Name']);
         const divKey = findCol(['division', 'Division', 'Div']);
         const batchKey = findCol(['batch', 'Batch']);
         const progKey = findCol(['program', 'Program', 'course']);
-        const mobileKey = findCol(['student mobile', 'Student Mobile', 'mobile']);
-        const parentKey = findCol(['parent mobile', 'Parent Mobile', 'parent']);
-        const emailKey = findCol(['email', 'Email', 'Email ID']);
-        const photoKey = findCol(['photo', 'Photo', 'image']);
+        const mobileKey = findCol(['student mobile', 'Student Mobile', 'mobile', 'Mobile Number']);
+        const parentKey = findCol(['parent mobile', 'Parent Mobile', 'parent', 'Parent']);
+        const emailKey = findCol(['email', 'Email', 'Email ID', 'mail']);
+        const photoKey = findCol(['photo', 'Photo', 'image', 'Image', 'picture']);
+        const offeringKey = findCol(['offering year', 'Offering Year', 'year']);
         
         rows.forEach((row, idx) => {
             let student = {
@@ -384,47 +288,49 @@
                 parent_mobile: row[parentKey] || '',
                 email: row[emailKey] || '',
                 photo: row[photoKey] || '',
-                offering_year: '2025-26'
+                offering_year: row[offeringKey] || '2025-26'
             };
+            // Clean up - if no name but has email, try to extract name from email
+            if (!student.name && student.email) student.name = student.email.split('@')[0];
             if (student.prn || student.name) allStudents.push(student);
         });
+        
         if (allStudents.length === 0) useSampleData();
-        else initDataTableAndResults();
+        else initDataTable();
     }
-    
+
     function useSampleData() {
+        // Fallback demo data
         allStudents = [
             { _id:0, prn:'125B16001', name:'Arnav More', division:'A', batch:'A1', program:'Mech', student_mobile:'9876543210', parent_mobile:'9876543211', email:'arnav.more25@pccoepune.org', photo:'', offering_year:'2025-26' },
             { _id:1, prn:'125B16002', name:'Atharv Dhayagude', division:'A', batch:'A1', program:'Mech', student_mobile:'9876543212', parent_mobile:'9876543213', email:'atharv.dhayagude25@pccoepune.org', photo:'', offering_year:'2025-26' },
-            { _id:2, prn:'125B16003', name:'Rutuja Patil', division:'B', batch:'B1', program:'CS', student_mobile:'9876543214', parent_mobile:'9876543215', email:'rutuja.patil@pccoepune.org', photo:'', offering_year:'2025-26' },
-            { _id:3, prn:'125B16004', name:'Soham Deshmukh', division:'C', batch:'C1', program:'IT', student_mobile:'9876543216', parent_mobile:'9876543217', email:'soham.d@pccoepune.org', photo:'', offering_year:'2025-26' }
+            { _id:2, prn:'125B16003', name:'Rutuja Patil', division:'B', batch:'B1', program:'CS', student_mobile:'9876543214', parent_mobile:'9876543215', email:'rutuja.patil@pccoepune.org', photo:'', offering_year:'2025-26' }
         ];
-        document.getElementById('dataStatus').innerHTML = '<i class="fas fa-database"></i> Sample Data';
-        initDataTableAndResults();
+        document.getElementById('dataStatus').innerHTML = 'Sample Data (CSV failed)';
+        initDataTable();
     }
-    
-    function initDataTableAndResults() {
-        // initialize current search results to all students
-        currentSearchResults = [...allStudents];
+
+    function initDataTable() {
         if (dataTable) dataTable.destroy();
         const columns = [
-            { data: null, render: (d) => `<input type="checkbox" class="student-checkbox" data-id="${d._id}" ${selectedStudents.has(d._id) ? 'checked' : ''} onchange="toggleStudentSelection(${d._id}, this.checked)">` },
-            { data: null, render: (d, type, row, meta) => meta.row + 1 },
-            { data: 'prn' }, { data: 'name' }, { data: 'division' }, { data: 'batch' }, { data: 'program' },
-            { data: 'photo', render: (photo) => photo ? `<img src="${photo}" class="student-photo-thumb" onclick="openFullPhoto('${photo}')">` : '<i class="fas fa-user-circle fa-2x text-secondary" style="cursor:pointer" onclick="alert(\'No photo available\')"></i>' },
-            { data: 'student_mobile', render: (m) => `<div class="d-flex align-items-center gap-1"><span>${m}</span><button class="copy-icon-btn btn btn-sm btn-outline-secondary rounded-circle" onclick="copyToClipboard('${m}')"><i class="far fa-copy"></i></button></div>` },
-            { data: 'parent_mobile', render: (p) => `<div class="d-flex align-items-center gap-1"><span>${p}</span><button class="copy-icon-btn btn btn-sm btn-outline-secondary rounded-circle" onclick="copyToClipboard('${p}')"><i class="far fa-copy"></i></button></div>` },
-            { data: 'email', render: (email) => `<div class="d-flex align-items-center gap-1"><span class="text-truncate" style="max-width:140px">${email}</span><button class="send-email-btn btn btn-sm btn-outline-primary rounded-circle" onclick="sendSingleEmail('${email}')"><i class="fas fa-paper-plane"></i></button><button class="copy-icon-btn btn btn-sm btn-outline-secondary rounded-circle" onclick="copyToClipboard('${email}')"><i class="far fa-copy"></i></button></div>` },
-            { data: null, render: (d) => isAdmin ? `<button class="btn btn-sm btn-warning rounded-pill" onclick="editStudent(${d._id})">Edit</button>` : '' }
+            { data: null, render: (d) => `<input type="checkbox" class="student-checkbox" data-id="${d._id}" onchange="toggleStudentSelection(${d._id})">` },
+            { data: null, render: (d,type,row,meta) => meta.row+1 },
+            { data: 'prn' },
+            { data: 'name' },
+            { data: 'division' },
+            { data: 'batch' },
+            { data: 'program' },
+            { data: 'photo', render: (photo) => photo ? `<img src="${photo}" class="student-photo-thumb" onclick="openFullPhoto('${photo}')">` : '<i class="fas fa-user-circle fa-2x" style="cursor:pointer" onclick="alert(\'No photo available\')"></i>' },
+            { data: 'student_mobile', render: (m) => `<div class="d-flex"><span>${m}</span><button class="copy-icon-btn ms-2" onclick="copyToClipboard('${m}')"><i class="far fa-copy"></i></button></div>` },
+            { data: 'parent_mobile', render: (p) => `<div class="d-flex"><span>${p}</span><button class="copy-icon-btn ms-2" onclick="copyToClipboard('${p}')"><i class="far fa-copy"></i></button></div>` },
+            { data: 'email', render: (email, type, row) => `<div class="d-flex align-items-center"><span class="text-truncate" style="max-width:150px">${email}</span><button class="send-email-btn ms-1" onclick="sendSingleEmail('${email}')"><i class="fas fa-paper-plane"></i></button><button class="copy-icon-btn ms-1" onclick="copyToClipboard('${email}')"><i class="far fa-copy"></i></button></div>` },
+            { data: null, render: (d,type,row) => isAdmin ? `<button class="btn btn-sm btn-warning" onclick="editStudent(${row._id})">Edit</button>` : '' }
         ];
-        dataTable = $('#studentTable').DataTable({ data: allStudents, columns, pageLength: 10, scrollX: true, drawCallback: function() { updateHeaderCheckboxState(); } });
+        dataTable = $('#studentTable').DataTable({ data: allStudents, columns, pageLength: 10, scrollX: true });
         document.getElementById('totalStudents').innerText = allStudents.length;
         updateExportCount();
-        updateHeaderCheckboxState();
-        document.getElementById('searchResults').innerText = currentSearchResults.length;
     }
-    
-    // ---------- SEARCH & FILTER (update currentSearchResults) ----------
+
     function searchTable() {
         const prn = document.getElementById('searchPRN').value.trim().toLowerCase();
         const name = document.getElementById('searchName').value.trim().toLowerCase();
@@ -434,151 +340,78 @@
             (!name || s.name.toLowerCase().includes(name)) &&
             (!div || s.division.toLowerCase().includes(div))
         );
-        applyNewSearchResults(filtered);
+        currentSearchResults = filtered;
+        dataTable.clear().rows.add(filtered).draw();
+        document.getElementById('searchResults').innerText = filtered.length;
+        updateExportCount();
     }
-    
+
     function searchMultiplePRNs() {
         const raw = document.getElementById('multiPRNSearch').value;
         const prns = raw.split(/[,\s\n;]+/).map(p => p.trim().toLowerCase()).filter(p => p);
         if (!prns.length) return;
         const filtered = allStudents.filter(s => prns.includes(s.prn.toLowerCase()));
-        applyNewSearchResults(filtered);
+        currentSearchResults = filtered;
+        dataTable.clear().rows.add(filtered).draw();
+        document.getElementById('searchResults').innerText = filtered.length;
+        updateExportCount();
     }
-    
+
     function clearSearch() {
         document.getElementById('searchPRN').value = '';
         document.getElementById('searchName').value = '';
         document.getElementById('searchDivision').value = '';
         document.getElementById('multiPRNSearch').value = '';
-        applyNewSearchResults([...allStudents]);
-    }
-    
-    function applyNewSearchResults(filteredArray) {
-        currentSearchResults = filteredArray;
-        dataTable.clear().rows.add(currentSearchResults).draw();
-        document.getElementById('searchResults').innerText = currentSearchResults.length;
+        dataTable.clear().rows.add(allStudents).draw();
+        currentSearchResults = [...allStudents];
+        document.getElementById('searchResults').innerText = allStudents.length;
         updateExportCount();
-        // After search results change, sync header checkbox state (selected set remains but might have stale ids)
-        updateHeaderCheckboxState();
     }
-    
+
     function updateExportCount() {
         const count = dataTable ? dataTable.rows().count() : 0;
         document.getElementById('exportCount').innerText = count;
     }
-    
-    // ---------- SELECTION LOGIC (only for current search results) ----------
-    // This function selects/deselects ALL students that belong to currentSearchResults only
-    function selectAllSearchResultsOnly(selectAll = true) {
-        if (!currentSearchResults.length) return;
-        if (selectAll) {
-            // add every student id from current search results to selectedStudents
-            for (let student of currentSearchResults) {
-                selectedStudents.add(student._id);
-            }
-        } else {
-            // remove only those that belong to current search results
-            for (let student of currentSearchResults) {
-                selectedStudents.delete(student._id);
-            }
-        }
-        // refresh table UI to reflect updated checkboxes
-        if (dataTable) {
-            dataTable.draw();  // re-renders checkboxes with new selected state
-        }
-        updateSelectedCountDisplay();
-        updateHeaderCheckboxState();
-    }
-    
-    // Handles header checkbox toggle (select/deselect all search results)
-    function handleHeaderSelectAll(checked) {
-        selectAllSearchResultsOnly(checked);
-    }
-    
-    // Individual checkbox toggle
-    function toggleStudentSelection(id, isChecked) {
-        if (isChecked) {
-            selectedStudents.add(id);
-        } else {
-            selectedStudents.delete(id);
-        }
-        updateSelectedCountDisplay();
-        updateHeaderCheckboxState();
-    }
-    
-    function updateSelectedCountDisplay() {
-        document.getElementById('selectedCount').innerText = selectedStudents.size;
-    }
-    
-    function updateHeaderCheckboxState() {
-        const headerCheck = document.getElementById('selectAllHeaderCheckbox');
-        if (!headerCheck) return;
-        if (currentSearchResults.length === 0) {
-            headerCheck.checked = false;
-            headerCheck.indeterminate = false;
-            return;
-        }
-        let selectedInResults = 0;
-        for (let student of currentSearchResults) {
-            if (selectedStudents.has(student._id)) selectedInResults++;
-        }
-        if (selectedInResults === currentSearchResults.length) {
-            headerCheck.checked = true;
-            headerCheck.indeterminate = false;
-        } else if (selectedInResults === 0) {
-            headerCheck.checked = false;
-            headerCheck.indeterminate = false;
-        } else {
-            headerCheck.indeterminate = true;
-        }
-    }
-    
-    // ---------- EMAIL & EXPORT ----------
-    function sendSingleEmail(email) { if(email) window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}`); }
-    function copyToClipboard(text) { navigator.clipboard.writeText(text); alert('✓ Copied: ' + text); }
-    function openFullPhoto(url) { document.getElementById('fullPhotoImg').src = url; new bootstrap.Modal(document.getElementById('photoModal')).show(); }
-    
+
     function exportSearchResults() {
         const data = dataTable.rows().data().toArray();
-        const wsData = [['PRN','Name','Division','Batch','Program','Student Mobile','Parent Mobile','Email']];
+        const wsData = [['PRN','Name','Division','Batch','Program','Mobile','Parent Mobile','Email']];
         data.forEach(s => wsData.push([s.prn, s.name, s.division, s.batch, s.program, s.student_mobile, s.parent_mobile, s.email]));
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(wsData), 'Search_Results');
-        XLSX.writeFile(wb, `PCCOE_Directory_${Date.now()}.xlsx`);
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(wsData), 'Students');
+        XLSX.writeFile(wb, `PCCOE_Students_${Date.now()}.xlsx`);
     }
-    
-    function toggleEmailDropdown() {
-        document.getElementById('emailDropdown').classList.toggle('show');
+
+    function sendSingleEmail(email) { if(email) window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}`); }
+    function copyToClipboard(text) { navigator.clipboard.writeText(text); alert('Copied: ' + text); }
+    function openFullPhoto(url) { document.getElementById('fullPhotoImg').src = url; new bootstrap.Modal(document.getElementById('photoModal')).show(); }
+
+    function toggleSelectAll() { 
+        const cb = document.getElementById('selectAllCheckbox');
+        document.querySelectorAll('.student-checkbox').forEach(ch => { ch.checked = cb.checked; toggleStudentSelection(parseInt(ch.dataset.id), cb.checked); });
+        updateSelectedCount();
     }
-    // close dropdown on outside click
-    window.onclick = function(e) { if (!e.target.closest('.email-dropdown')) { document.getElementById('emailDropdown')?.classList.remove('show'); } }
-    
+    function toggleStudentSelection(id, checked) { if(checked) selectedStudents.add(id); else selectedStudents.delete(id); updateSelectedCount(); }
+    function updateSelectedCount() { document.getElementById('selectedCount').innerText = selectedStudents.size; }
+    function toggleEmailDropdown() { document.getElementById('emailDropdown').classList.toggle('show'); }
     function sendEmailWithDraft(type) {
-        if (selectedStudents.size === 0) return alert('No students selected. Use checkboxes to select recipients.');
+        if(selectedStudents.size === 0) return alert('No students selected');
         const emails = allStudents.filter(s => selectedStudents.has(s._id) && s.email).map(s => s.email).join(',');
-        if (!emails) return alert('No valid email addresses among selected students.');
+        if(!emails) return alert('No valid emails');
         let subject = '', body = '';
-        if(type === 'openDay') { subject = 'Open Day Invitation'; body = 'Dear Student, you are invited to the Open Day event on March 20th.'; }
-        else if(type === 'faSchedule') { subject = 'FA Schedule Released'; body = 'Formative Assessment schedule has been published. Kindly check the notice board.'; }
-        else { subject = 'Announcement from PCCOE'; body = 'Please refer to the latest updates on the student portal.'; }
+        if(type === 'openDay') { subject = 'Open Day Schedule'; body = 'Dear Student, Open Day details attached.'; }
+        else if(type === 'faSchedule') { subject = 'FA Schedule'; body = 'Formative Assessment schedule is out.'; }
+        else { subject = 'Announcement'; body = 'Please check the notice board.'; }
         window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${emails}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
-        document.getElementById('emailDropdown')?.classList.remove('show');
+        document.getElementById('emailDropdown').classList.remove('show');
     }
-    
-    function editStudent(id) { alert(`Edit functionality for student ID ${id} can be extended as needed.`); }
-    function addNewStudent() { alert('Add student form integrated with backend mockup.'); }
-    
-    // ensures that after any operation counters are refreshed
-    window.updateSelectedCountDisplay = updateSelectedCountDisplay;
-    window.updateHeaderCheckboxState = updateHeaderCheckboxState;
-    
-    // override initial redraw consistency
-    if (dataTable) {
-        setTimeout(() => {
-            updateHeaderCheckboxState();
-            updateSelectedCountDisplay();
-        }, 100);
-    }
+
+    function editStudent(id) { alert('Edit feature - implement as needed'); }
+    function addNewStudent() { alert('Add new student'); }
+
+    // Auto login check
+    const saved = localStorage.getItem('pccoeLogin');
+    if(saved) { const data = JSON.parse(saved); if(data.loggedIn && data.expiry > Date.now()) { isLoggedIn = true; isAdmin = data.isAdmin; document.getElementById('loginSection').style.display = 'none'; document.getElementById('mainSection').style.display = 'block'; loadCSVData(); } }
 </script>
 </body>
 </html>
