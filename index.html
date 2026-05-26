@@ -219,12 +219,11 @@
         .directory-header {
             background: linear-gradient(135deg, #0d1547, #1a237e 50%, #283593);
             color: white;
-            padding: 1rem 1.5rem;
+            padding: 1.2rem 1.5rem;
             border-radius: 16px;
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
             align-items: center;
-            flex-wrap: wrap;
             gap: 12px;
             box-shadow: var(--shadow-md);
             position: relative;
@@ -241,33 +240,46 @@
             pointer-events: none;
         }
 
-        .header-logo { height: 64px; object-fit: contain; }
+        .header-logo { 
+    height: 64px; 
+    object-fit: contain;
+    justify-self: start; /* Keeps logo on the far left */
+}
 
-        .header-title h2 {
-            font-family: 'Crimson Pro', Georgia, serif;
-            font-size: 1.6rem;
-            font-weight: 600;
-            margin-bottom: 2px;
-        }
+       .header-title {
+    text-align: center; /* Centers both lines of text */
+    justify-self: center;
+}
 
-        .header-title p {
-            font-size: 0.8rem;
-            opacity: 0.75;
-            letter-spacing: 0.04em;
-        }
+.header-title h2 {
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 2.2rem; /* Increased font size */
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.header-title p {
+    font-family: 'Crimson Pro', Georgia, serif; /* Same font family as title */
+    font-size: 2.2rem; /* Same font size as title */
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    margin-bottom: 0;
+    opacity: 1; /* Removed lower opacity so it matches the title color intensity */
+}
 
         .logout-btn {
-            background: rgba(255,255,255,0.12);
-            border: 1.5px solid rgba(255,255,255,0.25);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 8px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
+    background: rgba(255,255,255,0.12);
+    border: 1.5px solid rgba(255,255,255,0.25);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    justify-self: end; /* Keeps logout button on the far right */
+}
 
         .logout-btn:hover { background: rgba(255,255,255,0.22); }
 
