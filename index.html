@@ -258,7 +258,7 @@
 
         .header-title p {
             font-family: 'Crimson Pro', Georgia, serif;
-            font-size: 2.2rem;
+            font-size: 1.4rem;
             font-weight: 400;
             letter-spacing: 0.02em;
             margin-bottom: 0;
@@ -393,7 +393,16 @@
 
         .btn-action:hover { transform: translateY(-1px); }
         .btn-action:active { transform: translateY(0); }
-        .btn-action:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        
+        /* Universal styling fallback for any disabled layout engine button */
+        .btn-action:disabled, button:disabled { 
+            background: #cccccc !important; 
+            color: #666666 !important; 
+            box-shadow: none !important; 
+            cursor: not-allowed; 
+            transform: none !important; 
+            opacity: 0.65; 
+        }
 
         .btn-select-all {
             background: #e8eaf6;
@@ -704,7 +713,7 @@
                 </div>
             </div>
 
-            <button class="btn-action btn-export" onclick="exportSearchResults()">
+            <button class="btn-action btn-export" id="exportBtn" onclick="exportSearchResults()" disabled>
                 <i class="fas fa-file-excel"></i> Export Results
             </button>
         </div>
@@ -925,61 +934,36 @@ function handleRowCheckbox(chk) {
         selectedStudents.delete(prn);
         row.removeClass('row-selected');
     }
-    updateSelectionUI();
+    updateSelectedCount();
 }
 
 function handleSelectAllCheckbox() {
-    const mainChk = document.getElementById('selectAllCheckbox');
-    const targetList = isSearchActive ? currentSearchResults : allStudents;
+    const masterChk = document.getElementById('selectAllCheckbox');
+    const rows = dataTable.rows({ search: 'applied' }).data();
     
-    targetList.forEach(st => {
-        if (mainChk.checked) {
-            selectedStudents.add(st.prn);
-        } else {
-            selectedStudents.delete(st.prn);
-        }
-    });
-
-    $('.row-checkbox').each(function() {
-        const prn = $(this).attr('data-prn');
-        if(selectedStudents.has(prn)) {
-            this.checked = true;
-            $(this).closest('tr').addClass('row-selected');
-        } else {
-            this.checked = false;
-            $(this).closest('tr').removeClass('row-selected');
-        }
-    });
-
-    updateSelectionUI();
-}
-
-function handleSelectAll() {
-    if (!isSearchActive) {
-        const warning = document.getElementById('selectAllWarning');
-        warning.classList.add('show');
-        setTimeout(() => warning.classList.remove('show'), 4000);
-        return;
+    if (masterChk.checked) {
+        rows.each(function(rowData) {
+            selectedStudents.add(rowData.prn);
+        });
+        $('.row-checkbox').prop('checked', true);
+        $('#studentTable tbody tr').addClass('row-selected');
+    } else {
+        rows.each(function(rowData) {
+            selectedStudents.delete(rowData.prn);
+        });
+        $('.row-checkbox').prop('checked', false);
+        $('#studentTable tbody tr').removeClass('row-selected');
     }
-    document.getElementById('selectAllCheckbox').checked = true;
-    handleSelectAllCheckbox();
+    updateSelectedCount();
 }
 
-function updateSelectionUI() {
+function updateSelectedCount() {
     const count = selectedStudents.size;
     document.getElementById('selectedCount').innerText = count;
     document.getElementById('exportCount').innerText = count;
 }
 
-function toggleEmailDropdown() {
-    document.getElementById('emailDropdown').classList.toggle('show');
-}
-
-window.addEventListener('click', (e) => {
-    if (!e.target.closest('.email-dropdown-wrap')) {
-        document.getElementById('emailDropdown').classList.remove('show');
-    }
-});
+/* ───────── ENGINE LOGIC FOR SEARCH & EXPORT ACTIONS ───────── */
 
 function searchTable() {
     const prnVal = document.getElementById('searchPRN').value.trim().toLowerCase();
@@ -991,28 +975,57 @@ function searchTable() {
         return;
     }
 
-    currentSearchResults = allStudents.filter(st => {
-        const mPRN = !prnVal || st.prn.toLowerCase().includes(prnVal);
-        const mName = !nameVal || st.name.toLowerCase().includes(nameVal);
-        const mDiv = !divVal || st.division.toLowerCase().slice(0, divVal.length) === divVal;
-        return mPRN && mName && mDiv;
+    currentSearchResults = allStudents.filter(s => {
+        const matchPRN = !prnVal || s.prn.toLowerCase().includes(prnVal);
+        const matchName = !nameVal || s.name.toLowerCase().includes(nameVal);
+        const matchDiv = !divVal || s.division.toLowerCase().includes(divVal);
+        return matchPRN && matchName && matchDiv;
     });
 
     isSearchActive = true;
     document.getElementById('searchResults').innerText = currentSearchResults.length;
+    document.getElementById('selectAllWarning').classList.remove('show');
+    
     initializeTable(currentSearchResults);
+
+    // Dynamic Toggle: Enable export button if results are found
+    const exportBtn = document.getElementById('exportBtn');
+    if (currentSearchResults.length > 0) {
+        exportBtn.disabled = false;
+    } else {
+        exportBtn.disabled = true;
+    }
 }
 
 function searchMultiplePRNs() {
-    const text = document.getElementById('multiPRNSearch').value.trim();
-    if (!text) return;
+    const rawInput = document.getElementById('multiPRNSearch').value;
+    if (!rawInput.trim()) {
+        clearSearch();
+        return;
+    }
 
-    const prns = text.split(/[\s,;\n]+/).map(p => p.trim().toLowerCase()).filter(p => p.length > 0);
-    
-    currentSearchResults = allStudents.filter(st => prns.includes(st.prn.toLowerCase()));
+    // Split items via line breaks, spaces, or commas
+    const prnList = rawInput.split(/[\s,]+/).map(p => p.trim().toLowerCase()).filter(p => p.length > 0);
+
+    if (prnList.length === 0) {
+        clearSearch();
+        return;
+    }
+
+    currentSearchResults = allStudents.filter(s => prnList.includes(s.prn.toLowerCase()));
     isSearchActive = true;
     document.getElementById('searchResults').innerText = currentSearchResults.length;
+    document.getElementById('selectAllWarning').classList.remove('show');
+
     initializeTable(currentSearchResults);
+
+    // Dynamic Toggle: Enable export button if matches are found
+    const exportBtn = document.getElementById('exportBtn');
+    if (currentSearchResults.length > 0) {
+        exportBtn.disabled = false;
+    } else {
+        exportBtn.disabled = true;
+    }
 }
 
 function clearSearch() {
@@ -1021,73 +1034,97 @@ function clearSearch() {
     document.getElementById('searchDivision').value = '';
     document.getElementById('multiPRNSearch').value = '';
     
-    isSearchActive = false;
     currentSearchResults = [];
+    isSearchActive = false;
+    
     document.getElementById('searchResults').innerText = '—';
+    document.getElementById('selectAllWarning').classList.remove('show');
+    document.getElementById('selectAllCheckbox').checked = false;
+    
+    // Safety lock: Re-disable the export button since parameters are reset
+    document.getElementById('exportBtn').disabled = true;
+
     initializeTable(allStudents);
 }
 
+function handleSelectAll() {
+    if (!isSearchActive) {
+        document.getElementById('selectAllWarning').classList.add('show');
+        return;
+    }
+    document.getElementById('selectAllWarning').classList.remove('show');
+    document.getElementById('selectAllCheckbox').checked = true;
+    handleSelectAllCheckbox();
+}
+
+function toggleEmailDropdown() {
+    document.getElementById('emailDropdown').classList.toggle('show');
+}
+
+window.addEventListener('click', function(e) {
+    if (!e.target.closest('.email-dropdown-wrap')) {
+        document.getElementById('emailDropdown').classList.remove('show');
+    }
+});
+
 function sendEmailWithDraft(type) {
     if (selectedStudents.size === 0) {
-        alert('Please select at least one student.');
+        alert('Please select at least one student checkbox to send an email.');
         return;
     }
 
-    const emails = allStudents.filter(st => selectedStudents.has(st.prn)).map(st => st.email).filter(e => e);
-    if(emails.length === 0) {
-        alert('No valid Email IDs found for selected students.');
+    const selectedList = allStudents.filter(s => selectedStudents.has(s.prn));
+    const emails = selectedList.map(s => s.email).filter(e => e.includes('@'));
+
+    if (emails.length === 0) {
+        alert('None of the selected students have a valid email address.');
         return;
     }
 
     let subject = "", body = "";
     if (type === 'openDay') {
-        subject = "Invitation to Open Day Presentation";
-        body = "Dear Student,\n\nYou are invited to attend the upcoming Open Day evaluation structure presentation.";
+        subject = "Invitation to PCCOE Open Day Evaluation";
+        body = "Dear Student,\n\nYou are hereby requested to attend the upcoming Open Day Display event at the campus along with your parents.\n\nBest Regards,\nDepartment of Applied Sciences & Humanities, PCCOE.";
     } else if (type === 'faSchedule') {
-        subject = "FA Examination Schedule Update";
-        body = "Dear Student,\n\nPlease find your upcoming Formative Assessment schedule inside your dashboard.";
+        subject = "Notification: Formative Assessment (FA) Schedule";
+        body = "Dear Student,\n\nPlease find your upcoming Formative Assessment schedule updated on the department display board. Attendance is mandatory.\n\nBest Regards,\nPCCOE.";
+    } else {
+        subject = "PCCOE Academic Notice";
+        body = "Dear Student,\n\n[Write your custom message here]\n\nBest Regards,\nPCCOE.";
     }
 
-    const bccList = emails.join(',');
-    window.open(`mailto:?bcc=${encodeURIComponent(bccList)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+    const mailtoUrl = `mailto:${emails.join(',')}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.open(mailtoUrl, '_blank');
 }
 
-// ───── EXPORT ACTION ─────
 function exportSearchResults() {
-    // Determine context logic: export filtered dataset or global file dataset
-    let dataToExport = [];
-    
-    if (isSearchActive) {
-        dataToExport = currentSearchResults;
-    } else {
-        dataToExport = allStudents;
-    }
-
-    if (dataToExport.length === 0) {
-        alert("No records found to export.");
+    // Ultimate fallback catch rule protection
+    const targets = isSearchActive ? currentSearchResults : [];
+    if (targets.length === 0) {
+        alert('No search active or matching entries available to extract records.');
         return;
     }
 
-    // Sanitize and format data properties for Excel output sheets
-    const rows = dataToExport.map(st => ({
-        '#': st.index,
-        'PRN': st.prn,
-        'Student Name': st.name,
-        'Division': st.division,
-        'Batch': st.batch,
-        'Program': st.program,
-        'Student Mobile': st.studentMobile,
-        'Parent Mobile': st.parentMobile,
-        'Email ID': st.email
+    const exportData = targets.map(s => ({
+        'Sr No': s.index,
+        'PRN': s.prn,
+        'Student Name': s.name,
+        'Division': s.division,
+        'Batch': s.batch,
+        'Program': s.program,
+        'Student Mobile': s.studentMobile,
+        'Parent Mobile': s.parentMobile,
+        'Email ID': s.email
     }));
 
-    const worksheet = XLSX.utils.json_to_sheet(rows);
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Student Directory");
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Filtered Students");
     
-    const fileName = isSearchActive ? "Filtered_Student_Results.xlsx" : "Complete_Student_File.xlsx";
-    XLSX.writeFile(workbook, fileName);
+    // Generates modern clean spreadsheet download stream 
+    XLSX.writeFile(workbook, `PCCOE_Student_Search_Results_${new Date().toISOString().slice(0,10)}.xlsx`);
 }
 </script>
+
 </body>
 </html>
