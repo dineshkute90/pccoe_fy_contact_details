@@ -867,10 +867,10 @@ async function loadCSVData() {
     allStudents = [];
 
     // Fetches your uploaded dataset file from the same repository folder
-    fetch('contact_testing_csv (1).csv')
+    fetch('contact_testing_csv.csv')
         .then(response => {
             if (!response.ok) {
-                throw new Error('CSV file "contact_testing_csv (1).csv" not found. Make sure it is in the same folder.');
+                throw new Error('CSV file "contact_testing_csv.csv" not found. Make sure it is in the same folder.');
             }
             return response.text();
         })
