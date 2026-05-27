@@ -59,6 +59,7 @@
             pointer-events: none;
         }
 
+        /* Decorative grid lines */
         #loginSection::after {
             content: '';
             position: absolute;
@@ -214,6 +215,7 @@
             padding: 20px;
         }
 
+        /* Header */
         .directory-header {
             background: linear-gradient(135deg, #0d1547, #1a237e 50%, #283593);
             color: white;
@@ -239,48 +241,49 @@
         }
 
         .header-logo { 
-            height: 64px; 
-            object-fit: contain;
-            justify-self: start;
-        }
+    height: 64px; 
+    object-fit: contain;
+    justify-self: start; /* Keeps logo on the far left */
+}
 
-        .header-title {
-            text-align: center;
-            justify-self: center;
-        }
+       .header-title {
+    text-align: center; /* Centers both lines of text */
+    justify-self: center;
+}
 
-        .header-title h2 {
-            font-family: 'Crimson Pro', Georgia, serif;
-            font-size: 2.2rem;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
+.header-title h2 {
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 2.2rem; /* Increased font size */
+    font-weight: 600;
+    margin-bottom: 8px;
+}
 
-        .header-title p {
-            font-family: 'Crimson Pro', Georgia, serif;
-            font-size: 1.1rem;
-            font-weight: 400;
-            letter-spacing: 0.02em;
-            margin-bottom: 0;
-            opacity: 0.85;
-        }
+.header-title p {
+    font-family: 'Crimson Pro', Georgia, serif; /* Same font family as title */
+    font-size: 2.2rem; /* Same font size as title */
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    margin-bottom: 0;
+    opacity: 1; /* Removed lower opacity so it matches the title color intensity */
+}
 
         .logout-btn {
-            background: rgba(255,255,255,0.12);
-            border: 1.5px solid rgba(255,255,255,0.25);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 8px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-            justify-self: end;
-        }
+    background: rgba(255,255,255,0.12);
+    border: 1.5px solid rgba(255,255,255,0.25);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    justify-self: end; /* Keeps logout button on the far right */
+}
 
         .logout-btn:hover { background: rgba(255,255,255,0.22); }
 
+        /* Stats Cards */
         .stats-row {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -331,6 +334,7 @@
             margin-top: 4px;
         }
 
+        /* Search Box */
         .search-box {
             background: var(--card-bg);
             padding: 1.4rem 1.5rem;
@@ -367,6 +371,7 @@
             outline: none;
         }
 
+        /* Action Buttons */
         .action-bar {
             display: flex;
             align-items: center;
@@ -437,7 +442,10 @@
             box-shadow: 0 3px 10px rgba(0,105,92,0.25);
         }
 
-        .email-dropdown-wrap { position: relative; }
+        /* Email Dropdown */
+        .email-dropdown-wrap {
+            position: relative;
+        }
 
         .email-dropdown-content {
             display: none;
@@ -469,6 +477,7 @@
         .email-dropdown-content .dd-item:hover { background: #f0f2ff; }
         .email-dropdown-content .dd-item:not(:last-child) { border-bottom: 1px solid var(--border); }
 
+        /* Data Table */
         .data-table-wrap {
             background: var(--card-bg);
             border-radius: 14px;
@@ -491,10 +500,11 @@
             border: none !important;
         }
 
-        #studentTable tbody tr { transition: background 0.15s; cursor: pointer; }
+        #studentTable tbody tr { transition: background 0.15s; }
         #studentTable tbody tr:hover { background: #f0f2ff !important; }
         #studentTable tbody td { padding: 10px 12px; vertical-align: middle; border-color: var(--border); }
 
+        /* Selected row */
         #studentTable tbody tr.row-selected { background: #e8eaf6 !important; }
 
         .student-photo-thumb {
@@ -535,6 +545,7 @@
             min-width: 24px;
         }
 
+        /* Select All warning banner */
         .select-all-warning {
             display: none;
             background: #fff3e0;
@@ -551,19 +562,22 @@
 
         .select-all-warning.show { display: flex; }
 
+        /* DataTable overrides */
         .dataTables_wrapper .dataTables_filter input {
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            padding: 6px 10px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 0.83rem;
-        }
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.83rem;
+}
 
-        .dataTables_wrapper .dataTables_length select {
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            padding: 6px 32px 6px 12px;
-        }
+.dataTables_wrapper .dataTables_length select {
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 32px 6px 12px; /* Increased right padding to make room for the arrow */
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.83rem;
+}
 
         .dataTables_wrapper .dataTables_paginate .paginate_button {
             border-radius: 6px !important;
@@ -579,6 +593,7 @@
         .dataTables_wrapper { padding: 16px; }
         div.dataTables_wrapper div.dataTables_info { font-size: 0.82rem; color: var(--text-muted); }
 
+        /* Footer */
         .app-footer {
             text-align: center;
             padding: 14px;
@@ -591,26 +606,28 @@
             letter-spacing: 0.03em;
         }
 
+        /* Photo Modal */
         #photoModal .modal-content { background: #0d1547; border: none; border-radius: 16px; overflow: hidden; }
         #photoModal .modal-header { border-bottom: 1px solid rgba(255,255,255,0.1); }
         .photo-modal-img { max-width: 90vw; max-height: 80vh; border-radius: 8px; }
 
         @media (max-width: 768px) {
-            .directory-header { 
-                display: flex;
-                flex-direction: column; 
-                text-align: center; 
-                gap: 16px;
-            }
-            .header-title h2, 
-            .header-title p {
-                font-size: 1.6rem;
-            }
-        }
+    .directory-header { 
+        display: flex;
+        flex-direction: column; 
+        text-align: center; 
+        gap: 16px;
+    }
+    .header-title h2, 
+    .header-title p {
+        font-size: 1.6rem; /* Scaled down slightly for mobile screens to avoid clipping */
+    }
+}
     </style>
 </head>
 <body>
 
+<!-- ═══════════════ LOGIN PAGE ═══════════════ -->
 <div id="loginSection">
     <div class="login-card">
         <div class="login-card-header">
@@ -624,7 +641,7 @@
 
             <div class="login-input-group">
                 <i class="fas fa-user input-icon"></i>
-                <input type="text" id="username" placeholder="Enter Email Address" autocomplete="username" required>
+                <input type="text" id="username" placeholder="Username" autocomplete="username" required>
             </div>
             <div class="login-input-group">
                 <i class="fas fa-lock input-icon"></i>
@@ -638,7 +655,9 @@
     </div>
 </div>
 
+<!-- ═══════════════ MAIN APP ═══════════════ -->
 <div id="mainSection">
+    <!-- Header -->
     <div class="directory-header">
         <img src="https://raw.githubusercontent.com/dineshkute90/pccoe_fy_contact_details/main/pccoe_logo.png" class="header-logo" alt="PCCOE">
         <div class="header-title">
@@ -648,6 +667,7 @@
         <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt me-1"></i> Logout</button>
     </div>
 
+    <!-- Stats -->
     <div class="stats-row">
         <div class="stat-card">
             <div class="stat-value" id="totalStudents">0</div>
@@ -667,6 +687,7 @@
         </div>
     </div>
 
+    <!-- Search Box -->
     <div class="search-box">
         <div class="section-label"><i class="fas fa-search me-1"></i> Quick Search</div>
         <div class="row g-2">
@@ -693,7 +714,8 @@
 
         <div class="row mt-2">
             <div class="col-md-10">
-                <textarea id="multiPRNSearch" class="form-control" rows="2" placeholder="Paste multiple PRNs (comma, space or new-line separated)…"></textarea>
+                <textarea id="multiPRNSearch" class="form-control" rows="2"
+                    placeholder="Paste multiple PRNs (comma, space or new-line separated)…"></textarea>
             </div>
             <div class="col-md-2 d-flex align-items-end">
                 <button class="btn-action btn-multi-search w-100" onclick="searchMultiplePRNs()">
@@ -702,6 +724,7 @@
             </div>
         </div>
 
+        <!-- Action Bar -->
         <div class="action-bar">
             <button class="btn-action btn-select-all" id="selectAllBtn" onclick="handleSelectAll()" title="Only works after searching">
                 <i class="fas fa-check-square"></i> Select All
@@ -724,12 +747,14 @@
             </button>
         </div>
 
+        <!-- Warning: Select All only for search -->
         <div class="select-all-warning" id="selectAllWarning">
             <i class="fas fa-exclamation-triangle"></i>
             <span>"Select All" works only after performing a search. Please search first.</span>
         </div>
     </div>
 
+    <!-- Table -->
     <div class="data-table-wrap">
         <div style="overflow-x:auto">
             <table id="studentTable" class="table table-striped" style="width:100%">
@@ -756,6 +781,7 @@
     <div class="app-footer">PCCOE Student Directory — Developed by Mr. Dinesh Kute</div>
 </div>
 
+<!-- Photo Modal -->
 <div class="modal fade" id="photoModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
@@ -770,404 +796,413 @@
     </div>
 </div>
 
+<!-- Add Student Modal -->
+<div class="modal fade" id="addStudentModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>Add Student</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input id="addPRN" class="form-control mb-2" placeholder="PRN">
+                <input id="addName" class="form-control mb-2" placeholder="Name">
+                <input id="addDivision" class="form-control mb-2" placeholder="Division">
+                <input id="addBatch" class="form-control mb-2" placeholder="Batch">
+                <input id="addProgram" class="form-control mb-2" placeholder="Program">
+                <input id="addMobile" class="form-control mb-2" placeholder="Mobile">
+                <input id="addEmail" class="form-control mb-2" placeholder="Email">
+                <input id="addPhoto" class="form-control mb-2" placeholder="Photo URL">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="addNewStudent()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-
 <script>
-// 1. Firebase Core Configuration Settings 
-const firebaseConfig = {
-  apiKey: "AIzaSyBxoRU8BfUCpEK-akWYEXQ6VmLCVQINTVI",
-  authDomain: "pccoecontact.firebaseapp.com",
-  projectId: "pccoecontact",
-  storageBucket: "pccoecontact.firebasestorage.app",
-  messagingSenderId: "419533074504",
-  appId: "1:419533074504:web:304b34ae611c651abee87d",
-  measurementId: "G-1WR1BWSBY1"
+// ───── CREDENTIALS ─────
+// Added dineshkute90 / dineshkute90 as requested
+const CREDENTIALS = {
+    'dineshkute90': 'dineshkute90',
+    'pccoeash':     'ashpccoe@2025',
+    'admin':        'pccoe@admin'
 };
 
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
-
-// 3. Runtime App Arrays & Control Parameters
-let dataTable = null, allStudents = [], isLoggedIn = false, isAdmin = false;
-let currentSearchResults = [];     
-let isSearchActive = false;        
+let dataTable, allStudents = [], isLoggedIn = false, isAdmin = false;
+let currentSearchResults = [];     // populated only after a search
+let isSearchActive = false;        // true = user has performed a search
 let selectedStudents = new Set();
 
-// ───── FIREBASE LOGIN FUNCTION ─────
+// ───── LOGIN ─────
 function doLogin() {
-    const email = document.getElementById('username').value.trim(); 
-    const pwd   = document.getElementById('password').value;
+    const user = document.getElementById('username').value.trim();
+    const pwd  = document.getElementById('password').value;
     const errDiv = document.getElementById('loginError');
 
-    errDiv.classList.add('d-none'); 
-
-    auth.signInWithEmailAndPassword(email, pwd)
-        .then((userCredential) => {
-            isAdmin = (email === 'admin@pccoe.edu'); 
-            isLoggedIn = true;
-            showMain();
-        })
-        .catch((error) => {
-            errDiv.classList.remove('d-none');
-            if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-                errDiv.innerText = 'Invalid email or password. Please try again.';
-            } else {
-                errDiv.innerText = error.message;
-            }
-            document.getElementById('password').value = '';
-            document.getElementById('password').focus();
-        });
-}
-
-// ───── FIREBASE LOGOUT FUNCTION ─────
-function logout() {
-    auth.signOut().then(() => {
-        isLoggedIn = false;
-        isAdmin = false;
-        location.reload();
-    });
-}
-
-// ───── AUTOMATIC AUTH STATE CONTROLLER ─────
-auth.onAuthStateChanged((user) => {
-    if (user) {
+    if (CREDENTIALS[user] && CREDENTIALS[user] === pwd) {
         isLoggedIn = true;
-        isAdmin = (user.email === 'admin@pccoe.edu'); 
+        isAdmin = (user === 'admin');
+        localStorage.setItem('pccoeLogin', JSON.stringify({
+            loggedIn: true, isAdmin, expiry: Date.now() + 7 * 86400000
+        }));
         showMain();
     } else {
-        isLoggedIn = false;
-        isAdmin = false;
-        document.getElementById('loginSection').style.display = 'flex';
-        document.getElementById('mainSection').style.display = 'none';
+        errDiv.classList.remove('d-none');
+        errDiv.innerText = 'Invalid username or password. Please try again.';
+        document.getElementById('password').value = '';
+        document.getElementById('password').focus();
+    }
+}
+
+// Allow Enter key on login inputs
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && document.getElementById('loginSection').style.display !== 'none') {
+        doLogin();
     }
 });
 
 function showMain() {
     document.getElementById('loginSection').style.display = 'none';
     document.getElementById('mainSection').style.display = 'block';
-    loadCSVData(); 
+    loadCSVData();
 }
 
-// ───── LOCAL CSV FILE DATA FETCH ─────
-async function loadCSVData() {
-    const statusDiv = document.getElementById('dataStatus');
-    statusDiv.innerText = 'Loading CSV Dataset...';
-    allStudents = [];
+function logout() {
+    localStorage.removeItem('pccoeLogin');
+    location.reload();
+}
 
-    fetch('students.csv')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('CSV file "students.csv" not found. Please verify it is in the same folder as index.html.');
+// Auto-login from localStorage
+window.addEventListener('DOMContentLoaded', () => {
+    const saved = localStorage.getItem('pccoeLogin');
+    if (saved) {
+        try {
+            const data = JSON.parse(saved);
+            if (data.loggedIn && data.expiry > Date.now()) {
+                isLoggedIn = true;
+                isAdmin = data.isAdmin;
+                showMain();
+                return;
             }
-            return response.text();
-        })
-        .then(csvText => {
-            Papa.parse(csvText, {
-                header: true,
-                skipEmptyLines: true,
-                complete: function(results) {
-                    let recordCount = 1; // 1-indexed count for display rows
-                    
-                    allStudents = results.data.map(row => {
-                        return {
-                            _id: recordCount++,
-                            prn: row['PRN'] || '',
-                            name: row['Student Name'] || '',
-                            division: row['Division'] || '',
-                            batch: row['Batch'] || '',
-                            program: row['Program'] || '',
-                            photo: row['Photo'] || '',
-                            studentMobile: row['Student Mobile'] || '',
-                            parentMobile: row['Parent Mobile'] || '',
-                            email: row['Email ID'] || ''
-                        };
-                    });
-
-                    document.getElementById('totalStudents').innerText = allStudents.length;
-
-                    if (allStudents.length > 0) {
-                        statusDiv.innerText = '✓ Live (CSV)';
-                        currentSearchResults = [...allStudents];
-                        initDataTable();
-                    } else {
-                        statusDiv.innerText = '⚠ Empty CSV';
-                        currentSearchResults = [];
-                        initDataTable(); 
-                    }
-                }
-            });
-        })
-        .catch((error) => {
-            console.error("CSV loading error: ", error);
-            statusDiv.innerText = '✕ File Load Error';
-        });
-}
-
-// ───── INITIALIZE DATATABLE ─────
-function initDataTable() {
-    if ($.fn.DataTable.isDataTable('#studentTable')) {
-        dataTable.destroy();
+        } catch(e) {}
     }
-
-    dataTable = $('#studentTable').DataTable({
-        data: currentSearchResults,
-        columns: [
-            { 
-                data: null, 
-                orderable: false,
-                render: function(data) {
-                    const checked = selectedStudents.has(data.email) ? 'checked' : '';
-                    return `<input type="checkbox" class="row-checkbox" data-email="${data.email}" ${checked} onclick="handleRowCheckbox(event, '${data.email}')">`;
-                }
-            },
-            { data: '_id' },
-            { data: 'prn' },
-            { data: 'name' },
-            { data: 'division' },
-            { data: 'batch' },
-            { data: 'program' },
-            { 
-                data: 'photo',
-                orderable: false,
-                render: function(data) {
-                    if(data) {
-                        return `<img src="${data}" class="student-photo-thumb" onclick="openPhotoModal('${data}')" onerror="this.src='https://via.placeholder.com/40?text=No+Img'">`;
-                    }
-                    return '—';
-                }
-            },
-            { data: 'studentMobile' },
-            { data: 'parentMobile' },
-            { 
-                data: 'email',
-                render: function(data) {
-                    if(!data) return '—';
-                    return `${data} <button class="copy-icon-btn ms-1" onclick="navigator.clipboard.writeText('${data}');alert('Copied email address!')" title="Copy"><i class="fas fa-copy"></i></button>`;
-                }
-            }
-        ],
-        order: [[1, 'asc']],
-        pageLength: 10,
-        lengthMenu: [5, 10, 25, 50, 100],
-        rowCallback: function(row, data) {
-            if (selectedStudents.has(data.email)) {
-                $(row).addClass('row-selected');
-            } else {
-                $(row).removeClass('row-selected');
-            }
-        }
-    });
-
-    document.getElementById('searchResults').innerText = currentSearchResults.length;
-    document.getElementById('exportCount').innerText = currentSearchResults.length;
-}
-
-// ───── INTERACTIVE ACTION & SELECTION HANDLERS ─────
-function handleRowCheckbox(event, email) {
-    event.stopPropagation();
-    if (!email) return;
-    
-    if (selectedStudents.has(email)) {
-        selectedStudents.delete(email);
-    } else {
-        selectedStudents.add(email);
-    }
-    updateSelectionUI();
-}
-
-// Row click toggle
-$('#studentTable tbody').on('click', 'tr', function (e) {
-    if ($(e.target).is('input, button, i, img')) return;
-    const rowData = dataTable.row(this).data();
-    if (!rowData || !rowData.email) return;
-
-    if (selectedStudents.has(rowData.email)) {
-        selectedStudents.delete(rowData.email);
-    } else {
-        selectedStudents.add(rowData.email);
-    }
-    updateSelectionUI();
+    // Show login
+    document.getElementById('loginSection').style.display = 'flex';
 });
 
-function handleSelectAllCheckbox() {
-    const isChecked = document.getElementById('selectAllCheckbox').checked;
-    dataTable.rows({ page: 'current' }).every(function() {
-        const rowData = this.data();
-        if (rowData && rowData.email) {
-            if (isChecked) selectedStudents.add(rowData.email);
-            else selectedStudents.delete(rowData.email);
-        }
-    });
-    updateSelectionUI();
+// ───── DATA LOADING ─────
+async function loadCSVData() {
+    document.getElementById('dataStatus').innerText = 'Loading…';
+    const csvUrl = 'https://raw.githubusercontent.com/dineshkute90/pccoe_fy_contact_details/main/contact_testing_csv.csv';
+    try {
+        const response = await fetch(csvUrl);
+        if (!response.ok) throw new Error('Network error');
+        const csvText = await response.text();
+        Papa.parse(csvText, {
+            header: true, skipEmptyLines: true,
+            complete: (results) => {
+                if (!results.data.length) throw new Error('Empty CSV');
+                mapCSVToStudents(results.data);
+                document.getElementById('dataStatus').innerText = '✓ Live';
+            },
+            error: () => useSampleData()
+        });
+    } catch(e) { useSampleData(); }
 }
 
-function handleSelectAll() {
-    if (!isSearchActive) {
-        const warning = document.getElementById('selectAllWarning');
-        warning.classList.add('show');
-        setTimeout(() => warning.classList.remove('show'), 4000);
-        return;
-    }
-    
-    const btn = document.getElementById('selectAllBtn');
-    if (btn.classList.contains('active')) {
-        currentSearchResults.forEach(s => { if(s.email) selectedStudents.delete(s.email); });
-        btn.classList.remove('active');
-    } else {
-        currentSearchResults.forEach(s => { if(s.email) selectedStudents.add(s.email); });
-        btn.classList.add('active');
-    }
-    updateSelectionUI();
-}
+function mapCSVToStudents(rows) {
+    allStudents = [];
+    const keys = Object.keys(rows[0]);
+    const findCol = (patterns) => keys.find(k => patterns.some(p => k.toLowerCase().includes(p.toLowerCase()))) || keys[0];
 
-function updateSelectionUI() {
-    document.getElementById('selectedCount').innerText = selectedStudents.size;
-    
-    // Refresh visual check states inside active viewport rows
-    $('#studentTable tbody tr').each(function() {
-        const rowData = dataTable.row(this).data();
-        if (rowData && selectedStudents.has(rowData.email)) {
-            $(this).addClass('row-selected');
-            $(this).find('.row-checkbox').prop('checked', true);
-        } else {
-            $(this).removeClass('row-selected');
-            $(this).find('.row-checkbox').prop('checked', false);
-        }
-    });
-}
+    const prnKey    = findCol(['prn','roll']);
+    const nameKey   = findCol(['student name','name']);
+    const divKey    = findCol(['division','div']);
+    const batchKey  = findCol(['batch']);
+    const progKey   = findCol(['program','course']);
+    const mobileKey = findCol(['student mobile','mobile']);
+    const parentKey = findCol(['parent mobile','parent']);
+    const emailKey  = findCol(['email','mail']);
+    const photoKey  = findCol(['photo','image','picture']);
 
-// ───── SEARCH ALGORITHMS ─────
-function searchTable() {
-    const prn = document.getElementById('searchPRN').value.trim().toLowerCase();
-    const name = document.getElementById('searchName').value.trim().toLowerCase();
-    const division = document.getElementById('searchDivision').value.trim().toLowerCase();
-
-    if (!prn && !name && !division) {
-        clearSearch();
-        return;
-    }
-
-    isSearchActive = true;
-    currentSearchResults = allStudents.filter(student => {
-        const matchPRN = !prn || student.prn.toLowerCase().includes(prn);
-        const matchName = !name || student.name.toLowerCase().includes(name);
-        const matchDiv = !division || student.division.toLowerCase().includes(division);
-        return matchPRN && matchName && matchDiv;
+    rows.forEach((row, idx) => {
+        const s = {
+            _id: idx,
+            prn:           row[prnKey]    || '',
+            name:          row[nameKey]   || '',
+            division:      row[divKey]    || '',
+            batch:         row[batchKey]  || '',
+            program:       row[progKey]   || '',
+            student_mobile:row[mobileKey] || '',
+            parent_mobile: row[parentKey] || '',
+            email:         row[emailKey]  || '',
+            photo:         row[photoKey]  || '',
+        };
+        if (!s.name && s.email) s.name = s.email.split('@')[0];
+        if (s.prn || s.name) allStudents.push(s);
     });
 
+    if (!allStudents.length) useSampleData();
+    else initDataTable();
+}
+
+function useSampleData() {
+    allStudents = [
+        { _id:0, prn:'125B16001', name:'Arnav More',         division:'A', batch:'A1', program:'Mech', student_mobile:'9876543210', parent_mobile:'9876543211', email:'arnav.more25@pccoepune.org',       photo:'' },
+        { _id:1, prn:'125B16002', name:'Atharv Dhayagude',   division:'A', batch:'A1', program:'Mech', student_mobile:'9876543212', parent_mobile:'9876543213', email:'atharv.dhayagude25@pccoepune.org', photo:'' },
+        { _id:2, prn:'125B16003', name:'Rutuja Patil',       division:'B', batch:'B1', program:'CS',   student_mobile:'9876543214', parent_mobile:'9876543215', email:'rutuja.patil@pccoepune.org',       photo:'' },
+        { _id:3, prn:'125B16004', name:'Siddharth Jadhav',   division:'B', batch:'B2', program:'IT',   student_mobile:'9876543216', parent_mobile:'9876543217', email:'siddharth.jadhav@pccoepune.org',   photo:'' },
+        { _id:4, prn:'125B16005', name:'Priya Sharma',       division:'C', batch:'C1', program:'Civil',student_mobile:'9876543218', parent_mobile:'9876543219', email:'priya.sharma@pccoepune.org',       photo:'' },
+    ];
+    document.getElementById('dataStatus').innerHTML = '⚠ Sample Data';
     initDataTable();
+}
+
+// ───── DATATABLE ─────
+function initDataTable() {
+    if (dataTable) { dataTable.destroy(); dataTable = null; }
+
+    const columns = [
+        {
+            data: null,
+            orderable: false,
+            render: (d) => `<input type="checkbox" class="student-checkbox" data-id="${d._id}" onchange="toggleStudentSelection(${d._id}, this.checked)">`
+        },
+        { data: null, render: (d,t,r,meta) => meta.row + 1 },
+        { data: 'prn' },
+        { data: 'name' },
+        { data: 'division' },
+        { data: 'batch' },
+        { data: 'program' },
+        {
+            data: 'photo',
+            render: (photo) => photo
+                ? `<img src="${photo}" class="student-photo-thumb" onclick="openFullPhoto('${photo}')" alt="Photo">`
+                : `<i class="fas fa-user-circle fa-2x" style="color:#9fa8da;cursor:default"></i>`
+        },
+        { data: 'student_mobile', render: (m) => `<div class="d-flex align-items-center gap-1"><span>${m}</span><button class="copy-icon-btn" onclick="copyToClipboard('${m}')" title="Copy"><i class="far fa-copy"></i></button></div>` },
+        { data: 'parent_mobile',  render: (p) => `<div class="d-flex align-items-center gap-1"><span>${p}</span><button class="copy-icon-btn" onclick="copyToClipboard('${p}')" title="Copy"><i class="far fa-copy"></i></button></div>` },
+        {
+            data: 'email',
+            render: (email) => `<div class="d-flex align-items-center gap-1">
+                <span class="text-truncate" style="max-width:140px" title="${email}">${email}</span>
+                <button class="send-email-btn" onclick="sendSingleEmail('${email}')" title="Send Email"><i class="fas fa-paper-plane"></i></button>
+                <button class="copy-icon-btn" onclick="copyToClipboard('${email}')" title="Copy"><i class="far fa-copy"></i></button>
+            </div>`
+        },
+        
+    ];
+
+    dataTable = $('#studentTable').DataTable({
+        data: allStudents,
+        columns,
+        pageLength: 10,
+        scrollX: true,
+        language: {
+            search: '<i class="fas fa-search"></i>',
+            searchPlaceholder: 'Filter table…'
+        }
+    });
+
+    document.getElementById('totalStudents').innerText = allStudents.length;
+    document.getElementById('exportCount').innerText   = allStudents.length;
+}
+
+// ───── SEARCH ─────
+function searchTable() {
+    const prn  = document.getElementById('searchPRN').value.trim().toLowerCase();
+    const name = document.getElementById('searchName').value.trim().toLowerCase();
+    const div  = document.getElementById('searchDivision').value.trim().toLowerCase();
+
+    if (!prn && !name && !div) {
+        alert('Please enter at least one search term.');
+        return;
+    }
+
+    const filtered = allStudents.filter(s =>
+        (!prn  || s.prn.toLowerCase().includes(prn)) &&
+        (!name || s.name.toLowerCase().includes(name)) &&
+        (!div  || s.division.toLowerCase().includes(div))
+    );
+
+    applySearchResults(filtered);
 }
 
 function searchMultiplePRNs() {
-    const text = document.getElementById('multiPRNSearch').value.trim();
-    if (!text) {
-        clearSearch();
-        return;
-    }
+    const raw  = document.getElementById('multiPRNSearch').value;
+    const prns = raw.split(/[,\s\n;]+/).map(p => p.trim().toLowerCase()).filter(p => p);
+    if (!prns.length) { alert('Please enter at least one PRN.'); return; }
+    const filtered = allStudents.filter(s => prns.includes(s.prn.toLowerCase()));
+    applySearchResults(filtered);
+}
 
-    // Split text inputs across common boundaries: commas, spaces, or clean lines
-    const prnList = text.split(/[\s,\n]+/).map(p => p.trim().toLowerCase()).filter(p => p.length > 0);
-    
+function applySearchResults(filtered) {
+    currentSearchResults = filtered;
     isSearchActive = true;
-    currentSearchResults = allStudents.filter(student => {
-        return prnList.some(prn => student.prn.toLowerCase().includes(prn));
-    });
+    selectedStudents.clear();
+    document.getElementById('selectAllCheckbox').checked = false;
+    document.getElementById('selectAllBtn').classList.remove('active');
+    document.getElementById('selectAllWarning').classList.remove('show');
+    document.getElementById('selectedCount').innerText = '0';
 
-    initDataTable();
+    dataTable.clear().rows.add(filtered).draw();
+    document.getElementById('searchResults').innerText = filtered.length;
+    document.getElementById('exportCount').innerText   = filtered.length;
 }
 
 function clearSearch() {
-    isSearchActive = false;
-    document.getElementById('searchPRN').value = '';
-    document.getElementById('searchName').value = '';
+    document.getElementById('searchPRN').value      = '';
+    document.getElementById('searchName').value     = '';
     document.getElementById('searchDivision').value = '';
     document.getElementById('multiPRNSearch').value = '';
+
+    isSearchActive = false;
+    currentSearchResults = [];
+    selectedStudents.clear();
     document.getElementById('selectAllCheckbox').checked = false;
     document.getElementById('selectAllBtn').classList.remove('active');
-    
-    currentSearchResults = [...allStudents];
-    initDataTable();
+    document.getElementById('selectAllWarning').classList.remove('show');
+    document.getElementById('selectedCount').innerText = '0';
+
+    dataTable.clear().rows.add(allStudents).draw();
+    document.getElementById('searchResults').innerText = '—';
+    document.getElementById('exportCount').innerText   = allStudents.length;
 }
 
-// ───── EMAIL & MODAL OUTLETS ─────
+// ───── SELECT ALL — only works if search is active ─────
+function handleSelectAll() {
+    if (!isSearchActive || currentSearchResults.length === 0) {
+        // Show warning, don't select anything
+        document.getElementById('selectAllWarning').classList.add('show');
+        setTimeout(() => document.getElementById('selectAllWarning').classList.remove('show'), 4000);
+        return;
+    }
+
+    document.getElementById('selectAllWarning').classList.remove('show');
+    const btn = document.getElementById('selectAllBtn');
+    const allSelected = currentSearchResults.every(s => selectedStudents.has(s._id));
+
+    if (allSelected) {
+        // Deselect all
+        currentSearchResults.forEach(s => selectedStudents.delete(s._id));
+        btn.classList.remove('active');
+        document.getElementById('selectAllCheckbox').checked = false;
+        document.querySelectorAll('.student-checkbox').forEach(cb => cb.checked = false);
+        // Remove row highlight
+        document.querySelectorAll('#studentTable tbody tr').forEach(tr => tr.classList.remove('row-selected'));
+    } else {
+        // Select all search results
+        currentSearchResults.forEach(s => selectedStudents.add(s._id));
+        btn.classList.add('active');
+        document.getElementById('selectAllCheckbox').checked = true;
+        document.querySelectorAll('.student-checkbox').forEach(cb => { cb.checked = true; });
+        document.querySelectorAll('#studentTable tbody tr').forEach(tr => tr.classList.add('row-selected'));
+    }
+
+    updateSelectedCount();
+}
+
+// Header checkbox behaviour — mirrors Select All button
+function handleSelectAllCheckbox() {
+    if (!isSearchActive || currentSearchResults.length === 0) {
+        document.getElementById('selectAllCheckbox').checked = false;
+        document.getElementById('selectAllWarning').classList.add('show');
+        setTimeout(() => document.getElementById('selectAllWarning').classList.remove('show'), 4000);
+        return;
+    }
+    handleSelectAll(); // delegate to main handler
+}
+
+function toggleStudentSelection(id, checked) {
+    if (checked) selectedStudents.add(id);
+    else         selectedStudents.delete(id);
+    updateSelectedCount();
+
+    // Highlight row
+    document.querySelectorAll(`.student-checkbox[data-id="${id}"]`).forEach(cb => {
+        const row = cb.closest('tr');
+        if (row) row.classList.toggle('row-selected', checked);
+    });
+}
+
+function updateSelectedCount() {
+    document.getElementById('selectedCount').innerText = selectedStudents.size;
+}
+
+// ───── EMAIL ─────
 function toggleEmailDropdown() {
     document.getElementById('emailDropdown').classList.toggle('show');
 }
 
-window.onclick = function(event) {
-    if (!event.target.matches('.btn-email') && !event.target.matches('.fa-envelope') && !event.target.matches('.badge-count')) {
-        const dds = document.getElementsByClassName("email-dropdown-content");
-        for (let i = 0; i < dds.length; i++) {
-            if (dds[i].classList.contains('show')) dds[i].classList.remove('show');
-        }
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.email-dropdown-wrap')) {
+        document.getElementById('emailDropdown').classList.remove('show');
     }
-}
+});
 
 function sendEmailWithDraft(type) {
-    if (selectedStudents.size === 0) {
-        alert("Please select at least one student recipient first.");
-        return;
-    }
+    if (!selectedStudents.size) { alert('No students selected.'); return; }
+    const emails = allStudents.filter(s => selectedStudents.has(s._id) && s.email).map(s => s.email).join(',');
+    if (!emails) { alert('No valid email addresses found.'); return; }
 
-    const recipients = Array.from(selectedStudents).join(',');
-    let subject = "", body = "";
+    let subject = '', body = '';
+    if (type === 'openDay')    { subject = 'Open Day Schedule';  body = 'Dear Student,\n\nOpen Day details are attached.\n\nRegards,\nPCCOE'; }
+    else if (type === 'faSchedule') { subject = 'FA Schedule';   body = 'Dear Student,\n\nFormative Assessment schedule is now available.\n\nRegards,\nPCCOE'; }
+    else                           { subject = 'Announcement';   body = 'Dear Student,\n\nPlease check the notice board for updates.\n\nRegards,\nPCCOE'; }
 
-    if (type === 'openDay') {
-        subject = "PCCOE Department Notification: Open Day Schedule";
-        body = "Dear Student,\n\nThis is to inform you that the Open Day for evaluating your academic answersheets has been scheduled. Attendance is mandatory.\n\nRegards,\nDepartment of Applied Sciences & Humanities,\nPCCOE.";
-    } else if (type === 'faSchedule') {
-        subject = "Academic Alert: Formative Assessment (FA) Schedule";
-        body = "Dear Student,\n\nPlease find attached the scheduled timeline details for the upcoming Formative Assessment (FA) evaluations.\n\nRegards,\nPCCOE Team.";
-    } else {
-        subject = "PCCOE Academic Update Notification";
-        body = "Dear Student,\n\nPlease log in to your dashboard portal to view the latest administrative updates.\n\nRegards,\nPCCOE.";
-    }
-
-    window.location.href = `mailto:${recipients}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(emails)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+    document.getElementById('emailDropdown').classList.remove('show');
 }
 
-function openPhotoModal(url) {
+function sendSingleEmail(email) {
+    if (email) window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}`);
+}
+
+// ───── UTILITIES ─────
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        // Brief toast-like feedback
+        const toast = document.createElement('div');
+        toast.innerText = '✓ Copied!';
+        Object.assign(toast.style, {
+            position:'fixed', bottom:'24px', right:'24px',
+            background:'#1a237e', color:'white', padding:'10px 18px',
+            borderRadius:'8px', fontFamily:'Plus Jakarta Sans,sans-serif',
+            fontWeight:'600', fontSize:'0.85rem', zIndex:'9999',
+            boxShadow:'0 4px 16px rgba(0,0,0,0.2)',
+            transition:'opacity 0.3s'
+        });
+        document.body.appendChild(toast);
+        setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 400); }, 1800);
+    });
+}
+
+function openFullPhoto(url) {
     document.getElementById('fullPhotoImg').src = url;
-    const myModal = new bootstrap.Modal(document.getElementById('photoModal'));
-    myModal.show();
+    new bootstrap.Modal(document.getElementById('photoModal')).show();
 }
 
-// ───── DATA EXPORT ENGINE (XLSX) ─────
 function exportSearchResults() {
-    if (currentSearchResults.length === 0) {
-        alert("No current record matrix available to export.");
-        return;
-    }
-
-    const dataMatrix = currentSearchResults.map(s => ({
-        'Sr. No.': s._id,
-        'PRN': s.prn,
-        'Student Name': s.name,
-        'Division': s.division,
-        'Batch': s.batch,
-        'Program': s.program,
-        'Student Mobile': s.studentMobile,
-        'Parent Mobile': s.parentMobile,
-        'Email ID': s.email
-    }));
-
-    const worksheet = XLSX.utils.json_to_sheet(dataMatrix);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Selected Directory");
-    
-    // File structure output timestamp generation
-    XLSX.writeFile(workbook, `PCCOE_Student_Export_${new Date().toISOString().slice(0,10)}.xlsx`);
+    const data = dataTable.rows().data().toArray();
+    if (!data.length) { alert('No data to export.'); return; }
+    const wsData = [['PRN','Name','Division','Batch','Program','Student Mobile','Parent Mobile','Email']];
+    data.forEach(s => wsData.push([s.prn, s.name, s.division, s.batch, s.program, s.student_mobile, s.parent_mobile, s.email]));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(wsData), 'Students');
+    XLSX.writeFile(wb, `PCCOE_Students_${new Date().toISOString().slice(0,10)}.xlsx`);
 }
+
+function editStudent(id) { alert('Edit feature — implement as needed.'); }
+function addNewStudent() { alert('Add new student.'); }
 </script>
 </body>
 </html>
