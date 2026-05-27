@@ -258,11 +258,11 @@
 
         .header-title p {
             font-family: 'Crimson Pro', Georgia, serif;
-            font-size: 2.2rem;
+            font-size: 1.1rem;
             font-weight: 400;
             letter-spacing: 0.02em;
             margin-bottom: 0;
-            opacity: 1;
+            opacity: 0.85;
         }
 
         .logout-btn {
@@ -491,7 +491,7 @@
             border: none !important;
         }
 
-        #studentTable tbody tr { transition: background 0.15s; }
+        #studentTable tbody tr { transition: background 0.15s; cursor: pointer; }
         #studentTable tbody tr:hover { background: #f0f2ff !important; }
         #studentTable tbody td { padding: 10px 12px; vertical-align: middle; border-color: var(--border); }
 
@@ -774,7 +774,7 @@
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -782,7 +782,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
 <script>
-// 1. Your Custom Firebase Core Settings 
+// 1. Firebase Core Configuration Settings 
 const firebaseConfig = {
   apiKey: "AIzaSyBxoRU8BfUCpEK-akWYEXQ6VmLCVQINTVI",
   authDomain: "pccoecontact.firebaseapp.com",
@@ -793,13 +793,12 @@ const firebaseConfig = {
   measurementId: "G-1WR1BWSBY1"
 };
 
-// 2. Wake Up the Firebase Engines using proper Compat Syntax
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
 // 3. Runtime App Arrays & Control Parameters
-let dataTable, allStudents = [], isLoggedIn = false, isAdmin = false;
+let dataTable = null, allStudents = [], isLoggedIn = false, isAdmin = false;
 let currentSearchResults = [];     
 let isSearchActive = false;        
 let selectedStudents = new Set();
@@ -853,7 +852,6 @@ auth.onAuthStateChanged((user) => {
     }
 });
 
-// Switch display panels once verified
 function showMain() {
     document.getElementById('loginSection').style.display = 'none';
     document.getElementById('mainSection').style.display = 'block';
@@ -866,7 +864,6 @@ async function loadCSVData() {
     statusDiv.innerText = 'Loading CSV Dataset...';
     allStudents = [];
 
-    // Cleaned up the filename here to avoid URL encoding issues
     fetch('students.csv')
         .then(response => {
             if (!response.ok) {
@@ -879,7 +876,7 @@ async function loadCSVData() {
                 header: true,
                 skipEmptyLines: true,
                 complete: function(results) {
-                    let recordCount = 0;
+                    let recordCount = 1; // 1-indexed count for display rows
                     
                     allStudents = results.data.map(row => {
                         return {
@@ -899,10 +896,12 @@ async function loadCSVData() {
                     document.getElementById('totalStudents').innerText = allStudents.length;
 
                     if (allStudents.length > 0) {
-                        statusDiv.innerText = '✓ Live (CSV File)';
+                        statusDiv.innerText = '✓ Live (CSV)';
+                        currentSearchResults = [...allStudents];
                         initDataTable();
                     } else {
-                        statusDiv.innerText = '⚠ Empty CSV File';
+                        statusDiv.innerText = '⚠ Empty CSV';
+                        currentSearchResults = [];
                         initDataTable(); 
                     }
                 }
@@ -913,24 +912,25 @@ async function loadCSVData() {
             statusDiv.innerText = '✕ File Load Error';
         });
 }
-// Initialize jQuery DataTables View Model
+
+// ───── INITIALIZE DATATABLE ─────
 function initDataTable() {
     if ($.fn.DataTable.isDataTable('#studentTable')) {
-        $('#studentTable').DataTable().destroy();
+        dataTable.destroy();
     }
 
     dataTable = $('#studentTable').DataTable({
-        data: allStudents,
+        data: currentSearchResults,
         columns: [
             { 
                 data: null, 
                 orderable: false,
-                render: function(data, type, row) {
-                    const checked = selectedStudents.has(row.prn) ? 'checked' : '';
-                    return `<input type="checkbox" class="row-checkbox" data-prn="${row.prn}" ${checked} onchange="handleRowCheckbox(this)">`;
+                render: function(data) {
+                    const checked = selectedStudents.has(data.email) ? 'checked' : '';
+                    return `<input type="checkbox" class="row-checkbox" data-email="${data.email}" ${checked} onclick="handleRowCheckbox(event, '${data.email}')">`;
                 }
             },
-            { data: '_id', render: (data) => parseInt(data) + 1 },
+            { data: '_id' },
             { data: 'prn' },
             { data: 'name' },
             { data: 'division' },
@@ -938,188 +938,236 @@ function initDataTable() {
             { data: 'program' },
             { 
                 data: 'photo',
+                orderable: false,
                 render: function(data) {
-                    if(!data) return `<i class="fas fa-user-circle text-secondary fa-2x"></i>`;
-                    return `<img src="${data}" class="student-photo-thumb" onclick="viewPhoto('${data}')" onerror="this.src='https://via.placeholder.com/40'">`;
+                    if(data) {
+                        return `<img src="${data}" class="student-photo-thumb" onclick="openPhotoModal('${data}')" onerror="this.src='https://via.placeholder.com/40?text=No+Img'">`;
+                    }
+                    return '—';
                 }
             },
-            { data: 'student_mobile' },
-            { data: 'parent_mobile' },
-            { data: 'email' }
+            { data: 'studentMobile' },
+            { data: 'parentMobile' },
+            { 
+                data: 'email',
+                render: function(data) {
+                    if(!data) return '—';
+                    return `${data} <button class="copy-icon-btn ms-1" onclick="navigator.clipboard.writeText('${data}');alert('Copied email address!')" title="Copy"><i class="fas fa-copy"></i></button>`;
+                }
+            }
         ],
+        order: [[1, 'asc']],
         pageLength: 10,
-        dom: 'lfrtip',
-        createdRow: function(row, data, dataIndex) {
-            if (selectedStudents.has(data.prn)) {
+        lengthMenu: [5, 10, 25, 50, 100],
+        rowCallback: function(row, data) {
+            if (selectedStudents.has(data.email)) {
                 $(row).addClass('row-selected');
+            } else {
+                $(row).removeClass('row-selected');
             }
         }
     });
+
+    document.getElementById('searchResults').innerText = currentSearchResults.length;
+    document.getElementById('exportCount').innerText = currentSearchResults.length;
 }
 
-function viewPhoto(url) {
-    document.getElementById('fullPhotoImg').src = url;
-    const modal = new bootstrap.Modal(document.getElementById('photoModal'));
-    modal.show();
-}
-
-function handleRowCheckbox(elem) {
-    const prn = elem.getAttribute('data-prn');
-    const row = $(elem).closest('tr');
-    if (elem.checked) {
-        selectedStudents.add(prn);
-        row.addClass('row-selected');
+// ───── INTERACTIVE ACTION & SELECTION HANDLERS ─────
+function handleRowCheckbox(event, email) {
+    event.stopPropagation();
+    if (!email) return;
+    
+    if (selectedStudents.has(email)) {
+        selectedStudents.delete(email);
     } else {
-        selectedStudents.delete(prn);
-        row.removeClass('row-selected');
+        selectedStudents.add(email);
     }
-    document.getElementById('selectedCount').innerText = selectedStudents.size;
-    document.getElementById('exportCount').innerText = selectedStudents.size;
+    updateSelectionUI();
 }
+
+// Row click toggle
+$('#studentTable tbody').on('click', 'tr', function (e) {
+    if ($(e.target).is('input, button, i, img')) return;
+    const rowData = dataTable.row(this).data();
+    if (!rowData || !rowData.email) return;
+
+    if (selectedStudents.has(rowData.email)) {
+        selectedStudents.delete(rowData.email);
+    } else {
+        selectedStudents.add(rowData.email);
+    }
+    updateSelectionUI();
+});
 
 function handleSelectAllCheckbox() {
-    const masterChecked = document.getElementById('selectAllCheckbox').checked;
-    const rows = dataTable.rows({ search: 'applied' }).data();
-    
-    rows.each(function(rowData) {
-        if (masterChecked) {
-            selectedStudents.add(rowData.prn);
-        } else {
-            selectedStudents.delete(rowData.prn);
+    const isChecked = document.getElementById('selectAllCheckbox').checked;
+    dataTable.rows({ page: 'current' }).every(function() {
+        const rowData = this.data();
+        if (rowData && rowData.email) {
+            if (isChecked) selectedStudents.add(rowData.email);
+            else selectedStudents.delete(rowData.email);
         }
     });
+    updateSelectionUI();
+}
 
-    $('.row-checkbox').prop('checked', masterChecked);
-    if(masterChecked) {
-        $('#studentTable tbody tr').addClass('row-selected');
-    } else {
-        $('#studentTable tbody tr').removeClass('row-selected');
+function handleSelectAll() {
+    if (!isSearchActive) {
+        const warning = document.getElementById('selectAllWarning');
+        warning.classList.add('show');
+        setTimeout(() => warning.classList.remove('show'), 4000);
+        return;
     }
+    
+    const btn = document.getElementById('selectAllBtn');
+    if (btn.classList.contains('active')) {
+        currentSearchResults.forEach(s => { if(s.email) selectedStudents.delete(s.email); });
+        btn.classList.remove('active');
+    } else {
+        currentSearchResults.forEach(s => { if(s.email) selectedStudents.add(s.email); });
+        btn.classList.add('active');
+    }
+    updateSelectionUI();
+}
 
+function updateSelectionUI() {
     document.getElementById('selectedCount').innerText = selectedStudents.size;
-    document.getElementById('exportCount').innerText = selectedStudents.size;
+    
+    // Refresh visual check states inside active viewport rows
+    $('#studentTable tbody tr').each(function() {
+        const rowData = dataTable.row(this).data();
+        if (rowData && selectedStudents.has(rowData.email)) {
+            $(this).addClass('row-selected');
+            $(this).find('.row-checkbox').prop('checked', true);
+        } else {
+            $(this).removeClass('row-selected');
+            $(this).find('.row-checkbox').prop('checked', false);
+        }
+    });
 }
 
+// ───── SEARCH ALGORITHMS ─────
 function searchTable() {
-    const prnVal = document.getElementById('searchPRN').value.toLowerCase().trim();
-    const nameVal = document.getElementById('searchName').value.toLowerCase().trim();
-    const divVal = document.getElementById('searchDivision').value.toLowerCase().trim();
+    const prn = document.getElementById('searchPRN').value.trim().toLowerCase();
+    const name = document.getElementById('searchName').value.trim().toLowerCase();
+    const division = document.getElementById('searchDivision').value.trim().toLowerCase();
 
-    dataTable.column(2).search(prnVal);
-    dataTable.column(3).search(nameVal);
-    dataTable.column(4).search(divVal);
-    dataTable.draw();
-
-    const matches = dataTable.rows({ search: 'applied' }).count();
-    document.getElementById('searchResults').innerText = matches;
-}
-
-function clearSearch() {
-    document.getElementById('searchPRN').value = '';
-    document.getElementById('searchName').value = '';
-    document.getElementById('searchDivision').value = '';
-    document.getElementById('multiPRNSearch').value = '';
-    
-    dataTable.columns().search('');
-    dataTable.search('').draw();
-    document.getElementById('searchResults').innerText = '—';
-}
-
-function searchMultiplePRNs() {
-    const rawInput = document.getElementById('multiPRNSearch').value;
-    const prns = rawInput.split(/[\s,]+/).map(p => p.trim().toLowerCase()).filter(p => p.length > 0);
-    
-    if(prns.length === 0) {
+    if (!prn && !name && !division) {
         clearSearch();
         return;
     }
 
-    // Custom regex search mapping for Datatables column 2
-    const regexString = '^(' + prns.map(p => p.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')).join('|') + ')$';
-    dataTable.column(2).search(regexString, true, false).draw();
-    
-    const matches = dataTable.rows({ search: 'applied' }).count();
-    document.getElementById('searchResults').innerText = matches;
+    isSearchActive = true;
+    currentSearchResults = allStudents.filter(student => {
+        const matchPRN = !prn || student.prn.toLowerCase().includes(prn);
+        const matchName = !name || student.name.toLowerCase().includes(name);
+        const matchDiv = !division || student.division.toLowerCase().includes(division);
+        return matchPRN && matchName && matchDiv;
+    });
+
+    initDataTable();
 }
 
+function searchMultiplePRNs() {
+    const text = document.getElementById('multiPRNSearch').value.trim();
+    if (!text) {
+        clearSearch();
+        return;
+    }
+
+    // Split text inputs across common boundaries: commas, spaces, or clean lines
+    const prnList = text.split(/[\s,\n]+/).map(p => p.trim().toLowerCase()).filter(p => p.length > 0);
+    
+    isSearchActive = true;
+    currentSearchResults = allStudents.filter(student => {
+        return prnList.some(prn => student.prn.toLowerCase().includes(prn));
+    });
+
+    initDataTable();
+}
+
+function clearSearch() {
+    isSearchActive = false;
+    document.getElementById('searchPRN').value = '';
+    document.getElementById('searchName').value = '';
+    document.getElementById('searchDivision').value = '';
+    document.getElementById('multiPRNSearch').value = '';
+    document.getElementById('selectAllCheckbox').checked = false;
+    document.getElementById('selectAllBtn').classList.remove('active');
+    
+    currentSearchResults = [...allStudents];
+    initDataTable();
+}
+
+// ───── EMAIL & MODAL OUTLETS ─────
 function toggleEmailDropdown() {
     document.getElementById('emailDropdown').classList.toggle('show');
 }
 
-window.addEventListener('click', function(e) {
-    if (!e.target.closest('.email-dropdown-wrap')) {
-        document.getElementById('emailDropdown').classList.remove('show');
+window.onclick = function(event) {
+    if (!event.target.matches('.btn-email') && !event.target.matches('.fa-envelope') && !event.target.matches('.badge-count')) {
+        const dds = document.getElementsByClassName("email-dropdown-content");
+        for (let i = 0; i < dds.length; i++) {
+            if (dds[i].classList.contains('show')) dds[i].classList.remove('show');
+        }
     }
-});
+}
 
 function sendEmailWithDraft(type) {
     if (selectedStudents.size === 0) {
-        alert("Please select at least one student checkbox first!");
+        alert("Please select at least one student recipient first.");
         return;
     }
 
-    const recipientEmails = [];
-    allStudents.forEach(s => {
-        if(selectedStudents.has(s.prn) && s.email) {
-            recipientEmails.push(s.email);
-        }
-    });
+    const recipients = Array.from(selectedStudents).join(',');
+    let subject = "", body = "";
 
-    if(recipientEmails.length === 0) {
-        alert("The selected students do not have registered Email IDs!");
-        return;
-    }
-
-    let subject = "Academic Update — PCCOE";
-    let body = "Dear Student,\n\n";
-
-    if(type === 'openDay') {
-        subject = "Invitation to Open Day Performance Evaluation — PCCOE";
-        body = "Dear Student,\n\nYou are hereby informed that the Open Day meeting is scheduled this week. Attendance is mandatory.\n\nRegards,\nDepartment of AS&H, PCCOE.";
+    if (type === 'openDay') {
+        subject = "PCCOE Department Notification: Open Day Schedule";
+        body = "Dear Student,\n\nThis is to inform you that the Open Day for evaluating your academic answersheets has been scheduled. Attendance is mandatory.\n\nRegards,\nDepartment of Applied Sciences & Humanities,\nPCCOE.";
     } else if (type === 'faSchedule') {
-        subject = "Formative Assessment (FA) Timetable Notification";
-        body = "Dear Student,\n\nThe schedule for the upcoming Formative Assessments has been updated on the notice board. Kindly check your slots.\n\nRegards,\nPCCOE Examination Cell.";
+        subject = "Academic Alert: Formative Assessment (FA) Schedule";
+        body = "Dear Student,\n\nPlease find attached the scheduled timeline details for the upcoming Formative Assessment (FA) evaluations.\n\nRegards,\nPCCOE Team.";
+    } else {
+        subject = "PCCOE Academic Update Notification";
+        body = "Dear Student,\n\nPlease log in to your dashboard portal to view the latest administrative updates.\n\nRegards,\nPCCOE.";
     }
 
-    const mailtoUrl = `mailto:${recipientEmails.join(',')}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.open(mailtoUrl, '_blank');
+    window.location.href = `mailto:${recipients}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
+function openPhotoModal(url) {
+    document.getElementById('fullPhotoImg').src = url;
+    const myModal = new bootstrap.Modal(document.getElementById('photoModal'));
+    myModal.show();
+}
+
+// ───── DATA EXPORT ENGINE (XLSX) ─────
 function exportSearchResults() {
-    const activeRows = dataTable.rows({ search: 'applied' }).data().toArray();
-    if(activeRows.length === 0) {
-        alert("No current data matches found to export!");
+    if (currentSearchResults.length === 0) {
+        alert("No current record matrix available to export.");
         return;
     }
 
-    const formattedData = activeRows.map((s, idx) => ({
-        "Sr No": idx + 1,
-        "PRN": s.prn,
-        "Student Name": s.name,
-        "Division": s.division,
-        "Batch": s.batch,
-        "Program": s.program,
-        "Mobile Number": s.student_mobile,
-        "Parent Mobile": s.parent_mobile,
-        "Email ID": s.email
+    const dataMatrix = currentSearchResults.map(s => ({
+        'Sr. No.': s._id,
+        'PRN': s.prn,
+        'Student Name': s.name,
+        'Division': s.division,
+        'Batch': s.batch,
+        'Program': s.program,
+        'Student Mobile': s.studentMobile,
+        'Parent Mobile': s.parentMobile,
+        'Email ID': s.email
     }));
 
-    const worksheet = XLSX.utils.json_to_sheet(formattedData);
+    const worksheet = XLSX.utils.json_to_sheet(dataMatrix);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Filtered Students");
-    XLSX.writeFile(workbook, "PCCOE_Student_Export.xlsx");
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Selected Directory");
+    
+    // File structure output timestamp generation
+    XLSX.writeFile(workbook, `PCCOE_Student_Export_${new Date().toISOString().slice(0,10)}.xlsx`);
 }
-
-// 4. Global Action Event Catchers
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') {
-        if (document.getElementById('loginSection').style.display !== 'none') {
-            doLogin();
-        } else {
-            searchTable();
-        }
-    }
-});
 </script>
 </body>
 </html>
