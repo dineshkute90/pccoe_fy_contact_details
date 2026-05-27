@@ -860,34 +860,59 @@ function showMain() {
     loadCSVData(); 
 }
 
-// ───── FIRESTORE LIVE DATA FETCH ─────
+// ───── LOCAL CSV FILE DATA FETCH ─────
 async function loadCSVData() {
     const statusDiv = document.getElementById('dataStatus');
-    statusDiv.innerText = 'Connecting to Database...';
+    statusDiv.innerText = 'Loading CSV Dataset...';
     allStudents = [];
 
-    db.collection("students").get()
-        .then((querySnapshot) => {
-            let recordCount = 0;
-            querySnapshot.forEach((doc) => {
-                const studentData = doc.data();
-                studentData._id = recordCount++; 
-                allStudents.push(studentData);
-            });
-
-            document.getElementById('totalStudents').innerText = allStudents.length;
-
-            if (allStudents.length > 0) {
-                statusDiv.innerText = '✓ Live (Firestore)';
-                initDataTable();
-            } else {
-                statusDiv.innerText = '⚠ Empty Collection';
-                initDataTable(); 
+    // Fetches your uploaded dataset file from the same repository folder
+    fetch('contact_testing_csv (1).csv')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('CSV file "contact_testing_csv (1).csv" not found. Make sure it is in the same folder.');
             }
+            return response.text();
+        })
+        .then(csvText => {
+            // Parse the CSV content using PapaParse (already loaded in your HTML)
+            Papa.parse(csvText, {
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    let recordCount = 0;
+                    
+                    // Map your specific CSV columns to the properties expected by the app's DataTable
+                    allStudents = results.data.map(row => {
+                        return {
+                            _id: recordCount++,
+                            prn: row['PRN'] || '',
+                            name: row['Student Name'] || '',
+                            division: row['Division'] || '',
+                            batch: row['Batch'] || '',
+                            program: row['Program'] || '',
+                            photo: row['Photo'] || '',
+                            studentMobile: row['Student Mobile'] || '',
+                            parentMobile: row['Parent Mobile'] || '',
+                            email: row['Email ID'] || ''
+                        };
+                    });
+
+                    document.getElementById('totalStudents').innerText = allStudents.length;
+
+                    if (allStudents.length > 0) {
+                        statusDiv.innerText = '✓ Live (CSV File)';
+                        initDataTable();
+                    } else {
+                        statusDiv.innerText = '⚠ Empty CSV File';
+                        initDataTable(); 
+                    }
+                }
+            });
         })
         .catch((error) => {
-            console.error("Firestore loading error: ", error);
-            statusDiv.innerText = '✕ Access Denied';
+            console.error("CSV loading error: ", error);
+            statusDiv.innerText = '✕ File Load Error';
         });
 }
 
