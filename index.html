@@ -828,7 +828,32 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
 <script>
+    // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyBxoRU8BfUCpEK-akWYEXQ6VmLCVQINTVI",
+  authDomain: "pccoecontact.firebaseapp.com",
+  projectId: "pccoecontact",
+  storageBucket: "pccoecontact.firebasestorage.app",
+  messagingSenderId: "419533074504",
+  appId: "1:419533074504:web:304b34ae611c651abee87d",
+  measurementId: "G-1WR1BWSBY1"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 // ───── CREDENTIALS ─────
 // Added dineshkute90 / dineshkute90 as requested
 const CREDENTIALS = {
@@ -843,24 +868,35 @@ let isSearchActive = false;        // true = user has performed a search
 let selectedStudents = new Set();
 
 // ───── LOGIN ─────
+// ───── FIREBASE LOGIN ─────
 function doLogin() {
-    const user = document.getElementById('username').value.trim();
-    const pwd  = document.getElementById('password').value;
+    const email = document.getElementById('username').value.trim(); // Firebase expects an email format
+    const pwd   = document.getElementById('password').value;
     const errDiv = document.getElementById('loginError');
 
-    if (CREDENTIALS[user] && CREDENTIALS[user] === pwd) {
-        isLoggedIn = true;
-        isAdmin = (user === 'admin');
-        localStorage.setItem('pccoeLogin', JSON.stringify({
-            loggedIn: true, isAdmin, expiry: Date.now() + 7 * 86400000
-        }));
-        showMain();
-    } else {
-        errDiv.classList.remove('d-none');
-        errDiv.innerText = 'Invalid username or password. Please try again.';
-        document.getElementById('password').value = '';
-        document.getElementById('password').focus();
-    }
+    errDiv.classList.add('d-none'); // Clear out any previous errors
+
+    // Firebase securely validates the password on Google's servers
+    auth.signInWithEmailAndPassword(email, pwd)
+        .then((userCredential) => {
+            // Check if the logged-in user is the administrator
+            isAdmin = (email === 'admin@pccoe.edu'); 
+            isLoggedIn = true;
+            
+            // Firebase handles security session states automatically!
+            showMain();
+        })
+        .catch((error) => {
+            errDiv.classList.remove('d-none');
+            // Friendly error message mapping
+            if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                errDiv.innerText = 'Invalid email or password. Please try again.';
+            } else {
+                errDiv.innerText = error.message;
+            }
+            document.getElementById('password').value = '';
+            document.getElementById('password').focus();
+        });
 }
 
 // Allow Enter key on login inputs
@@ -876,97 +912,71 @@ function showMain() {
     loadCSVData();
 }
 
+// ───── FIREBASE LOGOUT ─────
 function logout() {
-    localStorage.removeItem('pccoeLogin');
-    location.reload();
-}
-
-// Auto-login from localStorage
-window.addEventListener('DOMContentLoaded', () => {
-    const saved = localStorage.getItem('pccoeLogin');
-    if (saved) {
-        try {
-            const data = JSON.parse(saved);
-            if (data.loggedIn && data.expiry > Date.now()) {
-                isLoggedIn = true;
-                isAdmin = data.isAdmin;
-                showMain();
-                return;
-            }
-        } catch(e) {}
-    }
-    // Show login
-    document.getElementById('loginSection').style.display = 'flex';
-});
-
-// ───── DATA LOADING ─────
-async function loadCSVData() {
-    document.getElementById('dataStatus').innerText = 'Loading…';
-    const csvUrl = 'https://raw.githubusercontent.com/dineshkute90/pccoe_fy_contact_details/main/contact_testing_csv.csv';
-    try {
-        const response = await fetch(csvUrl);
-        if (!response.ok) throw new Error('Network error');
-        const csvText = await response.text();
-        Papa.parse(csvText, {
-            header: true, skipEmptyLines: true,
-            complete: (results) => {
-                if (!results.data.length) throw new Error('Empty CSV');
-                mapCSVToStudents(results.data);
-                document.getElementById('dataStatus').innerText = '✓ Live';
-            },
-            error: () => useSampleData()
-        });
-    } catch(e) { useSampleData(); }
-}
-
-function mapCSVToStudents(rows) {
-    allStudents = [];
-    const keys = Object.keys(rows[0]);
-    const findCol = (patterns) => keys.find(k => patterns.some(p => k.toLowerCase().includes(p.toLowerCase()))) || keys[0];
-
-    const prnKey    = findCol(['prn','roll']);
-    const nameKey   = findCol(['student name','name']);
-    const divKey    = findCol(['division','div']);
-    const batchKey  = findCol(['batch']);
-    const progKey   = findCol(['program','course']);
-    const mobileKey = findCol(['student mobile','mobile']);
-    const parentKey = findCol(['parent mobile','parent']);
-    const emailKey  = findCol(['email','mail']);
-    const photoKey  = findCol(['photo','image','picture']);
-
-    rows.forEach((row, idx) => {
-        const s = {
-            _id: idx,
-            prn:           row[prnKey]    || '',
-            name:          row[nameKey]   || '',
-            division:      row[divKey]    || '',
-            batch:         row[batchKey]  || '',
-            program:       row[progKey]   || '',
-            student_mobile:row[mobileKey] || '',
-            parent_mobile: row[parentKey] || '',
-            email:         row[emailKey]  || '',
-            photo:         row[photoKey]  || '',
-        };
-        if (!s.name && s.email) s.name = s.email.split('@')[0];
-        if (s.prn || s.name) allStudents.push(s);
+    auth.signOut().then(() => {
+        // Clear runtime flags and reload cleanly back to the login screen
+        isLoggedIn = false;
+        isAdmin = false;
+        location.reload();
     });
-
-    if (!allStudents.length) useSampleData();
-    else initDataTable();
 }
 
-function useSampleData() {
-    allStudents = [
-        { _id:0, prn:'125B16001', name:'Arnav More',         division:'A', batch:'A1', program:'Mech', student_mobile:'9876543210', parent_mobile:'9876543211', email:'arnav.more25@pccoepune.org',       photo:'' },
-        { _id:1, prn:'125B16002', name:'Atharv Dhayagude',   division:'A', batch:'A1', program:'Mech', student_mobile:'9876543212', parent_mobile:'9876543213', email:'atharv.dhayagude25@pccoepune.org', photo:'' },
-        { _id:2, prn:'125B16003', name:'Rutuja Patil',       division:'B', batch:'B1', program:'CS',   student_mobile:'9876543214', parent_mobile:'9876543215', email:'rutuja.patil@pccoepune.org',       photo:'' },
-        { _id:3, prn:'125B16004', name:'Siddharth Jadhav',   division:'B', batch:'B2', program:'IT',   student_mobile:'9876543216', parent_mobile:'9876543217', email:'siddharth.jadhav@pccoepune.org',   photo:'' },
-        { _id:4, prn:'125B16005', name:'Priya Sharma',       division:'C', batch:'C1', program:'Civil',student_mobile:'9876543218', parent_mobile:'9876543219', email:'priya.sharma@pccoepune.org',       photo:'' },
-    ];
-    document.getElementById('dataStatus').innerHTML = '⚠ Sample Data';
-    initDataTable();
-}
+// ───── AUTOMATIC SECURITY STATE MONITOR ─────
+// Firebase listens to the user session automatically. If they are validated,
+// it logs them right in. If not, it keeps them locked out on the login form.
+auth.onAuthStateChanged((user) => {
+    if (user) {
+        isLoggedIn = true;
+        isAdmin = (user.email === 'admin@pccoe.edu'); // Update with your actual admin email
+        showMain();
+    } else {
+        isLoggedIn = false;
+        isAdmin = false;
+        document.getElementById('loginSection').style.display = 'flex';
+        document.getElementById('mainSection').style.display = 'none';
+    }
+});
+// ───── FIRESTORE LIVE DATA FETCH ─────
+async function loadCSVData() {
+    const statusDiv = document.getElementById('dataStatus');
+    statusDiv.innerText = 'Connecting to Database...';
+    
+    // Reset our main runtime student tracking array
+    allStudents = [];
 
+    // Fetch documents directly from your "students" collection in Firestore
+    db.collection("students").get()
+        .then((querySnapshot) => {
+            let recordCount = 0;
+            
+            querySnapshot.forEach((doc) => {
+                // doc.data() pulls out the clean student object directly
+                const studentData = doc.data();
+                
+                // Add a unique ID tracking key matching what your Datatable looks for
+                studentData._id = recordCount++; 
+                
+                allStudents.push(studentData);
+            });
+
+            if (allStudents.length > 0) {
+                statusDiv.innerText = '✓ Live (Firestore)';
+                
+                // Fire off your original DataTable rendering engine directly!
+                initDataTable();
+            } else {
+                statusDiv.innerText = '⚠ No Records Found';
+                // Fallback: if database is completely empty, initialize empty table safely
+                initDataTable(); 
+            }
+        })
+        .catch((error) => {
+            console.error("Firestore loading error: ", error);
+            statusDiv.innerText = '✕ Access Denied';
+            alert("Error loading database documents. Check your console logs or security rules.");
+        });
+}
 // ───── DATATABLE ─────
 function initDataTable() {
     if (dataTable) { dataTable.destroy(); dataTable = null; }
