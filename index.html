@@ -1213,6 +1213,73 @@ function exportSearchResults() {
 
 function editStudent(id) { alert('Edit feature — implement as needed.'); }
 function addNewStudent() { alert('Add new student.'); }
+    // ───── TEMPORARY MIGRATION SCRIPT ─────
+// Execute this once by typing uploadCsvToFirestore() in your browser console
+async function uploadCsvToFirestore() {
+    console.log("Starting CSV download and cloud migration...");
+    const csvUrl = 'https://raw.githubusercontent.com/dineshkute90/pccoe_fy_contact_details/main/contact_testing_csv.csv';
+    
+    try {
+        const response = await fetch(csvUrl);
+        if (!response.ok) throw new Error('Failed to fetch CSV file from GitHub');
+        const csvText = await response.text();
+        
+        Papa.parse(csvText, {
+            header: true,
+            skipEmptyLines: true,
+            complete: async (results) => {
+                const rows = results.data;
+                console.log(`Found ${rows.length} records. Uploading to Firestore...`);
+                
+                // Track columns dynamically matching your original layout
+                const keys = Object.keys(rows[0]);
+                const findCol = (patterns) => keys.find(k => patterns.some(p => k.toLowerCase().includes(p.toLowerCase()))) || keys[0];
+
+                const prnKey    = findCol(['prn','roll']);
+                const nameKey   = findCol(['student name','name']);
+                const divKey    = findCol(['division','div']);
+                const batchKey  = findCol(['batch']);
+                const progKey   = findCol(['program','course']);
+                const mobileKey = findCol(['student mobile','mobile']);
+                const parentKey = findCol(['parent mobile','parent']);
+                const emailKey  = findCol(['email','mail']);
+                const photoKey  = findCol(['photo','image','picture']);
+
+                // Use a Firestore Batch to write data quickly in blocks
+                const batch = db.batch();
+                
+                rows.forEach((row) => {
+                    const prnValue = row[prnKey] ? row[prnKey].trim() : '';
+                    if (!prnValue) return; // Skip empty rows lacking a PRN ID
+
+                    // Use the unique PRN as the Firestore Document ID
+                    const studentRef = db.collection("students").doc(prnValue);
+                    
+                    const studentData = {
+                        prn: prnValue,
+                        name: row[nameKey] ? row[nameKey].trim() : '',
+                        division: row[divKey] ? row[divKey].trim() : '',
+                        batch: row[batchKey] ? row[batchKey].trim() : '',
+                        program: row[progKey] ? row[progKey].trim() : '',
+                        student_mobile: row[mobileKey] ? row[mobileKey].trim() : '',
+                        parent_mobile: row[parentKey] ? row[parentKey].trim() : '',
+                        email: row[emailKey] ? row[emailKey].trim() : '',
+                        photo: row[photoKey] ? row[photoKey].trim() : ''
+                    };
+
+                    batch.set(studentRef, studentData);
+                });
+
+                await batch.commit();
+                console.log("✅ Success! All records successfully written to Firestore.");
+                alert("Migration Complete! Check your Firestore dashboard.");
+            }
+        });
+    } catch (error) {
+        console.error("Migration halted: ", error);
+        alert("Upload failed. Make sure your Firestore security rules allow data writing!");
+    }
+}
 </script>
 </body>
 </html>
