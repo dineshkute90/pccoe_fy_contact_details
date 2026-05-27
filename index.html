@@ -59,7 +59,6 @@
             pointer-events: none;
         }
 
-        /* Decorative grid lines */
         #loginSection::after {
             content: '';
             position: absolute;
@@ -215,7 +214,6 @@
             padding: 20px;
         }
 
-        /* Header */
         .directory-header {
             background: linear-gradient(135deg, #0d1547, #1a237e 50%, #283593);
             color: white;
@@ -241,49 +239,48 @@
         }
 
         .header-logo { 
-    height: 64px; 
-    object-fit: contain;
-    justify-self: start; /* Keeps logo on the far left */
-}
+            height: 64px; 
+            object-fit: contain;
+            justify-self: start;
+        }
 
-       .header-title {
-    text-align: center; /* Centers both lines of text */
-    justify-self: center;
-}
+        .header-title {
+            text-align: center;
+            justify-self: center;
+        }
 
-.header-title h2 {
-    font-family: 'Crimson Pro', Georgia, serif;
-    font-size: 2.2rem; /* Increased font size */
-    font-weight: 600;
-    margin-bottom: 8px;
-}
+        .header-title h2 {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
 
-.header-title p {
-    font-family: 'Crimson Pro', Georgia, serif; /* Same font family as title */
-    font-size: 2.2rem; /* Same font size as title */
-    font-weight: 400;
-    letter-spacing: 0.02em;
-    margin-bottom: 0;
-    opacity: 1; /* Removed lower opacity so it matches the title color intensity */
-}
+        .header-title p {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 2.2rem;
+            font-weight: 400;
+            letter-spacing: 0.02em;
+            margin-bottom: 0;
+            opacity: 1;
+        }
 
         .logout-btn {
-    background: rgba(255,255,255,0.12);
-    border: 1.5px solid rgba(255,255,255,0.25);
-    color: white;
-    padding: 8px 20px;
-    border-radius: 8px;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-    justify-self: end; /* Keeps logout button on the far right */
-}
+            background: rgba(255,255,255,0.12);
+            border: 1.5px solid rgba(255,255,255,0.25);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            justify-self: end;
+        }
 
         .logout-btn:hover { background: rgba(255,255,255,0.22); }
 
-        /* Stats Cards */
         .stats-row {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -334,7 +331,6 @@
             margin-top: 4px;
         }
 
-        /* Search Box */
         .search-box {
             background: var(--card-bg);
             padding: 1.4rem 1.5rem;
@@ -371,7 +367,6 @@
             outline: none;
         }
 
-        /* Action Buttons */
         .action-bar {
             display: flex;
             align-items: center;
@@ -442,10 +437,7 @@
             box-shadow: 0 3px 10px rgba(0,105,92,0.25);
         }
 
-        /* Email Dropdown */
-        .email-dropdown-wrap {
-            position: relative;
-        }
+        .email-dropdown-wrap { position: relative; }
 
         .email-dropdown-content {
             display: none;
@@ -477,7 +469,6 @@
         .email-dropdown-content .dd-item:hover { background: #f0f2ff; }
         .email-dropdown-content .dd-item:not(:last-child) { border-bottom: 1px solid var(--border); }
 
-        /* Data Table */
         .data-table-wrap {
             background: var(--card-bg);
             border-radius: 14px;
@@ -504,7 +495,6 @@
         #studentTable tbody tr:hover { background: #f0f2ff !important; }
         #studentTable tbody td { padding: 10px 12px; vertical-align: middle; border-color: var(--border); }
 
-        /* Selected row */
         #studentTable tbody tr.row-selected { background: #e8eaf6 !important; }
 
         .student-photo-thumb {
@@ -545,7 +535,6 @@
             min-width: 24px;
         }
 
-        /* Select All warning banner */
         .select-all-warning {
             display: none;
             background: #fff3e0;
@@ -562,22 +551,19 @@
 
         .select-all-warning.show { display: flex; }
 
-        /* DataTable overrides */
         .dataTables_wrapper .dataTables_filter input {
-    border: 2px solid var(--border);
-    border-radius: 8px;
-    padding: 6px 10px;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 0.83rem;
-}
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.83rem;
+        }
 
-.dataTables_wrapper .dataTables_length select {
-    border: 2px solid var(--border);
-    border-radius: 8px;
-    padding: 6px 32px 6px 12px; /* Increased right padding to make room for the arrow */
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 0.83rem;
-}
+        .dataTables_wrapper .dataTables_length select {
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 6px 32px 6px 12px;
+        }
 
         .dataTables_wrapper .dataTables_paginate .paginate_button {
             border-radius: 6px !important;
@@ -593,7 +579,6 @@
         .dataTables_wrapper { padding: 16px; }
         div.dataTables_wrapper div.dataTables_info { font-size: 0.82rem; color: var(--text-muted); }
 
-        /* Footer */
         .app-footer {
             text-align: center;
             padding: 14px;
@@ -606,28 +591,26 @@
             letter-spacing: 0.03em;
         }
 
-        /* Photo Modal */
         #photoModal .modal-content { background: #0d1547; border: none; border-radius: 16px; overflow: hidden; }
         #photoModal .modal-header { border-bottom: 1px solid rgba(255,255,255,0.1); }
         .photo-modal-img { max-width: 90vw; max-height: 80vh; border-radius: 8px; }
 
         @media (max-width: 768px) {
-    .directory-header { 
-        display: flex;
-        flex-direction: column; 
-        text-align: center; 
-        gap: 16px;
-    }
-    .header-title h2, 
-    .header-title p {
-        font-size: 1.6rem; /* Scaled down slightly for mobile screens to avoid clipping */
-    }
-}
+            .directory-header { 
+                display: flex;
+                flex-direction: column; 
+                text-align: center; 
+                gap: 16px;
+            }
+            .header-title h2, 
+            .header-title p {
+                font-size: 1.6rem;
+            }
+        }
     </style>
 </head>
 <body>
 
-<!-- ═══════════════ LOGIN PAGE ═══════════════ -->
 <div id="loginSection">
     <div class="login-card">
         <div class="login-card-header">
@@ -641,7 +624,7 @@
 
             <div class="login-input-group">
                 <i class="fas fa-user input-icon"></i>
-                <input type="text" id="username" placeholder="Username" autocomplete="username" required>
+                <input type="text" id="username" placeholder="Enter Email Address" autocomplete="username" required>
             </div>
             <div class="login-input-group">
                 <i class="fas fa-lock input-icon"></i>
@@ -655,9 +638,7 @@
     </div>
 </div>
 
-<!-- ═══════════════ MAIN APP ═══════════════ -->
 <div id="mainSection">
-    <!-- Header -->
     <div class="directory-header">
         <img src="https://raw.githubusercontent.com/dineshkute90/pccoe_fy_contact_details/main/pccoe_logo.png" class="header-logo" alt="PCCOE">
         <div class="header-title">
@@ -667,7 +648,6 @@
         <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt me-1"></i> Logout</button>
     </div>
 
-    <!-- Stats -->
     <div class="stats-row">
         <div class="stat-card">
             <div class="stat-value" id="totalStudents">0</div>
@@ -687,7 +667,6 @@
         </div>
     </div>
 
-    <!-- Search Box -->
     <div class="search-box">
         <div class="section-label"><i class="fas fa-search me-1"></i> Quick Search</div>
         <div class="row g-2">
@@ -714,8 +693,7 @@
 
         <div class="row mt-2">
             <div class="col-md-10">
-                <textarea id="multiPRNSearch" class="form-control" rows="2"
-                    placeholder="Paste multiple PRNs (comma, space or new-line separated)…"></textarea>
+                <textarea id="multiPRNSearch" class="form-control" rows="2" placeholder="Paste multiple PRNs (comma, space or new-line separated)…"></textarea>
             </div>
             <div class="col-md-2 d-flex align-items-end">
                 <button class="btn-action btn-multi-search w-100" onclick="searchMultiplePRNs()">
@@ -724,7 +702,6 @@
             </div>
         </div>
 
-        <!-- Action Bar -->
         <div class="action-bar">
             <button class="btn-action btn-select-all" id="selectAllBtn" onclick="handleSelectAll()" title="Only works after searching">
                 <i class="fas fa-check-square"></i> Select All
@@ -747,14 +724,12 @@
             </button>
         </div>
 
-        <!-- Warning: Select All only for search -->
         <div class="select-all-warning" id="selectAllWarning">
             <i class="fas fa-exclamation-triangle"></i>
             <span>"Select All" works only after performing a search. Please search first.</span>
         </div>
     </div>
 
-    <!-- Table -->
     <div class="data-table-wrap">
         <div style="overflow-x:auto">
             <table id="studentTable" class="table table-striped" style="width:100%">
@@ -781,7 +756,6 @@
     <div class="app-footer">PCCOE Student Directory — Developed by Mr. Dinesh Kute</div>
 </div>
 
-<!-- Photo Modal -->
 <div class="modal fade" id="photoModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
@@ -791,31 +765,6 @@
             </div>
             <div class="modal-body text-center pb-4">
                 <img id="fullPhotoImg" class="photo-modal-img" alt="Student Photo">
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Add Student Modal -->
-<div class="modal fade" id="addStudentModal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5>Add Student</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <input id="addPRN" class="form-control mb-2" placeholder="PRN">
-                <input id="addName" class="form-control mb-2" placeholder="Name">
-                <input id="addDivision" class="form-control mb-2" placeholder="Division">
-                <input id="addBatch" class="form-control mb-2" placeholder="Batch">
-                <input id="addProgram" class="form-control mb-2" placeholder="Program">
-                <input id="addMobile" class="form-control mb-2" placeholder="Mobile">
-                <input id="addEmail" class="form-control mb-2" placeholder="Email">
-                <input id="addPhoto" class="form-control mb-2" placeholder="Photo URL">
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" onclick="addNewStudent()">Save</button>
             </div>
         </div>
     </div>
@@ -833,14 +782,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
 <script>
-    // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// 1. Your Custom Firebase Core Settings 
 const firebaseConfig = {
   apiKey: "AIzaSyBxoRU8BfUCpEK-akWYEXQ6VmLCVQINTVI",
   authDomain: "pccoecontact.firebaseapp.com",
@@ -851,44 +793,33 @@ const firebaseConfig = {
   measurementId: "G-1WR1BWSBY1"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-// ───── CREDENTIALS ─────
-// Added dineshkute90 / dineshkute90 as requested
-const CREDENTIALS = {
-    'dineshkute90': 'dineshkute90',
-    'pccoeash':     'ashpccoe@2025',
-    'admin':        'pccoe@admin'
-};
+// 2. Wake Up the Firebase Engines using proper Compat Syntax
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
 
+// 3. Runtime App Arrays & Control Parameters
 let dataTable, allStudents = [], isLoggedIn = false, isAdmin = false;
-let currentSearchResults = [];     // populated only after a search
-let isSearchActive = false;        // true = user has performed a search
+let currentSearchResults = [];     
+let isSearchActive = false;        
 let selectedStudents = new Set();
 
-// ───── LOGIN ─────
-// ───── FIREBASE LOGIN ─────
+// ───── FIREBASE LOGIN FUNCTION ─────
 function doLogin() {
-    const email = document.getElementById('username').value.trim(); // Firebase expects an email format
+    const email = document.getElementById('username').value.trim(); 
     const pwd   = document.getElementById('password').value;
     const errDiv = document.getElementById('loginError');
 
-    errDiv.classList.add('d-none'); // Clear out any previous errors
+    errDiv.classList.add('d-none'); 
 
-    // Firebase securely validates the password on Google's servers
     auth.signInWithEmailAndPassword(email, pwd)
         .then((userCredential) => {
-            // Check if the logged-in user is the administrator
             isAdmin = (email === 'admin@pccoe.edu'); 
             isLoggedIn = true;
-            
-            // Firebase handles security session states automatically!
             showMain();
         })
         .catch((error) => {
             errDiv.classList.remove('d-none');
-            // Friendly error message mapping
             if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
                 errDiv.innerText = 'Invalid email or password. Please try again.';
             } else {
@@ -899,36 +830,20 @@ function doLogin() {
         });
 }
 
-// Allow Enter key on login inputs
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && document.getElementById('loginSection').style.display !== 'none') {
-        doLogin();
-    }
-});
-
-function showMain() {
-    document.getElementById('loginSection').style.display = 'none';
-    document.getElementById('mainSection').style.display = 'block';
-    loadCSVData();
-}
-
-// ───── FIREBASE LOGOUT ─────
+// ───── FIREBASE LOGOUT FUNCTION ─────
 function logout() {
     auth.signOut().then(() => {
-        // Clear runtime flags and reload cleanly back to the login screen
         isLoggedIn = false;
         isAdmin = false;
         location.reload();
     });
 }
 
-// ───── AUTOMATIC SECURITY STATE MONITOR ─────
-// Firebase listens to the user session automatically. If they are validated,
-// it logs them right in. If not, it keeps them locked out on the login form.
+// ───── AUTOMATIC AUTH STATE CONTROLLER ─────
 auth.onAuthStateChanged((user) => {
     if (user) {
         isLoggedIn = true;
-        isAdmin = (user.email === 'admin@pccoe.edu'); // Update with your actual admin email
+        isAdmin = (user.email === 'admin@pccoe.edu'); 
         showMain();
     } else {
         isLoggedIn = false;
@@ -937,349 +852,252 @@ auth.onAuthStateChanged((user) => {
         document.getElementById('mainSection').style.display = 'none';
     }
 });
+
+// Switch display panels once verified
+function showMain() {
+    document.getElementById('loginSection').style.display = 'none';
+    document.getElementById('mainSection').style.display = 'block';
+    loadCSVData(); 
+}
+
 // ───── FIRESTORE LIVE DATA FETCH ─────
 async function loadCSVData() {
     const statusDiv = document.getElementById('dataStatus');
     statusDiv.innerText = 'Connecting to Database...';
-    
-    // Reset our main runtime student tracking array
     allStudents = [];
 
-    // Fetch documents directly from your "students" collection in Firestore
     db.collection("students").get()
         .then((querySnapshot) => {
             let recordCount = 0;
-            
             querySnapshot.forEach((doc) => {
-                // doc.data() pulls out the clean student object directly
                 const studentData = doc.data();
-                
-                // Add a unique ID tracking key matching what your Datatable looks for
                 studentData._id = recordCount++; 
-                
                 allStudents.push(studentData);
             });
 
+            document.getElementById('totalStudents').innerText = allStudents.length;
+
             if (allStudents.length > 0) {
                 statusDiv.innerText = '✓ Live (Firestore)';
-                
-                // Fire off your original DataTable rendering engine directly!
                 initDataTable();
             } else {
-                statusDiv.innerText = '⚠ No Records Found';
-                // Fallback: if database is completely empty, initialize empty table safely
+                statusDiv.innerText = '⚠ Empty Collection';
                 initDataTable(); 
             }
         })
         .catch((error) => {
             console.error("Firestore loading error: ", error);
             statusDiv.innerText = '✕ Access Denied';
-            alert("Error loading database documents. Check your console logs or security rules.");
         });
 }
-// ───── DATATABLE ─────
-function initDataTable() {
-    if (dataTable) { dataTable.destroy(); dataTable = null; }
 
-    const columns = [
-        {
-            data: null,
-            orderable: false,
-            render: (d) => `<input type="checkbox" class="student-checkbox" data-id="${d._id}" onchange="toggleStudentSelection(${d._id}, this.checked)">`
-        },
-        { data: null, render: (d,t,r,meta) => meta.row + 1 },
-        { data: 'prn' },
-        { data: 'name' },
-        { data: 'division' },
-        { data: 'batch' },
-        { data: 'program' },
-        {
-            data: 'photo',
-            render: (photo) => photo
-                ? `<img src="${photo}" class="student-photo-thumb" onclick="openFullPhoto('${photo}')" alt="Photo">`
-                : `<i class="fas fa-user-circle fa-2x" style="color:#9fa8da;cursor:default"></i>`
-        },
-        { data: 'student_mobile', render: (m) => `<div class="d-flex align-items-center gap-1"><span>${m}</span><button class="copy-icon-btn" onclick="copyToClipboard('${m}')" title="Copy"><i class="far fa-copy"></i></button></div>` },
-        { data: 'parent_mobile',  render: (p) => `<div class="d-flex align-items-center gap-1"><span>${p}</span><button class="copy-icon-btn" onclick="copyToClipboard('${p}')" title="Copy"><i class="far fa-copy"></i></button></div>` },
-        {
-            data: 'email',
-            render: (email) => `<div class="d-flex align-items-center gap-1">
-                <span class="text-truncate" style="max-width:140px" title="${email}">${email}</span>
-                <button class="send-email-btn" onclick="sendSingleEmail('${email}')" title="Send Email"><i class="fas fa-paper-plane"></i></button>
-                <button class="copy-icon-btn" onclick="copyToClipboard('${email}')" title="Copy"><i class="far fa-copy"></i></button>
-            </div>`
-        },
-        
-    ];
+// Initialize jQuery DataTables View Model
+function initDataTable() {
+    if ($.fn.DataTable.isDataTable('#studentTable')) {
+        $('#studentTable').DataTable().destroy();
+    }
 
     dataTable = $('#studentTable').DataTable({
         data: allStudents,
-        columns,
+        columns: [
+            { 
+                data: null, 
+                orderable: false,
+                render: function(data, type, row) {
+                    const checked = selectedStudents.has(row.prn) ? 'checked' : '';
+                    return `<input type="checkbox" class="row-checkbox" data-prn="${row.prn}" ${checked} onchange="handleRowCheckbox(this)">`;
+                }
+            },
+            { data: '_id', render: (data) => parseInt(data) + 1 },
+            { data: 'prn' },
+            { data: 'name' },
+            { data: 'division' },
+            { data: 'batch' },
+            { data: 'program' },
+            { 
+                data: 'photo',
+                render: function(data) {
+                    if(!data) return `<i class="fas fa-user-circle text-secondary fa-2x"></i>`;
+                    return `<img src="${data}" class="student-photo-thumb" onclick="viewPhoto('${data}')" onerror="this.src='https://via.placeholder.com/40'">`;
+                }
+            },
+            { data: 'student_mobile' },
+            { data: 'parent_mobile' },
+            { data: 'email' }
+        ],
         pageLength: 10,
-        scrollX: true,
-        language: {
-            search: '<i class="fas fa-search"></i>',
-            searchPlaceholder: 'Filter table…'
+        dom: 'lfrtip',
+        createdRow: function(row, data, dataIndex) {
+            if (selectedStudents.has(data.prn)) {
+                $(row).addClass('row-selected');
+            }
+        }
+    });
+}
+
+function viewPhoto(url) {
+    document.getElementById('fullPhotoImg').src = url;
+    const modal = new bootstrap.Modal(document.getElementById('photoModal'));
+    modal.show();
+}
+
+function handleRowCheckbox(elem) {
+    const prn = elem.getAttribute('data-prn');
+    const row = $(elem).closest('tr');
+    if (elem.checked) {
+        selectedStudents.add(prn);
+        row.addClass('row-selected');
+    } else {
+        selectedStudents.delete(prn);
+        row.removeClass('row-selected');
+    }
+    document.getElementById('selectedCount').innerText = selectedStudents.size;
+    document.getElementById('exportCount').innerText = selectedStudents.size;
+}
+
+function handleSelectAllCheckbox() {
+    const masterChecked = document.getElementById('selectAllCheckbox').checked;
+    const rows = dataTable.rows({ search: 'applied' }).data();
+    
+    rows.each(function(rowData) {
+        if (masterChecked) {
+            selectedStudents.add(rowData.prn);
+        } else {
+            selectedStudents.delete(rowData.prn);
         }
     });
 
-    document.getElementById('totalStudents').innerText = allStudents.length;
-    document.getElementById('exportCount').innerText   = allStudents.length;
-}
-
-// ───── SEARCH ─────
-function searchTable() {
-    const prn  = document.getElementById('searchPRN').value.trim().toLowerCase();
-    const name = document.getElementById('searchName').value.trim().toLowerCase();
-    const div  = document.getElementById('searchDivision').value.trim().toLowerCase();
-
-    if (!prn && !name && !div) {
-        alert('Please enter at least one search term.');
-        return;
+    $('.row-checkbox').prop('checked', masterChecked);
+    if(masterChecked) {
+        $('#studentTable tbody tr').addClass('row-selected');
+    } else {
+        $('#studentTable tbody tr').removeClass('row-selected');
     }
 
-    const filtered = allStudents.filter(s =>
-        (!prn  || s.prn.toLowerCase().includes(prn)) &&
-        (!name || s.name.toLowerCase().includes(name)) &&
-        (!div  || s.division.toLowerCase().includes(div))
-    );
-
-    applySearchResults(filtered);
+    document.getElementById('selectedCount').innerText = selectedStudents.size;
+    document.getElementById('exportCount').innerText = selectedStudents.size;
 }
 
-function searchMultiplePRNs() {
-    const raw  = document.getElementById('multiPRNSearch').value;
-    const prns = raw.split(/[,\s\n;]+/).map(p => p.trim().toLowerCase()).filter(p => p);
-    if (!prns.length) { alert('Please enter at least one PRN.'); return; }
-    const filtered = allStudents.filter(s => prns.includes(s.prn.toLowerCase()));
-    applySearchResults(filtered);
-}
+function searchTable() {
+    const prnVal = document.getElementById('searchPRN').value.toLowerCase().trim();
+    const nameVal = document.getElementById('searchName').value.toLowerCase().trim();
+    const divVal = document.getElementById('searchDivision').value.toLowerCase().trim();
 
-function applySearchResults(filtered) {
-    currentSearchResults = filtered;
-    isSearchActive = true;
-    selectedStudents.clear();
-    document.getElementById('selectAllCheckbox').checked = false;
-    document.getElementById('selectAllBtn').classList.remove('active');
-    document.getElementById('selectAllWarning').classList.remove('show');
-    document.getElementById('selectedCount').innerText = '0';
+    dataTable.column(2).search(prnVal);
+    dataTable.column(3).search(nameVal);
+    dataTable.column(4).search(divVal);
+    dataTable.draw();
 
-    dataTable.clear().rows.add(filtered).draw();
-    document.getElementById('searchResults').innerText = filtered.length;
-    document.getElementById('exportCount').innerText   = filtered.length;
+    const matches = dataTable.rows({ search: 'applied' }).count();
+    document.getElementById('searchResults').innerText = matches;
 }
 
 function clearSearch() {
-    document.getElementById('searchPRN').value      = '';
-    document.getElementById('searchName').value     = '';
+    document.getElementById('searchPRN').value = '';
+    document.getElementById('searchName').value = '';
     document.getElementById('searchDivision').value = '';
     document.getElementById('multiPRNSearch').value = '';
-
-    isSearchActive = false;
-    currentSearchResults = [];
-    selectedStudents.clear();
-    document.getElementById('selectAllCheckbox').checked = false;
-    document.getElementById('selectAllBtn').classList.remove('active');
-    document.getElementById('selectAllWarning').classList.remove('show');
-    document.getElementById('selectedCount').innerText = '0';
-
-    dataTable.clear().rows.add(allStudents).draw();
+    
+    dataTable.columns().search('');
+    dataTable.search('').draw();
     document.getElementById('searchResults').innerText = '—';
-    document.getElementById('exportCount').innerText   = allStudents.length;
 }
 
-// ───── SELECT ALL — only works if search is active ─────
-function handleSelectAll() {
-    if (!isSearchActive || currentSearchResults.length === 0) {
-        // Show warning, don't select anything
-        document.getElementById('selectAllWarning').classList.add('show');
-        setTimeout(() => document.getElementById('selectAllWarning').classList.remove('show'), 4000);
+function searchMultiplePRNs() {
+    const rawInput = document.getElementById('multiPRNSearch').value;
+    const prns = rawInput.split(/[\s,]+/).map(p => p.trim().toLowerCase()).filter(p => p.length > 0);
+    
+    if(prns.length === 0) {
+        clearSearch();
         return;
     }
 
-    document.getElementById('selectAllWarning').classList.remove('show');
-    const btn = document.getElementById('selectAllBtn');
-    const allSelected = currentSearchResults.every(s => selectedStudents.has(s._id));
-
-    if (allSelected) {
-        // Deselect all
-        currentSearchResults.forEach(s => selectedStudents.delete(s._id));
-        btn.classList.remove('active');
-        document.getElementById('selectAllCheckbox').checked = false;
-        document.querySelectorAll('.student-checkbox').forEach(cb => cb.checked = false);
-        // Remove row highlight
-        document.querySelectorAll('#studentTable tbody tr').forEach(tr => tr.classList.remove('row-selected'));
-    } else {
-        // Select all search results
-        currentSearchResults.forEach(s => selectedStudents.add(s._id));
-        btn.classList.add('active');
-        document.getElementById('selectAllCheckbox').checked = true;
-        document.querySelectorAll('.student-checkbox').forEach(cb => { cb.checked = true; });
-        document.querySelectorAll('#studentTable tbody tr').forEach(tr => tr.classList.add('row-selected'));
-    }
-
-    updateSelectedCount();
+    // Custom regex search mapping for Datatables column 2
+    const regexString = '^(' + prns.map(p => p.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')).join('|') + ')$';
+    dataTable.column(2).search(regexString, true, false).draw();
+    
+    const matches = dataTable.rows({ search: 'applied' }).count();
+    document.getElementById('searchResults').innerText = matches;
 }
 
-// Header checkbox behaviour — mirrors Select All button
-function handleSelectAllCheckbox() {
-    if (!isSearchActive || currentSearchResults.length === 0) {
-        document.getElementById('selectAllCheckbox').checked = false;
-        document.getElementById('selectAllWarning').classList.add('show');
-        setTimeout(() => document.getElementById('selectAllWarning').classList.remove('show'), 4000);
-        return;
-    }
-    handleSelectAll(); // delegate to main handler
-}
-
-function toggleStudentSelection(id, checked) {
-    if (checked) selectedStudents.add(id);
-    else         selectedStudents.delete(id);
-    updateSelectedCount();
-
-    // Highlight row
-    document.querySelectorAll(`.student-checkbox[data-id="${id}"]`).forEach(cb => {
-        const row = cb.closest('tr');
-        if (row) row.classList.toggle('row-selected', checked);
-    });
-}
-
-function updateSelectedCount() {
-    document.getElementById('selectedCount').innerText = selectedStudents.size;
-}
-
-// ───── EMAIL ─────
 function toggleEmailDropdown() {
     document.getElementById('emailDropdown').classList.toggle('show');
 }
 
-document.addEventListener('click', (e) => {
+window.addEventListener('click', function(e) {
     if (!e.target.closest('.email-dropdown-wrap')) {
         document.getElementById('emailDropdown').classList.remove('show');
     }
 });
 
 function sendEmailWithDraft(type) {
-    if (!selectedStudents.size) { alert('No students selected.'); return; }
-    const emails = allStudents.filter(s => selectedStudents.has(s._id) && s.email).map(s => s.email).join(',');
-    if (!emails) { alert('No valid email addresses found.'); return; }
+    if (selectedStudents.size === 0) {
+        alert("Please select at least one student checkbox first!");
+        return;
+    }
 
-    let subject = '', body = '';
-    if (type === 'openDay')    { subject = 'Open Day Schedule';  body = 'Dear Student,\n\nOpen Day details are attached.\n\nRegards,\nPCCOE'; }
-    else if (type === 'faSchedule') { subject = 'FA Schedule';   body = 'Dear Student,\n\nFormative Assessment schedule is now available.\n\nRegards,\nPCCOE'; }
-    else                           { subject = 'Announcement';   body = 'Dear Student,\n\nPlease check the notice board for updates.\n\nRegards,\nPCCOE'; }
-
-    window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(emails)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
-    document.getElementById('emailDropdown').classList.remove('show');
-}
-
-function sendSingleEmail(email) {
-    if (email) window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}`);
-}
-
-// ───── UTILITIES ─────
-function copyToClipboard(text) {
-    navigator.clipboard.writeText(text).then(() => {
-        // Brief toast-like feedback
-        const toast = document.createElement('div');
-        toast.innerText = '✓ Copied!';
-        Object.assign(toast.style, {
-            position:'fixed', bottom:'24px', right:'24px',
-            background:'#1a237e', color:'white', padding:'10px 18px',
-            borderRadius:'8px', fontFamily:'Plus Jakarta Sans,sans-serif',
-            fontWeight:'600', fontSize:'0.85rem', zIndex:'9999',
-            boxShadow:'0 4px 16px rgba(0,0,0,0.2)',
-            transition:'opacity 0.3s'
-        });
-        document.body.appendChild(toast);
-        setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 400); }, 1800);
+    const recipientEmails = [];
+    allStudents.forEach(s => {
+        if(selectedStudents.has(s.prn) && s.email) {
+            recipientEmails.push(s.email);
+        }
     });
-}
 
-function openFullPhoto(url) {
-    document.getElementById('fullPhotoImg').src = url;
-    new bootstrap.Modal(document.getElementById('photoModal')).show();
+    if(recipientEmails.length === 0) {
+        alert("The selected students do not have registered Email IDs!");
+        return;
+    }
+
+    let subject = "Academic Update — PCCOE";
+    let body = "Dear Student,\n\n";
+
+    if(type === 'openDay') {
+        subject = "Invitation to Open Day Performance Evaluation — PCCOE";
+        body = "Dear Student,\n\nYou are hereby informed that the Open Day meeting is scheduled this week. Attendance is mandatory.\n\nRegards,\nDepartment of AS&H, PCCOE.";
+    } else if (type === 'faSchedule') {
+        subject = "Formative Assessment (FA) Timetable Notification";
+        body = "Dear Student,\n\nThe schedule for the upcoming Formative Assessments has been updated on the notice board. Kindly check your slots.\n\nRegards,\nPCCOE Examination Cell.";
+    }
+
+    const mailtoUrl = `mailto:${recipientEmails.join(',')}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.open(mailtoUrl, '_blank');
 }
 
 function exportSearchResults() {
-    const data = dataTable.rows().data().toArray();
-    if (!data.length) { alert('No data to export.'); return; }
-    const wsData = [['PRN','Name','Division','Batch','Program','Student Mobile','Parent Mobile','Email']];
-    data.forEach(s => wsData.push([s.prn, s.name, s.division, s.batch, s.program, s.student_mobile, s.parent_mobile, s.email]));
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(wsData), 'Students');
-    XLSX.writeFile(wb, `PCCOE_Students_${new Date().toISOString().slice(0,10)}.xlsx`);
-}
-
-function editStudent(id) { alert('Edit feature — implement as needed.'); }
-function addNewStudent() { alert('Add new student.'); }
-    // ───── TEMPORARY MIGRATION SCRIPT ─────
-// Execute this once by typing uploadCsvToFirestore() in your browser console
-async function uploadCsvToFirestore() {
-    console.log("Starting CSV download and cloud migration...");
-    const csvUrl = 'https://raw.githubusercontent.com/dineshkute90/pccoe_fy_contact_details/main/contact_testing_csv.csv';
-    
-    try {
-        const response = await fetch(csvUrl);
-        if (!response.ok) throw new Error('Failed to fetch CSV file from GitHub');
-        const csvText = await response.text();
-        
-        Papa.parse(csvText, {
-            header: true,
-            skipEmptyLines: true,
-            complete: async (results) => {
-                const rows = results.data;
-                console.log(`Found ${rows.length} records. Uploading to Firestore...`);
-                
-                // Track columns dynamically matching your original layout
-                const keys = Object.keys(rows[0]);
-                const findCol = (patterns) => keys.find(k => patterns.some(p => k.toLowerCase().includes(p.toLowerCase()))) || keys[0];
-
-                const prnKey    = findCol(['prn','roll']);
-                const nameKey   = findCol(['student name','name']);
-                const divKey    = findCol(['division','div']);
-                const batchKey  = findCol(['batch']);
-                const progKey   = findCol(['program','course']);
-                const mobileKey = findCol(['student mobile','mobile']);
-                const parentKey = findCol(['parent mobile','parent']);
-                const emailKey  = findCol(['email','mail']);
-                const photoKey  = findCol(['photo','image','picture']);
-
-                // Use a Firestore Batch to write data quickly in blocks
-                const batch = db.batch();
-                
-                rows.forEach((row) => {
-                    const prnValue = row[prnKey] ? row[prnKey].trim() : '';
-                    if (!prnValue) return; // Skip empty rows lacking a PRN ID
-
-                    // Use the unique PRN as the Firestore Document ID
-                    const studentRef = db.collection("students").doc(prnValue);
-                    
-                    const studentData = {
-                        prn: prnValue,
-                        name: row[nameKey] ? row[nameKey].trim() : '',
-                        division: row[divKey] ? row[divKey].trim() : '',
-                        batch: row[batchKey] ? row[batchKey].trim() : '',
-                        program: row[progKey] ? row[progKey].trim() : '',
-                        student_mobile: row[mobileKey] ? row[mobileKey].trim() : '',
-                        parent_mobile: row[parentKey] ? row[parentKey].trim() : '',
-                        email: row[emailKey] ? row[emailKey].trim() : '',
-                        photo: row[photoKey] ? row[photoKey].trim() : ''
-                    };
-
-                    batch.set(studentRef, studentData);
-                });
-
-                await batch.commit();
-                console.log("✅ Success! All records successfully written to Firestore.");
-                alert("Migration Complete! Check your Firestore dashboard.");
-            }
-        });
-    } catch (error) {
-        console.error("Migration halted: ", error);
-        alert("Upload failed. Make sure your Firestore security rules allow data writing!");
+    const activeRows = dataTable.rows({ search: 'applied' }).data().toArray();
+    if(activeRows.length === 0) {
+        alert("No current data matches found to export!");
+        return;
     }
+
+    const formattedData = activeRows.map((s, idx) => ({
+        "Sr No": idx + 1,
+        "PRN": s.prn,
+        "Student Name": s.name,
+        "Division": s.division,
+        "Batch": s.batch,
+        "Program": s.program,
+        "Mobile Number": s.student_mobile,
+        "Parent Mobile": s.parent_mobile,
+        "Email ID": s.email
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(formattedData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Filtered Students");
+    XLSX.writeFile(workbook, "PCCOE_Student_Export.xlsx");
 }
+
+// 4. Global Action Event Catchers
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        if (document.getElementById('loginSection').style.display !== 'none') {
+            doLogin();
+        } else {
+            searchTable();
+        }
+    }
+});
 </script>
 </body>
 </html>
