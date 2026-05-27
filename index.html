@@ -866,23 +866,21 @@ async function loadCSVData() {
     statusDiv.innerText = 'Loading CSV Dataset...';
     allStudents = [];
 
-    // Fetches your uploaded dataset file from the same repository folder
+    // Cleaned up the filename here to avoid URL encoding issues
     fetch('students.csv')
         .then(response => {
             if (!response.ok) {
-                throw new Error('CSV file "students.csv" not found. Make sure it is in the same folder.');
+                throw new Error('CSV file "students.csv" not found. Please verify it is in the same folder as index.html.');
             }
             return response.text();
         })
         .then(csvText => {
-            // Parse the CSV content using PapaParse (already loaded in your HTML)
             Papa.parse(csvText, {
                 header: true,
                 skipEmptyLines: true,
                 complete: function(results) {
                     let recordCount = 0;
                     
-                    // Map your specific CSV columns to the properties expected by the app's DataTable
                     allStudents = results.data.map(row => {
                         return {
                             _id: recordCount++,
@@ -915,7 +913,6 @@ async function loadCSVData() {
             statusDiv.innerText = '✕ File Load Error';
         });
 }
-
 // Initialize jQuery DataTables View Model
 function initDataTable() {
     if ($.fn.DataTable.isDataTable('#studentTable')) {
