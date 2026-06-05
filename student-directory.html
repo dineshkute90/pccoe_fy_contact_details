@@ -775,7 +775,6 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
-// ⚠️ REPLACE THIS CONFIG BLOCK WITH YOUR ACTUAL FIREBASE APP DETAILS
 const firebaseConfig = {
     apiKey: "AIzaSyBJPGhOYeSN0pl2dOgnJv_Fhh0913DyrMw",
     authDomain: "pccoe-student-directory.firebaseapp.com",
@@ -792,22 +791,21 @@ const db = firebase.firestore();
 
 let dataTable, allStudents = [];
 let selectedStudents = new Set();
+let isFilteredSearchActive = false;
 
 // Dynamic Authentication State Observer
 auth.onAuthStateChanged((user) => {
     if (user) {
-        // User logged in
         document.getElementById('loginSection').style.display = 'none';
         document.getElementById('mainSection').style.display = 'block';
         fetchStudentsFromFirebase();
     } else {
-        // User logged out
         document.getElementById('loginSection').style.display = 'flex';
         document.getElementById('mainSection').style.display = 'none';
     }
 });
 
-// Firebase Authorized Account Sign-in Execution
+// Firebase Sign-in
 function doLogin() {
     const email = document.getElementById('username').value.trim();
     const pwd   = document.getElementById('password').value;
@@ -825,6 +823,8 @@ function logout() {
     auth.signOut().then(() => {
         if(dataTable) dataTable.clear().draw();
         allStudents = [];
+        selectedStudents.clear();
+        updateSelectedCount();
     });
 }
 
@@ -832,22 +832,23 @@ function logout() {
 async function fetchStudentsFromFirebase() {
     document.getElementById('dataStatus').innerText = 'Loading…';
     try {
-        const snapshot = await db.collection('students').orderBy('name').get();
+        const snapshot = await db.collection('contacts').orderBy('Student Name').get();
         allStudents = [];
         let idx = 1;
+        
         snapshot.forEach((doc) => {
             let item = doc.data();
             allStudents.push({
                 index: idx++,
-                prn: item.prn || '',
-                name: item.name || '',
-                division: item.division || '',
-                batch: item.batch || '',
-                program: item.program || '',
-                photo: item.photo || '',
-                studentMobile: item.studentMobile || '',
-                parentMobile: item.parentMobile || '',
-                email: item.email || ''
+                prn: item.PRN || '',
+                name: item['Student Name'] || '',
+                division: item.Division || '',
+                batch: item.Batch || '',
+                program: item.Program || '',
+                photo: item.Photo || '',
+                studentMobile: item['Student Mobile'] || '',
+                parentMobile: item['Parent Mobile'] || '',
+                email: item['Email ID'] || ''
             });
         });
         
@@ -899,10 +900,15 @@ function initializeTable(data) {
             }
         },
         pageLength: 25,
-        dom: 'lfrtip'
+        dom: 'lfrtip',
+        drawCallback: function() {
+            updateSelectAllCheckboxState();
+        }
     });
+    document.getElementById('searchResults').innerText = data.length;
 }
 
+// Checkbox Management
 function handleRowCheckbox(el) {
     const prn = el.getAttribute('data-prn');
     const row = $(el).closest('tr');
@@ -914,124 +920,240 @@ function handleRowCheckbox(el) {
         row.removeClass('row-selected');
     }
     updateSelectedCount();
+    updateSelectAllCheckboxState();
+}
+
+function handleSelectAllCheckbox() {
+    const mainBox = document.getElementById('selectAllCheckbox');
+    const rows = dataTable.rows({ page: 'current', search: 'applied' }).data();
+    
+    for(let i=0; i<rows.length; i++) {
+        if(mainBox.checked) {
+            selectedStudents.add(rows[i].prn);
+        } else {
+            selectedStudents.delete(rows[i].prn);
+        }
+    }
+    
+    // Rerender current visible table row checkboxes without resetting pagination
+    $('#studentTable tbody input[type="checkbox"]').each(function() {
+        const prn = this.getAttribute('data-prn');
+        this.checked = mainBox.checked;
+        if(mainBox.checked) {
+            $(this).closest('tr').addClass('row-selected');
+        } else {
+            $(this).closest('tr').removeClass('row-selected');
+        }
+    });
+    
+    updateSelectedCount();
+}
+
+function updateSelectAllCheckboxState() {
+    const mainBox = document.getElementById('selectAllCheckbox');
+    if(!mainBox || !dataTable) return;
+    
+    const visibleRows = dataTable.rows({ page: 'current', search: 'applied' }).data();
+    if(visibleRows.length === 0) {
+        mainBox.checked = false;
+        return;
+    }
+    
+    let allChecked = true;
+    for(let i=0; i<visibleRows.length; i++) {
+        if(!selectedStudents.has(visibleRows[i].prn)) {
+            allChecked = false;
+            break;
+        }
+    }
+    mainBox.checked = allChecked;
 }
 
 function updateSelectedCount() {
     const count = selectedStudents.size;
     document.getElementById('selectedCount').innerText = count;
     document.getElementById('exportCount').innerText = count;
-    document.getElementById('exportBtn').disabled = (count === 0);
+    
+    const exportBtn = document.getElementById('exportBtn');
+    if (count > 0) {
+        exportBtn.removeAttribute('disabled');
+    } else {
+        exportBtn.setAttribute('disabled', 'true');
+    }
 }
 
-function handleSelectAllCheckbox() {
-    const mainCb = document.getElementById('selectAllCheckbox');
-    const visibleCheckboxes = document.querySelectorAll('.row-checkbox');
-    visibleCheckboxes.forEach(cb => {
-        cb.checked = mainCb.checked;
-        handleRowCheckbox(cb);
-    });
-}
-
-function handleSelectAll() {
-    allStudents.forEach(st => selectedStudents.add(st.prn));
-    initializeTable(allStudents);
-    updateSelectedCount();
-}
-
+// Search Mechanics
 function searchTable() {
-    const prnVal = document.getElementById('searchPRN').value.toLowerCase().trim();
-    const nameVal = document.getElementById('searchName').value.toLowerCase().trim();
-    const divVal = document.getElementById('searchDivision').value.toLowerCase().trim();
-
-    const filtered = allStudents.filter(st => {
-        return (!prnVal || st.prn.toLowerCase().includes(prnVal)) &&
-               (!nameVal || st.name.toLowerCase().includes(nameVal)) &&
-               (!divVal || st.division.toLowerCase() === divVal);
-    });
-
-    document.getElementById('searchResults').innerText = filtered.length;
-    initializeTable(filtered);
+    const prnVal = document.getElementById('searchPRN').value.trim();
+    const nameVal = document.getElementById('searchName').value.trim();
+    const divVal = document.getElementById('searchDivision').value.trim();
+    
+    // Multi-column filtering via DataTables instance APIs
+    dataTable.column(2).search(prnVal);
+    dataTable.column(3).search(nameVal);
+    dataTable.column(4).search(divVal);
+    
+    // Clear out standard global filter box text to prevent structural conflicts
+    dataTable.search('').draw();
+    
+    const count = dataTable.rows({ search: 'applied' }).count();
+    document.getElementById('searchResults').innerText = count;
+    
+    isFilteredSearchActive = (prnVal !== "" || nameVal !== "" || divVal !== "");
+    document.getElementById('selectAllWarning').classList.remove('show');
 }
 
 function searchMultiplePRNs() {
-    const raw = document.getElementById('multiPRNSearch').value;
-    if(!raw.trim()) return;
-    const prns = raw.split(/[\s,]+/).map(p => p.trim().toLowerCase()).filter(p => p);
+    const textInput = document.getElementById('multiPRNSearch').value;
+    // Matches commas, spaces, or lines to parse messy lists safely
+    const cleanTokens = textInput.split(/[\s,;\n\r]+/).filter(t => t.trim() !== "");
     
-    const filtered = allStudents.filter(st => prns.includes(st.prn.toLowerCase()));
-    document.getElementById('searchResults').innerText = filtered.length;
-    initializeTable(filtered);
+    if(cleanTokens.length === 0) {
+        clearSearch();
+        return;
+    }
+    
+    // Turn array tokens into an escaped regex regex logic (PRN1|PRN2|PRN3)
+    const exactRegexSearchQuery = cleanTokens.map(t => '^' + $.fn.dataTable.util.escapeRegex(t) + '$').join('|');
+    
+    // Flush simple field values to minimize processing bugs
+    document.getElementById('searchPRN').value = "";
+    document.getElementById('searchName').value = "";
+    document.getElementById('searchDivision').value = "";
+    dataTable.columns().search('');
+    
+    dataTable.column(2).search(exactRegexSearchQuery, true, false).draw();
+    
+    const count = dataTable.rows({ search: 'applied' }).count();
+    document.getElementById('searchResults').innerText = count;
+    
+    isFilteredSearchActive = true;
+    document.getElementById('selectAllWarning').classList.remove('show');
 }
 
 function clearSearch() {
-    document.getElementById('searchPRN').value = '';
-    document.getElementById('searchName').value = '';
-    document.getElementById('searchDivision').value = '';
-    document.getElementById('multiPRNSearch').value = '';
-    document.getElementById('searchResults').innerText = '—';
-    initializeTable(allStudents);
+    document.getElementById('searchPRN').value = "";
+    document.getElementById('searchName').value = "";
+    document.getElementById('searchDivision').value = "";
+    document.getElementById('multiPRNSearch').value = "";
+    
+    isFilteredSearchActive = false;
+    document.getElementById('selectAllWarning').classList.remove('show');
+    
+    dataTable.search('').columns().search('').draw();
+    document.getElementById('searchResults').innerText = allStudents.length;
+}
+
+function handleSelectAll() {
+    if (!isFilteredSearchActive) {
+        document.getElementById('selectAllWarning').classList.add('show');
+        return;
+    }
+    
+    document.getElementById('selectAllWarning').classList.remove('show');
+    const targetedRowsData = dataTable.rows({ search: 'applied' }).data();
+    
+    for(let i = 0; i < targetedRowsData.length; i++) {
+        selectedStudents.add(targetedRowsData[i].prn);
+    }
+    
+    // Rerender UI selections
+    dataTable.rows().every(function() {
+        const item = this.data();
+        if(selectedStudents.has(item.prn)) {
+            $(this.node()).addClass('row-selected');
+            $(this.node()).find('.row-checkbox').prop('checked', true);
+        }
+    });
+    
+    updateSelectedCount();
+    updateSelectAllCheckboxState();
+}
+
+// Document Management and Export Logic via SheetJS
+function exportSearchResults() {
+    if(selectedStudents.size === 0) return;
+    
+    // Target only elements selected by user checkboxes
+    const matchedExportArray = allStudents.filter(s => selectedStudents.has(s.prn));
+    
+    const exportDataPayload = matchedExportArray.map((student, idx) => ({
+        "Sr No": idx + 1,
+        "PRN": student.prn,
+        "Student Name": student.name,
+        "Division": student.division,
+        "Batch": student.batch,
+        "Program": student.program,
+        "Student Mobile": student.studentMobile,
+        "Parent Mobile": student.parentMobile,
+        "Email ID": student.email,
+        "Photo Link": student.photo
+    }));
+    
+    const worksheet = XLSX.utils.json_to_sheet(exportDataPayload);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Selected Students");
+    
+    // Generate file output with ISO timestamps
+    const dateStamp = new Date().toISOString().slice(0,10);
+    XLSX.writeFile(workbook, `PCCOE_Export_${dateStamp}.xlsx`);
+}
+
+// Mail Handler Infrastructure
+function sendEmailWithDraft(type) {
+    if(selectedStudents.size === 0) {
+        alert("Please select at least one student checkbox row before trying to email.");
+        return;
+    }
+    
+    const selectedTargets = allStudents.filter(s => selectedStudents.has(s.prn));
+    const cleanMailList = selectedTargets.map(s => s.email).filter(e => e.includes('@'));
+    
+    if(cleanMailList.length === 0) {
+        alert("The selected student profiles do not contain valid email records.");
+        return;
+    }
+    
+    let subject = "", body = "";
+    if (type === 'openDay') {
+        subject = "Invitation to PCCOE Open Day Evaluation Meet";
+        body = "Dear Student,\n\nYou are requested to attend the upcoming Open Day event along with your parents to discuss performance evaluations.\n\nBest Regards,\nDepartment of Applied Sciences & Humanities, PCCOE";
+    } else if (type === 'faSchedule') {
+        subject = "Notification: Formative Assessment (FA) Schedule Update";
+        body = "Dear Student,\n\nPlease review your updated Formative Assessment dashboard schedule matrix via the official student portal link.\n\nBest Regards,\nPCCOE Examination Cell";
+    } else {
+        subject = "Academic Notification Notice";
+        body = "Dear Student,\n\n";
+    }
+    
+    // Uses bcc configuration context to blind copy groups securely
+    const mailtoUri = `mailto:?bcc=${encodeURIComponent(cleanMailList.join(','))}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.open(mailtoUri, '_blank');
+}
+
+// Photo Viewer Modal Window Triggers
+function openPhotoModal(url) {
+    document.getElementById('fullPhotoImg').src = url;
+    const photoModalElement = new bootstrap.Modal(document.getElementById('photoModal'));
+    photoModalElement.show();
 }
 
 function toggleEmailDropdown() {
     document.getElementById('emailDropdown').classList.toggle('show');
 }
 
+// Closes custom structural UI context layers safely
 window.onclick = function(event) {
-    if (!event.target.matches('.btn-email') && !event.target.matches('.fa-envelope')) {
+    if (!event.target.matches('.btn-email') && !event.target.closest('.btn-email')) {
         const dropdowns = document.getElementsByClassName("email-dropdown-content");
         for (let i = 0; i < dropdowns.length; i++) {
-            if (dropdowns[i].classList.contains('show')) {
-                dropdowns[i].classList.remove('show');
+            let openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
             }
         }
     }
 }
-
-function sendEmailWithDraft(type) {
-    const selectedList = allStudents.filter(st => selectedStudents.has(st.prn));
-    const emails = selectedList.map(st => st.email).filter(e => e).join(',');
-    
-    if(!emails) {
-        alert("No valid email addresses found for selection.");
-        return;
-    }
-
-    let subject = "", body = "";
-    if(type === 'openDay') {
-        subject = "Invitation to PCCOE Open Day Evaluation";
-        body = "Dear Student,\n\nYou are requested to attend the Open Day Session accompanied by your parent.";
-    } else if(type === 'faSchedule') {
-        subject = "Notification: Formative Assessment (FA) Schedule";
-        body = "Dear Student,\n\nPlease find your upcoming Formative Assessment scheduling matrix attached.";
-    } else {
-        subject = "PCCOE Academic Update Notification";
-        body = "Dear Student,\n\n";
-    }
-
-    window.open(`mailto:?bcc=${emails}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
-}
-
-function exportSearchResults() {
-    const selectedList = allStudents.filter(st => selectedStudents.has(st.prn));
-    if(!selectedList.length) return;
-
-    const worksheet = XLSX.utils.json_to_sheet(selectedList);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Selected Students");
-    XLSX.writeFile(workbook, "PCCOE_Student_Export.xlsx");
-}
-
-function openPhotoModal(url) {
-    document.getElementById('fullPhotoImg').src = url;
-    const myModal = new bootstrap.Modal(document.getElementById('photoModal'));
-    myModal.show();
-}
-
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && document.getElementById('loginSection').style.display !== 'none') {
-        doLogin();
-    }
-});
 </script>
 </body>
 </html>
