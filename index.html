@@ -2,9 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PCCOE Team Mathematics | Home</title>
-  <!-- Bootstrap 5 + Icons + Fonts -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
@@ -12,142 +11,27 @@
     :root {
       --pccoe-blue: #1a237e;
       --pccoe-blue-light: #3949ab;
-      --pccoe-red: #d32f2f;
       --pccoe-green: #1b5e20;
       --pccoe-gold: #f9a825;
-      --bg-light: #f8faff;
-      --text-dark: #111827;
     }
-    body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background: var(--bg-light);
-      color: var(--text-dark);
-      scroll-behavior: smooth;
-    }
-    /* Navbar */
-    .navbar-brand {
-      font-family: 'Crimson Pro', serif;
-      font-weight: 700;
-      font-size: 1.6rem;
-      letter-spacing: -0.3px;
-      background: linear-gradient(135deg, #1a237e, #2e7d32);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-    .navbar {
-      background: white;
-      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
-      padding: 0.8rem 0;
-    }
-    .nav-link {
-      font-weight: 600;
-      color: #1e293b;
-      margin: 0 0.2rem;
-      transition: 0.2s;
-    }
-    .nav-link:hover, .nav-link.active {
-      color: var(--pccoe-blue);
-      background: #eef2ff;
-      border-radius: 40px;
-    }
-    .hero-section {
-      background: linear-gradient(105deg, #ffffff 0%, #eef2ff 100%);
-      border-bottom: 1px solid rgba(0,0,0,0.05);
-    }
-    .btn-primary-custom {
-      background: var(--pccoe-blue);
-      border: none;
-      padding: 10px 28px;
-      font-weight: 600;
-      border-radius: 40px;
-      transition: 0.2s;
-    }
-    .btn-primary-custom:hover {
-      background: #0f1a5c;
-      transform: translateY(-2px);
-    }
-    .btn-outline-custom {
-      border: 2px solid var(--pccoe-blue);
-      color: var(--pccoe-blue);
-      border-radius: 40px;
-      font-weight: 600;
-      padding: 8px 24px;
-    }
-    .footer {
-      background: #0b1120;
-      color: #cbd5e1;
-      padding: 3rem 0 2rem;
-      margin-top: 3rem;
-    }
-    .card-hover {
-      transition: all 0.25s ease;
-      border-radius: 20px;
-      overflow: hidden;
-    }
-    .card-hover:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 20px 35px -10px rgba(0,0,0,0.1);
-    }
-    .section-title {
-      font-family: 'Crimson Pro', serif;
-      font-weight: 700;
-      font-size: 2.3rem;
-      color: var(--pccoe-blue);
-      border-left: 6px solid var(--pccoe-gold);
-      padding-left: 1rem;
-    }
-    .bg-math-pattern {
-      background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
-      background-size: 28px 28px;
-    }
-    .product-card {
-      cursor: pointer;
-      background: white;
-      border-radius: 28px;
-      transition: all 0.2s;
-    }
-    .product-card:hover {
-      box-shadow: 0 20px 30px -12px rgba(0,0,0,0.15);
-    }
-    .gallery-img {
-      border-radius: 20px;
-      transition: 0.25s;
-      height: 220px;
-      object-fit: cover;
-      width: 100%;
-    }
-    .gallery-img:hover {
-      transform: scale(1.02);
-      box-shadow: 0 12px 20px -8px rgba(0,0,0,0.2);
-    }
-    .contact-icon {
-      width: 48px;
-      height: 48px;
-      background: #eef2ff;
-      border-radius: 30px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--pccoe-blue);
-      font-size: 1.4rem;
-    }
-    @media (max-width: 768px) {
-      .section-title { font-size: 1.8rem; }
-    }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8faff; }
+    .navbar { background: white; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
+    .navbar-brand { font-family: 'Crimson Pro', serif; font-weight: 700; font-size: 1.8rem; background: linear-gradient(135deg, #1a237e, #2e7d32); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .nav-link { font-weight: 600; margin: 0 0.2rem; transition: 0.2s; }
+    .nav-link:hover, .nav-link.active { color: var(--pccoe-blue); background: #eef2ff; border-radius: 40px; }
+    .hero-section { background: linear-gradient(105deg, #ffffff 0%, #eef2ff 100%); border-bottom: 1px solid rgba(0,0,0,0.05); }
+    .btn-primary-custom { background: var(--pccoe-blue); border: none; padding: 10px 28px; border-radius: 40px; font-weight: 600; }
+    .btn-primary-custom:hover { background: #0f1a5c; transform: translateY(-2px); }
+    .btn-outline-custom { border: 2px solid var(--pccoe-blue); color: var(--pccoe-blue); border-radius: 40px; font-weight: 600; }
+    .footer { background: #0b1120; color: #cbd5e1; padding: 3rem 0 2rem; margin-top: 3rem; }
+    .section-title { font-family: 'Crimson Pro', serif; font-weight: 700; font-size: 2.3rem; color: var(--pccoe-blue); border-left: 6px solid var(--pccoe-gold); padding-left: 1rem; }
   </style>
 </head>
 <body>
-
-<!-- ======================= NAVIGATION ======================= -->
 <nav class="navbar navbar-expand-lg sticky-top">
   <div class="container">
-    <a class="navbar-brand fw-bold" href="index.html">
-      <i class="fas fa-square-root-alt me-2" style="color:#1a237e;"></i> PCCOE Team Math
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+    <a class="navbar-brand" href="index.html"><i class="fas fa-square-root-alt me-2" style="color:#1a237e;"></i>PCCOE Team Math</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"><span class="navbar-toggler-icon"></span></button>
     <div class="collapse navbar-collapse" id="mainNav">
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0 gap-2">
         <li class="nav-item"><a class="nav-link active" href="index.html">HOME</a></li>
@@ -161,14 +45,13 @@
   </div>
 </nav>
 
-<!-- ======================= HERO SECTION ======================= -->
 <section class="hero-section py-5">
   <div class="container py-4">
     <div class="row align-items-center g-5">
       <div class="col-lg-6">
-        <span class="badge bg-warning text-dark mb-3 fw-semibold px-3 py-2"><i class="fas fa-chalkboard-user me-1"></i> Department of Applied Sciences</span>
+        <span class="badge bg-warning text-dark mb-3 px-3 py-2"><i class="fas fa-chalkboard-user me-1"></i> Department of Applied Sciences</span>
         <h1 class="display-4 fw-bold" style="color: #0a0f2c;">PCCOE <span style="color:#1b5e20;">Team Mathematics</span><br>Excellence in Numbers</h1>
-        <p class="lead mt-3 text-secondary">Where mathematical thinking meets real-world innovation — empowering engineers, researchers, and problem solvers.</p>
+        <p class="lead text-secondary">Where mathematical thinking meets real-world innovation — empowering engineers, researchers, and problem solvers.</p>
         <div class="mt-4 d-flex flex-wrap gap-3">
           <a href="learning-hub.html" class="btn btn-primary-custom"><i class="fas fa-graduation-cap me-2"></i>Explore Learning Hub</a>
           <a href="products.html" class="btn btn-outline-custom"><i class="fas fa-cubes me-2"></i>View Products</a>
@@ -176,81 +59,23 @@
       </div>
       <div class="col-lg-6 text-center">
         <img src="https://raw.githubusercontent.com/dineshkute90/pccoe_fy_contact_details/main/pccoe_logo.png" alt="PCCOE Logo" class="img-fluid" style="max-height: 220px;">
-        <div class="mt-3 p-3 bg-white rounded-4 shadow-sm d-inline-block">
-          <i class="fas fa-chart-line text-success me-2"></i> <strong>30+</strong> Research Publications • <i class="fas fa-users text-primary ms-2 me-1"></i> 6 Faculty Mentors
-        </div>
+        <div class="mt-3 p-3 bg-white rounded-4 shadow-sm d-inline-block"><i class="fas fa-chart-line text-success me-2"></i> <strong>30+</strong> Research Publications • <i class="fas fa-users text-primary ms-2 me-1"></i> 6 Faculty Mentors</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ======================= KEY HIGHLIGHTS ======================= -->
-<section class="container my-5">
+<div class="container my-5">
   <div class="row text-center g-4">
-    <div class="col-md-4">
-      <div class="p-4 bg-white rounded-4 shadow-sm h-100">
-        <i class="fas fa-calculator fs-1 text-primary mb-3"></i>
-        <h5>Analytics & Modeling</h5>
-        <p class="text-secondary">Advanced computational math for real-world engineering challenges</p>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="p-4 bg-white rounded-4 shadow-sm h-100">
-        <i class="fas fa-chalkboard fs-1 text-success mb-3"></i>
-        <h5>Peer Tutoring</h5>
-        <p class="text-secondary">Weekly problem-solving sessions & mentorship programs</p>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="p-4 bg-white rounded-4 shadow-sm h-100">
-        <i class="fas fa-trophy fs-1 text-warning mb-3"></i>
-        <h5>Competition Ready</h5>
-        <p class="text-secondary">National & International Math Olympiad training</p>
-      </div>
-    </div>
+    <div class="col-md-4"><div class="p-4 bg-white rounded-4 shadow-sm"><i class="fas fa-calculator fs-1 text-primary mb-3"></i><h5>Analytics & Modeling</h5><p class="text-secondary">Advanced computational math for real-world engineering challenges</p></div></div>
+    <div class="col-md-4"><div class="p-4 bg-white rounded-4 shadow-sm"><i class="fas fa-chalkboard fs-1 text-success mb-3"></i><h5>Peer Tutoring</h5><p class="text-secondary">Weekly problem-solving sessions & mentorship programs</p></div></div>
+    <div class="col-md-4"><div class="p-4 bg-white rounded-4 shadow-sm"><i class="fas fa-trophy fs-1 text-warning mb-3"></i><h5>Competition Ready</h5><p class="text-secondary">National & International Math Olympiad training</p></div></div>
   </div>
-</section>
+</div>
 
-<!-- ======================= UPCOMING / ANNOUNCEMENTS ======================= -->
-<section class="container my-5">
-  <div class="bg-white p-4 rounded-4 shadow-sm border-start border-4 border-warning">
-    <div class="d-flex flex-wrap justify-content-between align-items-center">
-      <div><i class="fas fa-bullhorn text-warning fs-3 me-3"></i> <strong class="fs-5">📢 Upcoming: National Mathematics Day Symposium</strong><br><span class="text-secondary">December 22, 2025 | Hosted by PCCOE Team Mathematics</span></div>
-      <a href="#" class="btn btn-sm btn-outline-primary rounded-pill mt-2 mt-sm-0">Register Interest →</a>
-    </div>
-  </div>
-</section>
-
-<!-- ======================= FOOTER ======================= -->
 <footer class="footer">
-  <div class="container">
-    <div class="row g-4">
-      <div class="col-md-4">
-        <h5 class="text-white fw-semibold"><i class="fas fa-square-root-alt me-2"></i>PCCOE Math Team</h5>
-        <p class="small">Empowering future innovators with mathematical excellence and interdisciplinary research.</p>
-        <div><i class="fas fa-map-marker-alt me-2"></i> Pimpri Chinchwad College of Engineering, Nigdi, Pune</div>
-      </div>
-      <div class="col-md-4">
-        <h6 class="text-white">Quick Links</h6>
-        <ul class="list-unstyled small">
-          <li><a href="index.html" class="text-decoration-none text-secondary-emphasis">Home</a></li>
-          <li><a href="about.html" class="text-decoration-none text-secondary-emphasis">About Us</a></li>
-          <li><a href="products.html" class="text-decoration-none text-secondary-emphasis">Products</a></li>
-          <li><a href="learning-hub.html" class="text-decoration-none text-secondary-emphasis">Learning Hub</a></li>
-        </ul>
-      </div>
-      <div class="col-md-4">
-        <h6 class="text-white">Connect</h6>
-        <p><i class="fas fa-envelope me-2"></i> maths@pccoepune.org</p>
-        <p><i class="fab fa-linkedin me-2"></i> /pccoe-math-dept</p>
-        <p><i class="fab fa-github me-2"></i> pccoe-math-analytics</p>
-      </div>
-    </div>
-    <hr class="mt-4 opacity-25">
-    <div class="text-center small">© 2025 PCCOE Team Mathematics — Innovate, Solve, Excel.</div>
-  </div>
+  <div class="container"><div class="row g-4"><div class="col-md-4"><h5 class="text-white"><i class="fas fa-square-root-alt me-2"></i>PCCOE Math Team</h5><p class="small">Empowering future innovators with mathematical excellence.</p></div><div class="col-md-4"><h6 class="text-white">Quick Links</h6><ul class="list-unstyled small"><li><a href="index.html" class="text-decoration-none text-secondary-emphasis">Home</a></li><li><a href="about.html" class="text-decoration-none text-secondary-emphasis">About Us</a></li><li><a href="products.html" class="text-decoration-none text-secondary-emphasis">Products</a></li></ul></div><div class="col-md-4"><h6 class="text-white">Connect</h6><p><i class="fas fa-envelope me-2"></i> maths@pccoepune.org</p></div></div><hr class="mt-4 opacity-25"><div class="text-center small">© 2025 PCCOE Team Mathematics — Innovate, Solve, Excel.</div></div>
 </footer>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
