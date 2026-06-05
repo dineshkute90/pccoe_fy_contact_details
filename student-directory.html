@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&family=Crimson+Pro:ital,wght=0,400;0,600;1,400&display=swap" rel="stylesheet">
     <style>
         :root {
             --pccoe-blue: #1a237e;
@@ -617,7 +617,7 @@
             <div id="loginError" class="alert alert-danger d-none" role="alert"></div>
             <div class="login-input-group">
                 <i class="fas fa-user input-icon"></i>
-                <input type="text" id="username" placeholder="Username" autocomplete="username" required>
+                <input type="email" id="username" placeholder="Authorized Email (e.g., admin@pccoe.edu)" autocomplete="username" required>
             </div>
             <div class="login-input-group">
                 <i class="fas fa-lock input-icon"></i>
@@ -770,108 +770,94 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
 <script>
-const CREDENTIALS = {
-    'dineshkute90': 'dineshkute90',
-    'pccoeash':     'ashpccoe@2025',
-    'admin':        'pccoe@admin'
+// ⚠️ REPLACE THIS CONFIG BLOCK WITH YOUR ACTUAL FIREBASE APP DETAILS
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
 };
 
-let dataTable, allStudents = [], isLoggedIn = false, isAdmin = false;
-let currentSearchResults = [];     
-let isSearchActive = false;        
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+let dataTable, allStudents = [];
 let selectedStudents = new Set();
 
-function doLogin() {
-    const user = document.getElementById('username').value.trim();
-    const pwd  = document.getElementById('password').value;
-    const errDiv = document.getElementById('loginError');
-
-    if (CREDENTIALS[user] && CREDENTIALS[user] === pwd) {
-        isLoggedIn = true;
-        isAdmin = (user === 'admin');
-        localStorage.setItem('pccoeLogin', JSON.stringify({
-            loggedIn: true, isAdmin, expiry: Date.now() + 7 * 86400000
-        }));
-        showMain();
+// Dynamic Authentication State Observer
+auth.onAuthStateChanged((user) => {
+    if (user) {
+        // User logged in
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('mainSection').style.display = 'block';
+        fetchStudentsFromFirebase();
     } else {
-        errDiv.classList.remove('d-none');
-        errDiv.innerText = 'Invalid username or password. Please try again.';
-        document.getElementById('password').value = '';
-        document.getElementById('password').focus();
-    }
-}
-
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && document.getElementById('loginSection').style.display !== 'none') {
-        doLogin();
+        // User logged out
+        document.getElementById('loginSection').style.display = 'flex';
+        document.getElementById('mainSection').style.display = 'none';
     }
 });
 
-function showMain() {
-    document.getElementById('loginSection').style.display = 'none';
-    document.getElementById('mainSection').style.display = 'block';
-    loadCSVData();
+// Firebase Authorized Account Sign-in Execution
+function doLogin() {
+    const email = document.getElementById('username').value.trim();
+    const pwd   = document.getElementById('password').value;
+    const errDiv = document.getElementById('loginError');
+    
+    auth.signInWithEmailAndPassword(email, pwd)
+        .catch(error => {
+            errDiv.classList.remove('d-none');
+            errDiv.innerText = error.message;
+            document.getElementById('password').value = '';
+        });
 }
 
 function logout() {
-    localStorage.removeItem('pccoeLogin');
-    location.reload();
+    auth.signOut().then(() => {
+        if(dataTable) dataTable.clear().draw();
+        allStudents = [];
+    });
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-    const saved = localStorage.getItem('pccoeLogin');
-    if (saved) {
-        try {
-            const data = JSON.parse(saved);
-            if (data.loggedIn && data.expiry > Date.now()) {
-                isLoggedIn = true;
-                isAdmin = data.isAdmin;
-                showMain();
-                return;
-            }
-        } catch(e) {}
-    }
-    document.getElementById('loginSection').style.display = 'flex';
-});
-
-async function loadCSVData() {
+// Fetch Records Securely from Cloud Firestore
+async function fetchStudentsFromFirebase() {
     document.getElementById('dataStatus').innerText = 'Loading…';
-    const csvUrl = 'https://raw.githubusercontent.com/dineshkute90/pccoe_fy_contact_details/main/contact_testing_csv.csv';
     try {
-        const response = await fetch(csvUrl);
-        if (!response.ok) throw new Error('Network error');
-        const csvText = await response.text();
-        Papa.parse(csvText, {
-            header: true, skipEmptyLines: true,
-            complete: (results) => {
-                if (!results.data.length) throw new Error('Empty CSV');
-                mapCSVToStudents(results.data);
-                document.getElementById('dataStatus').innerText = 'Active';
-            }
+        const snapshot = await db.collection('students').orderBy('name').get();
+        allStudents = [];
+        let idx = 1;
+        snapshot.forEach((doc) => {
+            let item = doc.data();
+            allStudents.push({
+                index: idx++,
+                prn: item.prn || '',
+                name: item.name || '',
+                division: item.division || '',
+                batch: item.batch || '',
+                program: item.program || '',
+                photo: item.photo || '',
+                studentMobile: item.studentMobile || '',
+                parentMobile: item.parentMobile || '',
+                email: item.email || ''
+            });
         });
+        
+        document.getElementById('totalStudents').innerText = allStudents.length;
+        document.getElementById('dataStatus').innerText = 'Active';
+        initializeTable(allStudents);
     } catch (e) {
         document.getElementById('dataStatus').innerText = 'Error';
-        console.error(e);
+        console.error("Error reading database collection: ", e);
     }
-}
-
-function mapCSVToStudents(data) {
-    allStudents = data.map((item, index) => ({
-        index: index + 1,
-        prn: item['PRN'] || '',
-        name: item['Student Name'] || item['Name'] || '',
-        division: item['Division'] || '',
-        batch: item['Batch'] || '',
-        program: item['Program'] || '',
-        photo: item['Photo'] || '',
-        studentMobile: item['Student Mobile'] || '',
-        parentMobile: item['Parent Mobile'] || '',
-        email: item['Email ID'] || item['Email'] || ''
-    }));
-
-    document.getElementById('totalStudents').innerText = allStudents.length;
-    initializeTable(allStudents);
 }
 
 function initializeTable(data) {
@@ -917,16 +903,10 @@ function initializeTable(data) {
     });
 }
 
-function openPhotoModal(url) {
-    document.getElementById('fullPhotoImg').src = url;
-    const modal = new bootstrap.Modal(document.getElementById('photoModal'));
-    modal.show();
-}
-
-function handleRowCheckbox(chk) {
-    const prn = chk.getAttribute('data-prn');
-    const row = $(chk).closest('tr');
-    if (chk.checked) {
+function handleRowCheckbox(el) {
+    const prn = el.getAttribute('data-prn');
+    const row = $(el).closest('tr');
+    if(el.checked) {
         selectedStudents.add(prn);
         row.addClass('row-selected');
     } else {
@@ -936,92 +916,51 @@ function handleRowCheckbox(chk) {
     updateSelectedCount();
 }
 
-function handleSelectAllCheckbox() {
-    const masterChk = document.getElementById('selectAllCheckbox');
-    const rows = dataTable.rows({ search: 'applied' }).data();
-    
-    if (masterChk.checked) {
-        rows.each(function(rowData) {
-            selectedStudents.add(rowData.prn);
-        });
-        $('.row-checkbox').prop('checked', true);
-        $('#studentTable tbody tr').addClass('row-selected');
-    } else {
-        rows.each(function(rowData) {
-            selectedStudents.delete(rowData.prn);
-        });
-        $('.row-checkbox').prop('checked', false);
-        $('#studentTable tbody tr').removeClass('row-selected');
-    }
-    updateSelectedCount();
-}
-
 function updateSelectedCount() {
     const count = selectedStudents.size;
     document.getElementById('selectedCount').innerText = count;
     document.getElementById('exportCount').innerText = count;
+    document.getElementById('exportBtn').disabled = (count === 0);
 }
 
-/* ───────── ENGINE LOGIC FOR SEARCH & EXPORT ACTIONS ───────── */
+function handleSelectAllCheckbox() {
+    const mainCb = document.getElementById('selectAllCheckbox');
+    const visibleCheckboxes = document.querySelectorAll('.row-checkbox');
+    visibleCheckboxes.forEach(cb => {
+        cb.checked = mainCb.checked;
+        handleRowCheckbox(cb);
+    });
+}
+
+function handleSelectAll() {
+    allStudents.forEach(st => selectedStudents.add(st.prn));
+    initializeTable(allStudents);
+    updateSelectedCount();
+}
 
 function searchTable() {
-    const prnVal = document.getElementById('searchPRN').value.trim().toLowerCase();
-    const nameVal = document.getElementById('searchName').value.trim().toLowerCase();
-    const divVal = document.getElementById('searchDivision').value.trim().toLowerCase();
+    const prnVal = document.getElementById('searchPRN').value.toLowerCase().trim();
+    const nameVal = document.getElementById('searchName').value.toLowerCase().trim();
+    const divVal = document.getElementById('searchDivision').value.toLowerCase().trim();
 
-    if (!prnVal && !nameVal && !divVal) {
-        clearSearch();
-        return;
-    }
-
-    currentSearchResults = allStudents.filter(s => {
-        const matchPRN = !prnVal || s.prn.toLowerCase().includes(prnVal);
-        const matchName = !nameVal || s.name.toLowerCase().includes(nameVal);
-        const matchDiv = !divVal || s.division.toLowerCase().includes(divVal);
-        return matchPRN && matchName && matchDiv;
+    const filtered = allStudents.filter(st => {
+        return (!prnVal || st.prn.toLowerCase().includes(prnVal)) &&
+               (!nameVal || st.name.toLowerCase().includes(nameVal)) &&
+               (!divVal || st.division.toLowerCase() === divVal);
     });
 
-    isSearchActive = true;
-    document.getElementById('searchResults').innerText = currentSearchResults.length;
-    document.getElementById('selectAllWarning').classList.remove('show');
-    
-    initializeTable(currentSearchResults);
-
-    const exportBtn = document.getElementById('exportBtn');
-    if (currentSearchResults.length > 0) {
-        exportBtn.disabled = false;
-    } else {
-        exportBtn.disabled = true;
-    }
+    document.getElementById('searchResults').innerText = filtered.length;
+    initializeTable(filtered);
 }
 
 function searchMultiplePRNs() {
-    const rawInput = document.getElementById('multiPRNSearch').value;
-    if (!rawInput.trim()) {
-        clearSearch();
-        return;
-    }
-
-    const prnList = rawInput.split(/[\s,]+/).map(p => p.trim().toLowerCase()).filter(p => p.length > 0);
-
-    if (prnList.length === 0) {
-        clearSearch();
-        return;
-    }
-
-    currentSearchResults = allStudents.filter(s => prnList.includes(s.prn.toLowerCase()));
-    isSearchActive = true;
-    document.getElementById('searchResults').innerText = currentSearchResults.length;
-    document.getElementById('selectAllWarning').classList.remove('show');
-
-    initializeTable(currentSearchResults);
-
-    const exportBtn = document.getElementById('exportBtn');
-    if (currentSearchResults.length > 0) {
-        exportBtn.disabled = false;
-    } else {
-        exportBtn.disabled = true;
-    }
+    const raw = document.getElementById('multiPRNSearch').value;
+    if(!raw.trim()) return;
+    const prns = raw.split(/[\s,]+/).map(p => p.trim().toLowerCase()).filter(p => p);
+    
+    const filtered = allStudents.filter(st => prns.includes(st.prn.toLowerCase()));
+    document.getElementById('searchResults').innerText = filtered.length;
+    initializeTable(filtered);
 }
 
 function clearSearch() {
@@ -1029,94 +968,70 @@ function clearSearch() {
     document.getElementById('searchName').value = '';
     document.getElementById('searchDivision').value = '';
     document.getElementById('multiPRNSearch').value = '';
-    
-    currentSearchResults = [];
-    isSearchActive = false;
-    
     document.getElementById('searchResults').innerText = '—';
-    document.getElementById('selectAllWarning').classList.remove('show');
-    document.getElementById('selectAllCheckbox').checked = false;
-    
-    document.getElementById('exportBtn').disabled = true;
-
     initializeTable(allStudents);
-}
-
-function handleSelectAll() {
-    if (!isSearchActive) {
-        document.getElementById('selectAllWarning').classList.add('show');
-        return;
-    }
-    document.getElementById('selectAllWarning').classList.remove('show');
-    document.getElementById('selectAllCheckbox').checked = true;
-    handleSelectAllCheckbox();
 }
 
 function toggleEmailDropdown() {
     document.getElementById('emailDropdown').classList.toggle('show');
 }
 
-window.addEventListener('click', function(e) {
-    if (!e.target.closest('.email-dropdown-wrap')) {
-        document.getElementById('emailDropdown').classList.remove('show');
+window.onclick = function(event) {
+    if (!event.target.matches('.btn-email') && !event.target.matches('.fa-envelope')) {
+        const dropdowns = document.getElementsByClassName("email-dropdown-content");
+        for (let i = 0; i < dropdowns.length; i++) {
+            if (dropdowns[i].classList.contains('show')) {
+                dropdowns[i].classList.remove('show');
+            }
+        }
     }
-});
+}
 
 function sendEmailWithDraft(type) {
-    if (selectedStudents.size === 0) {
-        alert('Please select at least one student checkbox to send an email.');
-        return;
-    }
-
-    const selectedList = allStudents.filter(s => selectedStudents.has(s.prn));
-    const emails = selectedList.map(s => s.email).filter(e => e.includes('@'));
-
-    if (emails.length === 0) {
-        alert('None of the selected students have a valid email address.');
+    const selectedList = allStudents.filter(st => selectedStudents.has(st.prn));
+    const emails = selectedList.map(st => st.email).filter(e => e).join(',');
+    
+    if(!emails) {
+        alert("No valid email addresses found for selection.");
         return;
     }
 
     let subject = "", body = "";
-    if (type === 'openDay') {
+    if(type === 'openDay') {
         subject = "Invitation to PCCOE Open Day Evaluation";
-        body = "Dear Student,\n\nYou are hereby requested to attend the upcoming Open Day Display event at the campus along with your parents.\n\nBest Regards,\nDepartment of Applied Sciences & Humanities, PCCOE.";
-    } else if (type === 'faSchedule') {
+        body = "Dear Student,\n\nYou are requested to attend the Open Day Session accompanied by your parent.";
+    } else if(type === 'faSchedule') {
         subject = "Notification: Formative Assessment (FA) Schedule";
-        body = "Dear Student,\n\nPlease find your upcoming Formative Assessment schedule updated on the department display board. Attendance is mandatory.\n\nBest Regards,\nPCCOE.";
+        body = "Dear Student,\n\nPlease find your upcoming Formative Assessment scheduling matrix attached.";
     } else {
-        subject = "PCCOE Academic Notice";
-        body = "Dear Student,\n\n[Write your custom message here]\n\nBest Regards,\nPCCOE.";
+        subject = "PCCOE Academic Update Notification";
+        body = "Dear Student,\n\n";
     }
 
-    const mailtoUrl = `mailto:${emails.join(',')}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.open(mailtoUrl, '_blank');
+    window.open(`mailto:?bcc=${emails}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
 }
 
 function exportSearchResults() {
-    const targets = isSearchActive ? currentSearchResults : [];
-    if (targets.length === 0) {
-        alert('No search active or matching entries available to extract records.');
-        return;
-    }
+    const selectedList = allStudents.filter(st => selectedStudents.has(st.prn));
+    if(!selectedList.length) return;
 
-    const exportData = targets.map(s => ({
-        'Sr No': s.index,
-        'PRN': s.prn,
-        'Student Name': s.name,
-        'Division': s.division,
-        'Batch': s.batch,
-        'Program': s.program,
-        'Student Mobile': s.studentMobile,
-        'Parent Mobile': s.parentMobile,
-        'Email ID': s.email
-    }));
-
-    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const worksheet = XLSX.utils.json_to_sheet(selectedList);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Filtered Students");
-    XLSX.writeFile(workbook, `PCCOE_Student_Search_Results_${new Date().toISOString().slice(0,10)}.xlsx`);
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Selected Students");
+    XLSX.writeFile(workbook, "PCCOE_Student_Export.xlsx");
 }
-</script>
 
+function openPhotoModal(url) {
+    document.getElementById('fullPhotoImg').src = url;
+    const myModal = new bootstrap.Modal(document.getElementById('photoModal'));
+    myModal.show();
+}
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && document.getElementById('loginSection').style.display !== 'none') {
+        doLogin();
+    }
+});
+</script>
 </body>
 </html>
