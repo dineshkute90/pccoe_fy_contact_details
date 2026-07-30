@@ -905,7 +905,7 @@ function initDataTable(data) {
             <td>${imgTag}</td>
             <td>${student.studentMobile}</td>
             <td>${student.parentMobile}</td>
-            <td><a href="mailto:${student.emailId}">${student.emailId}</a></td>
+            <td><a href="https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(student.emailId)}" target="_blank">${student.emailId}</a></td>
         `;
         tbody.appendChild(tr);
     });
@@ -1046,7 +1046,7 @@ function toggleEmailDropdown(e) {
     document.getElementById('emailDropdown').classList.toggle('show');
 }
 
-/* ──────── UPDATED EMAIL SYSTEM ──────── */
+/* ──────── GMAIL WEB REDIRECT SYSTEM ──────── */
 
 function sendEmailWithDraft(type) {
     document.getElementById('emailDropdown').classList.remove('show');
@@ -1066,50 +1066,48 @@ function sendEmailWithDraft(type) {
     switch(type) {
         case 'openDay':
             subject = "PCCOE — Open Day Schedule Notification";
-            body = "Dear Student/Parent,\r\n\r\nPlease find the schedule for the upcoming Open Day attached.\r\n\r\nRegards,\r\nDepartment of Applied Sciences & Humanities\r\nPCCOE";
+            body = "Dear Student/Parent,\n\nPlease find the schedule for the upcoming Open Day attached.\n\nRegards,\nDepartment of Applied Sciences & Humanities\nPCCOE";
             break;
         case 'faSaMarks':
             subject = "PCCOE — FA & SA Marks Update";
-            body = "Dear Student/Parent,\r\n\r\nYour FA & SA marks have been updated in the portal. Please verify.\r\n\r\nRegards,\r\nPCCOE";
+            body = "Dear Student/Parent,\n\nYour FA & SA marks have been updated in the portal. Please verify.\n\nRegards,\nPCCOE";
             break;
         case 'nonReportedFa':
             subject = "URGENT: Non-Reported Status in FA I & II";
-            body = "Dear Student/Parent,\r\n\r\nOur records indicate non-reporting for FA I & II. Contact your class teacher immediately.\r\n\r\nRegards,\r\nPCCOE";
+            body = "Dear Student/Parent,\n\nOur records indicate non-reporting for FA I & II. Contact your class teacher immediately.\n\nRegards,\nPCCOE";
             break;
         case 'faSchedule':
             subject = "PCCOE — Schedule for FA I & II";
-            body = "Dear Student,\r\n\r\nThe timetable for FA I & II is announced. Please prepare accordingly.\r\n\r\nRegards,\r\nPCCOE";
+            body = "Dear Student,\n\nThe timetable for FA I & II is announced. Please prepare accordingly.\n\nRegards,\nPCCOE";
             break;
         case 'custom':
         default:
             subject = "Notice from PCCOE";
-            body = "Dear Student,\r\n\r\n";
+            body = "Dear Student,\n\n";
             break;
     }
 
-    const mailtoUrl = `mailto:?bcc=${encodeURIComponent(bccList)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    // Direct Web Gmail Compose URL
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&bcc=${encodeURIComponent(bccList)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-    // Safety fallback: standard mailto links break if URL exceeds ~2000 characters
-    if (mailtoUrl.length > 2000) {
+    // Fallback if URL exceeds standard Web browser GET length (~2000 chars)
+    if (gmailUrl.length > 2000) {
         if (navigator.clipboard) {
             navigator.clipboard.writeText(bccList).then(() => {
-                alert(`You have selected ${validEmails.length} recipients, which exceeds the browser URL email limit.\n\nAll ${validEmails.length} email addresses have been COPIED to your clipboard!\n\nPlease open your mail application and paste (Ctrl+V) into the BCC field.`);
+                alert(`You have selected ${validEmails.length} recipients, which exceeds Gmail's browser URL limit.\n\nAll email addresses have been COPIED to your clipboard!\n\nGmail will now open, please paste (Ctrl+V) into the BCC field.`);
+                const shortGmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                window.open(shortGmailUrl, '_blank');
             }).catch(() => {
-                alert(`Too many recipients (${validEmails.length}) for direct mail application link. Please select fewer students at a time.`);
+                alert(`Too many recipients (${validEmails.length}) for single web link creation. Please select fewer students at a time.`);
             });
         } else {
-            alert(`Selected list is too large for mail client integration (${validEmails.length} recipients). Please reduce your selection size.`);
+            alert(`Selected list is too large for web link creation (${validEmails.length} recipients). Please reduce your selection size.`);
         }
         return;
     }
 
-    // Dynamic clean link execution
-    const mailLink = document.createElement('a');
-    mailLink.href = mailtoUrl;
-    mailLink.style.display = 'none';
-    document.body.appendChild(mailLink);
-    mailLink.click();
-    document.body.removeChild(mailLink);
+    // Opens Gmail composer directly in a new tab
+    window.open(gmailUrl, '_blank');
 }
 
 /* ──────── EXPORT SYSTEM ──────── */
