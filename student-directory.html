@@ -17,7 +17,6 @@
             --pccoe-green: #1b5e20;
             --pccoe-green-mid: #2e7d32;
             --pccoe-gold: #f9a825;
-            --pccoe-gold-light: #fdd835;
             --surface: #f0f2f8;
             --card-bg: #ffffff;
             --text-main: #1a1f3a;
@@ -56,17 +55,6 @@
             background:
                 radial-gradient(ellipse 60% 60% at 20% 20%, rgba(255,255,255,0.04) 0%, transparent 70%),
                 radial-gradient(ellipse 40% 40% at 80% 80%, rgba(249,168,37,0.08) 0%, transparent 70%);
-            pointer-events: none;
-        }
-
-        #loginSection::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background-image:
-                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-            background-size: 60px 60px;
             pointer-events: none;
         }
 
@@ -110,9 +98,7 @@
             filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
         }
 
-        .login-card-body {
-            padding: 0.5rem 2rem 2rem;
-        }
+        .login-card-body { padding: 0.5rem 2rem 2rem; }
 
         .login-title {
             font-family: 'Crimson Pro', Georgia, serif;
@@ -140,8 +126,7 @@
 
         .login-input-group .input-icon {
             position: absolute;
-            left: 14px;
-            top: 50%;
+            left: 14px; top: 50%;
             transform: translateY(-50%);
             color: var(--pccoe-blue-light);
             font-size: 0.9rem;
@@ -179,7 +164,7 @@
             font-weight: 700;
             letter-spacing: 0.03em;
             cursor: pointer;
-            transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+            transition: transform 0.15s, box-shadow 0.15s;
             box-shadow: 0 4px 16px rgba(27,94,32,0.3);
             margin-top: 0.5rem;
         }
@@ -188,8 +173,6 @@
             transform: translateY(-1px);
             box-shadow: 0 6px 20px rgba(27,94,32,0.4);
         }
-
-        .login-btn:active { transform: translateY(0); }
 
         .login-footer {
             text-align: center;
@@ -228,41 +211,18 @@
             overflow: hidden;
         }
 
-        .directory-header::before {
-            content: '';
-            position: absolute;
-            top: -40px; right: -40px;
-            width: 200px; height: 200px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.04);
-            pointer-events: none;
-        }
-
-        .header-logo { 
-            height: 64px; 
-            object-fit: contain;
-            justify-self: start;
-        }
-
-        .header-title {
-            text-align: center;
-            justify-self: center;
-        }
-
+        .header-logo { height: 64px; object-fit: contain; justify-self: start; }
+        .header-title { text-align: center; justify-self: center; }
         .header-title h2 {
             font-family: 'Crimson Pro', Georgia, serif;
             font-size: 2.2rem;
             font-weight: 600;
             margin-bottom: 8px;
         }
-
         .header-title p {
             font-family: 'Crimson Pro', Georgia, serif;
             font-size: 1.4rem;
-            font-weight: 400;
-            letter-spacing: 0.02em;
             margin-bottom: 0;
-            opacity: 1;
         }
 
         .logout-btn {
@@ -275,7 +235,6 @@
             font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s;
             justify-self: end;
         }
 
@@ -290,6 +249,7 @@
 
         @media (max-width: 768px) {
             .stats-row { grid-template-columns: repeat(2, 1fr); }
+            .directory-header { display: flex; flex-direction: column; text-align: center; }
         }
 
         .stat-card {
@@ -303,25 +263,13 @@
             text-align: center;
         }
 
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 3px;
-        }
-
+        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
         .stat-card:nth-child(1)::before { background: var(--pccoe-blue-light); }
         .stat-card:nth-child(2)::before { background: var(--pccoe-green-mid); }
         .stat-card:nth-child(3)::before { background: var(--pccoe-gold); }
         .stat-card:nth-child(4)::before { background: var(--pccoe-red); }
 
-        .stat-value {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--pccoe-blue);
-            line-height: 1;
-        }
-
+        .stat-value { font-size: 1.8rem; font-weight: 800; color: var(--pccoe-blue); line-height: 1; }
         .stat-label {
             font-size: 0.72rem;
             color: var(--text-muted);
@@ -357,14 +305,6 @@
             padding: 10px 14px;
             color: var(--text-main);
             background: #f8f9ff;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .form-control:focus {
-            border-color: var(--pccoe-blue-light);
-            box-shadow: 0 0 0 3px rgba(57,73,171,0.12);
-            background: white;
-            outline: none;
         }
 
         .action-bar {
@@ -385,62 +325,26 @@
             font-weight: 600;
             cursor: pointer;
             border: none;
-            transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
             display: inline-flex;
             align-items: center;
             gap: 7px;
         }
 
-        .btn-action:hover { transform: translateY(-1px); }
-        .btn-action:active { transform: translateY(0); }
-        
-        .btn-action:disabled, button:disabled { 
-            background: #cccccc !important; 
-            color: #666666 !important; 
-            box-shadow: none !important; 
-            cursor: not-allowed; 
-            transform: none !important; 
-            opacity: 0.65; 
+        .btn-action:disabled {
+            background: #cccccc !important;
+            color: #666666 !important;
+            cursor: not-allowed;
+            opacity: 0.65;
         }
 
-        .btn-select-all {
-            background: #e8eaf6;
-            color: var(--pccoe-blue);
-            border: 1.5px solid #c5cae9;
-        }
-
-        .btn-email {
-            background: linear-gradient(135deg, var(--pccoe-green), var(--pccoe-green-mid));
-            color: white;
-            box-shadow: 0 3px 10px rgba(27,94,32,0.25);
-        }
-
-        .btn-export {
-            background: linear-gradient(135deg, #e65100, #f57c00);
-            color: white;
-            box-shadow: 0 3px 10px rgba(230,81,0,0.25);
-        }
-
-        .btn-search {
-            background: linear-gradient(135deg, var(--pccoe-blue), var(--pccoe-blue-light));
-            color: white;
-            box-shadow: 0 3px 10px rgba(26,35,126,0.25);
-        }
-
-        .btn-clear {
-            background: #f0f0f0;
-            color: #555;
-            border: 1.5px solid #ddd;
-        }
-
-        .btn-multi-search {
-            background: linear-gradient(135deg, #00695c, #00897b);
-            color: white;
-            box-shadow: 0 3px 10px rgba(0,105,92,0.25);
-        }
+        .btn-select-all { background: #e8eaf6; color: var(--pccoe-blue); border: 1.5px solid #c5cae9; }
+        .btn-email { background: linear-gradient(135deg, var(--pccoe-green), var(--pccoe-green-mid)); color: white; }
+        .btn-export { background: linear-gradient(135deg, #e65100, #f57c00); color: white; }
+        .btn-search { background: linear-gradient(135deg, var(--pccoe-blue), var(--pccoe-blue-light)); color: white; }
+        .btn-clear { background: #f0f0f0; color: #555; border: 1.5px solid #ddd; }
+        .btn-multi-search { background: linear-gradient(135deg, #00695c, #00897b); color: white; }
 
         .email-dropdown-wrap { position: relative; }
-
         .email-dropdown-content {
             display: none;
             position: absolute;
@@ -452,11 +356,8 @@
             box-shadow: var(--shadow-md);
             z-index: 1000;
             min-width: 240px;
-            overflow: hidden;
         }
-
         .email-dropdown-content.show { display: block; }
-
         .email-dropdown-content .dd-item {
             padding: 11px 16px;
             font-size: 0.85rem;
@@ -465,11 +366,8 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            transition: background 0.15s;
         }
-
         .email-dropdown-content .dd-item:hover { background: #f0f2ff; }
-        .email-dropdown-content .dd-item:not(:last-child) { border-bottom: 1px solid var(--border); }
 
         .data-table-wrap {
             background: var(--card-bg);
@@ -480,23 +378,14 @@
         }
 
         #studentTable { font-size: 0.83rem; min-width: 1100px; }
-
         #studentTable thead th {
             background: linear-gradient(135deg, var(--pccoe-blue), var(--pccoe-blue-mid)) !important;
             color: white !important;
             font-weight: 700;
             font-size: 0.78rem;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
             padding: 13px 12px;
-            white-space: nowrap;
-            border: none !important;
         }
-
-        #studentTable tbody tr { transition: background 0.15s; }
-        #studentTable tbody tr:hover { background: #f0f2ff !important; }
-        #studentTable tbody td { padding: 10px 12px; vertical-align: middle; border-color: var(--border); }
-        #studentTable tbody tr.row-selected { background: #e8eaf6 !important; }
 
         .student-photo-thumb {
             width: 40px; height: 40px;
@@ -504,10 +393,7 @@
             border-radius: 8px;
             cursor: pointer;
             border: 2px solid var(--border);
-            transition: transform 0.2s, box-shadow 0.2s;
         }
-
-        .student-photo-thumb:hover { transform: scale(1.1); box-shadow: var(--shadow-sm); }
 
         .badge-count {
             display: inline-flex;
@@ -535,38 +421,7 @@
             gap: 8px;
             margin-top: 10px;
         }
-
         .select-all-warning.show { display: flex; }
-
-        .dataTables_wrapper .dataTables_filter input {
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            padding: 6px 10px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 0.83rem;
-        }
-
-        .dataTables_wrapper .dataTables_length select {
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            padding: 6px 32px 6px 12px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 0.83rem;
-        }
-
-        .dataTables_wrapper .dataTables_paginate .paginate_button {
-            border-radius: 6px !important;
-            font-weight: 600;
-        }
-
-        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
-            background: var(--pccoe-blue) !important;
-            border-color: var(--pccoe-blue) !important;
-            color: white !important;
-        }
-
-        .dataTables_wrapper { padding: 16px; }
-        div.dataTables_wrapper div.dataTables_info { font-size: 0.82rem; color: var(--text-muted); }
 
         .app-footer {
             text-align: center;
@@ -576,26 +431,10 @@
             border-radius: 12px;
             color: rgba(255,255,255,0.85);
             font-size: 0.8rem;
-            font-weight: 500;
-            letter-spacing: 0.03em;
         }
 
         #photoModal .modal-content { background: #0d1547; border: none; border-radius: 16px; overflow: hidden; }
-        #photoModal .modal-header { border-bottom: 1px solid rgba(255,255,255,0.1); }
         .photo-modal-img { max-width: 90vw; max-height: 80vh; border-radius: 8px; }
-
-        @media (max-width: 768px) {
-            .directory-header { 
-                display: flex;
-                flex-direction: column; 
-                text-align: center; 
-                gap: 16px;
-            }
-            .header-title h2, 
-            .header-title p {
-                font-size: 1.6rem;
-            }
-        }
     </style>
 </head>
 <body>
@@ -765,14 +604,15 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/XLSX/0.18.5/xlsx.full.min.js"></script>
-<!-- Supabase Client JS SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
 // --- SUPABASE CONFIGURATION ---
-const SUPABASE_URL = 'https://dvewbixgjjyotcbhdlnc.supabase.co'; // Replace with your Supabase Project URL
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2ZXdiaXhnamp5b3RjYmhkbG5jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzOTgyNDcsImV4cCI6MjEwMDk3NDI0N30.M138nudFENeCI-MgqDAiv6_le1ZA3cPivDbGOueiX14'; // Replace with your Supabase Anon Key
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const SUPABASE_URL = 'https://dvewbixgjjyotcbhdlnc.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2ZXdiaXhnamp5b3RjYmhkbG5jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzOTgyNDcsImV4cCI6MjEwMDk3NDI0N30.M138nudFENeCI-MgqDAiv6_le1ZA3cPivDbGOueiX14';
+
+// Fixed variable name conflict
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // --- GOOGLE SHEET CONFIGURATION ---
 const SHEET_ID = '1oTS6yoW429gUaPBABTtFXRPyBEp2RD5t_JJNzWVWNl4';
@@ -791,7 +631,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('username').addEventListener('keyup', (e) => { if(e.key === 'Enter') doLogin(); });
     document.getElementById('password').addEventListener('keyup', (e) => { if(e.key === 'Enter') doLogin(); });
 
-    // Close dropdown when clicking outside
     window.addEventListener('click', (e) => {
         if (!e.target.closest('.email-dropdown-wrap')) {
             document.getElementById('emailDropdown').classList.remove('show');
@@ -800,7 +639,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function checkAuthState() {
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session } } = await supabaseClient.auth.getSession();
     if (session) {
         document.getElementById('loginSection').style.display = 'none';
         document.getElementById('mainSection').style.display = 'block';
@@ -826,17 +665,14 @@ async function doLogin() {
     loginBtn.disabled = true;
     loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Signing in...';
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: password,
-    });
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
     loginBtn.disabled = false;
     loginBtn.innerHTML = '<i class="fas fa-sign-in-alt" style="margin-right:6px"></i> Sign In';
 
     if (error) {
         errDiv.classList.remove('d-none');
-        errDiv.innerText = error.message || "Invalid credentials. Authorized email or password incorrect.";
+        errDiv.innerText = error.message || "Invalid credentials.";
         document.getElementById('password').value = '';
     } else {
         errDiv.classList.add('d-none');
@@ -845,7 +681,7 @@ async function doLogin() {
 }
 
 async function logout() {
-    await supabase.auth.signOut();
+    await supabaseClient.auth.signOut();
     if(dataTable) dataTable.clear().draw();
     allStudents = [];
     selectedStudents.clear();
@@ -888,170 +724,78 @@ async function fetchStudentsFromGoogleSheets() {
                 });
 
                 document.getElementById('totalStudents').innerText = allStudents.length;
-                document.getElementById('dataStatus').innerText = 'Connected';
-                initDataTable(allStudents);
+                document.getElementById('dataStatus').innerText = 'Ready';
+                renderTable(allStudents);
             }
         });
-    } catch (error) {
-        console.error("Error loading data from Google Sheets:", error);
+    } catch (err) {
         document.getElementById('dataStatus').innerText = 'Error';
+        alert("Failed to load student data from Google Sheets: " + err.message);
     }
 }
 
-function initDataTable(data) {
-    if (dataTable) {
-        dataTable.destroy();
+function renderTable(data) {
+    if ($.fn.DataTable.isDataTable('#studentTable')) {
+        $('#studentTable').DataTable().destroy();
     }
-    
-    const tbody = document.querySelector('#studentTable tbody');
-    tbody.innerHTML = '';
 
-    data.forEach(student => {
+    const tableBody = document.querySelector('#studentTable tbody');
+    tableBody.innerHTML = '';
+
+    data.forEach((s) => {
         const tr = document.createElement('tr');
-        tr.id = `row-${student.prn}`;
-        if (selectedStudents.has(student.emailId)) {
-            tr.classList.add('row-selected');
-        }
-
-        const isChecked = selectedStudents.has(student.emailId) ? 'checked' : '';
-        const imgTag = student.photoUrl 
-            ? `<img src="${student.photoUrl}" class="student-photo-thumb" onclick="viewPhoto('${student.photoUrl}')" alt="Thumb">` 
-            : 'N/A';
+        if (selectedStudents.has(s.emailId)) tr.classList.add('row-selected');
 
         tr.innerHTML = `
-            <td><input type="checkbox" class="row-checkbox" value="${student.emailId}" ${isChecked} onchange="toggleRowSelection(this, '${student.prn}')"></td>
-            <td>${student.index}</td>
-            <td>${student.prn}</td>
-            <td>${student.name}</td>
-            <td>${student.division}</td>
-            <td>${student.batch}</td>
-            <td>${student.program}</td>
-            <td>${imgTag}</td>
-            <td>${student.studentMobile}</td>
-            <td>${student.parentMobile}</td>
-            <td>${student.emailId}</td>
+            <td><input type="checkbox" class="student-checkbox" value="${s.emailId}" ${selectedStudents.has(s.emailId) ? 'checked' : ''} onchange="toggleSelectStudent('${s.emailId}', this)"></td>
+            <td>${s.index}</td>
+            <td><strong>${s.prn}</strong></td>
+            <td>${s.name}</td>
+            <td><span class="badge bg-secondary">${s.division}</span></td>
+            <td>${s.batch}</td>
+            <td>${s.program}</td>
+            <td>${s.photoUrl ? `<img src="${s.photoUrl}" class="student-photo-thumb" onclick="openPhotoModal('${s.photoUrl}')" alt="Photo">` : '—'}</td>
+            <td>${s.studentMobile}</td>
+            <td>${s.parentMobile}</td>
+            <td>${s.emailId}</td>
         `;
-        tbody.appendChild(tr);
+        tableBody.appendChild(tr);
     });
 
     dataTable = $('#studentTable').DataTable({
-        pageLength: 25,
-        responsive: true,
-        destroy: true,
-        order: [[1, 'asc']]
+        pageLength: 10,
+        lengthMenu: [10, 25, 50, 100],
+        responsive: true
     });
-}
-
-function viewPhoto(url) {
-    document.getElementById('fullPhotoImg').src = url;
-    const photoModal = new bootstrap.Modal(document.getElementById('photoModal'));
-    photoModal.show();
-}
-
-function toggleRowSelection(cb, prn) {
-    const row = document.getElementById(`row-${prn}`);
-    if (cb.checked) {
-        selectedStudents.add(cb.value);
-        if(row) row.classList.add('row-selected');
-    } else {
-        selectedStudents.delete(cb.value);
-        if(row) row.classList.remove('row-selected');
-    }
-    updateSelectedCount();
-}
-
-function updateSelectedCount() {
-    document.getElementById('selectedCount').innerText = selectedStudents.size;
-}
-
-function toggleEmailDropdown(e) {
-    e.stopPropagation();
-    document.getElementById('emailDropdown').classList.toggle('show');
-}
-
-function handleSelectAll() {
-    if (!isFilteredSearchActive) {
-        const warn = document.getElementById('selectAllWarning');
-        warn.classList.add('show');
-        setTimeout(() => warn.classList.remove('show'), 4000);
-        return;
-    }
-
-    currentFilteredData.forEach(st => {
-        if(st.emailId) selectedStudents.add(st.emailId);
-    });
-
-    document.querySelectorAll('.row-checkbox').forEach(cb => {
-        cb.checked = true;
-        const tr = cb.closest('tr');
-        if(tr) tr.classList.add('row-selected');
-    });
-
-    document.getElementById('selectAllCheckbox').checked = true;
-    updateSelectedCount();
-}
-
-function handleSelectAllCheckbox() {
-    const mainCb = document.getElementById('selectAllCheckbox');
-    const targetData = isFilteredSearchActive ? currentFilteredData : allStudents;
-
-    targetData.forEach(st => {
-        if (mainCb.checked) {
-            if(st.emailId) selectedStudents.add(st.emailId);
-        } else {
-            if(st.emailId) selectedStudents.delete(st.emailId);
-        }
-    });
-
-    document.querySelectorAll('.row-checkbox').forEach(cb => {
-        cb.checked = mainCb.checked;
-        const tr = cb.closest('tr');
-        if (tr) {
-            if(mainCb.checked) tr.classList.add('row-selected');
-            else tr.classList.remove('row-selected');
-        }
-    });
-
-    updateSelectedCount();
 }
 
 function searchTable() {
-    const prnVal = document.getElementById('searchPRN').value.toLowerCase().trim();
-    const nameVal = document.getElementById('searchName').value.toLowerCase().trim();
-    const divVal = document.getElementById('searchDivision').value.toLowerCase().trim();
+    const prn = document.getElementById('searchPRN').value.trim().toLowerCase();
+    const name = document.getElementById('searchName').value.trim().toLowerCase();
+    const div = document.getElementById('searchDivision').value.trim().toLowerCase();
 
-    if (!prnVal && !nameVal && !divVal) {
-        clearSearch();
-        return;
-    }
-
-    currentFilteredData = allStudents.filter(st => {
-        const matchesPRN = prnVal ? st.prn.toLowerCase().includes(prnVal) : true;
-        const matchesName = nameVal ? st.name.toLowerCase().includes(nameVal) : true;
-        const matchesDiv = divVal ? st.division.toLowerCase().includes(divVal) : true;
-        return matchesPRN && matchesName && matchesDiv;
+    currentFilteredData = allStudents.filter(s => {
+        return (!prn || s.prn.toLowerCase().includes(prn)) &&
+               (!name || s.name.toLowerCase().includes(name)) &&
+               (!div || s.division.toLowerCase().includes(div));
     });
 
     isFilteredSearchActive = true;
     document.getElementById('searchResults').innerText = currentFilteredData.length;
-    initDataTable(currentFilteredData);
+    renderTable(currentFilteredData);
     updateExportButtonState();
 }
 
 function searchMultiplePRNs() {
-    const rawInput = document.getElementById('multiPRNSearch').value;
-    const prnArray = rawInput.split(/[\s,]+/).map(p => p.trim().toLowerCase()).filter(Boolean);
+    const raw = document.getElementById('multiPRNSearch').value;
+    const prns = raw.split(/[\s,]+/).map(p => p.trim().toLowerCase()).filter(Boolean);
 
-    if (prnArray.length === 0) {
-        clearSearch();
-        return;
-    }
+    if (prns.length === 0) return;
 
-    currentFilteredData = allStudents.filter(st => prnArray.includes(st.prn.toLowerCase()));
-
+    currentFilteredData = allStudents.filter(s => prns.includes(s.prn.toLowerCase()));
     isFilteredSearchActive = true;
     document.getElementById('searchResults').innerText = currentFilteredData.length;
-    initDataTable(currentFilteredData);
+    renderTable(currentFilteredData);
     updateExportButtonState();
 }
 
@@ -1064,84 +808,106 @@ function clearSearch() {
     isFilteredSearchActive = false;
     currentFilteredData = [];
     document.getElementById('searchResults').innerText = '—';
-    document.getElementById('selectAllCheckbox').checked = false;
-
-    initDataTable(allStudents);
+    document.getElementById('selectAllWarning').classList.remove('show');
+    renderTable(allStudents);
     updateExportButtonState();
+}
+
+function handleSelectAll() {
+    if (!isFilteredSearchActive) {
+        document.getElementById('selectAllWarning').classList.add('show');
+        return;
+    }
+    document.getElementById('selectAllWarning').classList.remove('show');
+    currentFilteredData.forEach(s => { if (s.emailId) selectedStudents.add(s.emailId); });
+    renderTable(currentFilteredData);
+    updateSelectedCount();
+}
+
+function handleSelectAllCheckbox() {
+    const checked = document.getElementById('selectAllCheckbox').checked;
+    const list = isFilteredSearchActive ? currentFilteredData : allStudents;
+
+    list.forEach(s => {
+        if (s.emailId) {
+            if (checked) selectedStudents.add(s.emailId);
+            else selectedStudents.delete(s.emailId);
+        }
+    });
+
+    renderTable(list);
+    updateSelectedCount();
+}
+
+function toggleSelectStudent(email, checkbox) {
+    if (!email) return;
+    if (checkbox.checked) selectedStudents.add(email);
+    else selectedStudents.delete(email);
+    updateSelectedCount();
+}
+
+function updateSelectedCount() {
+    document.getElementById('selectedCount').innerText = selectedStudents.size;
 }
 
 function updateExportButtonState() {
     const btn = document.getElementById('exportBtn');
-    if (isFilteredSearchActive && currentFilteredData.length > 0) {
-        btn.disabled = false;
-        document.getElementById('exportCount').innerText = currentFilteredData.length;
-    } else {
-        btn.disabled = true;
-        document.getElementById('exportCount').innerText = '0';
-    }
+    const count = isFilteredSearchActive ? currentFilteredData.length : 0;
+    btn.disabled = count === 0;
+    document.getElementById('exportCount').innerText = count;
+}
+
+function exportSearchResults() {
+    if (currentFilteredData.length === 0) return;
+    const ws = XLSX.utils.json_to_sheet(currentFilteredData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Students");
+    XLSX.writeFile(wb, "PCCOE_Filtered_Students.xlsx");
+}
+
+function toggleEmailDropdown(e) {
+    e.stopPropagation();
+    document.getElementById('emailDropdown').classList.toggle('show');
 }
 
 function sendEmailWithDraft(type) {
     if (selectedStudents.size === 0) {
-        alert("Please select at least one student to send an email.");
+        alert("Please select at least one student email.");
         return;
     }
 
-    const emails = Array.from(selectedStudents).join(',');
-    let subject = '';
-    let body = '';
+    const bcc = Array.from(selectedStudents).join(',');
+    let subject = "", body = "";
 
-    switch(type) {
+    switch (type) {
         case 'openDay':
-            subject = 'Open Day Schedule Notice';
-            body = 'Dear Student/Parent,\n\nPlease find the details regarding the upcoming Open Day schedule.\n\nRegards,\nPCCOE Admin';
+            subject = "PCCOE Open Day Schedule Notification";
+            body = "Dear Student/Parent,\n\nPlease find the details regarding the upcoming Open Day Schedule attached.";
             break;
         case 'faSaMarks':
-            subject = 'FA & SA Marks Notification';
-            body = 'Dear Student/Parent,\n\nThe Formative and Summative Assessment marks have been published.\n\nRegards,\nPCCOE Admin';
+            subject = "PCCOE FA & SA Marks Update";
+            body = "Dear Student/Parent,\n\nYour FA & SA performance marks have been uploaded. Please log into the portal to check.";
             break;
         case 'nonReportedFa':
-            subject = 'Important Notice: Non-Reporting in FA I & II';
-            body = 'Dear Student/Parent,\n\nOur records indicate non-reporting for FA I & II. Please contact the department office immediately.\n\nRegards,\nPCCOE Admin';
+            subject = "IMPORTANT: Non-Reported Status for FA I & II";
+            body = "Dear Student/Parent,\n\nOur records indicate non-reporting for FA I & II examinations. Please report immediately.";
             break;
         case 'faSchedule':
-            subject = 'Schedule of FA I & II';
-            body = 'Dear Student/Parent,\n\nPlease check the schedule for FA I & II examinations attached herewith.\n\nRegards,\nPCCOE Admin';
+            subject = "Schedule for FA I & II Examinations";
+            body = "Dear Student,\n\nPlease review the upcoming timetable and guidelines for FA I & II.";
             break;
-        case 'custom':
         default:
-            subject = 'PCCOE Department Notification';
-            body = 'Dear Student/Parent,\n\n\n\nRegards,\nPCCOE Admin';
-            break;
+            subject = "Notification from PCCOE";
+            body = "Dear Student,\n\n";
     }
 
-    window.open(`mailto:?bcc=${encodeURIComponent(emails)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+    window.location.href = `mailto:?bcc=${encodeURIComponent(bcc)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
-function exportSearchResults() {
-    if (!isFilteredSearchActive || currentFilteredData.length === 0) {
-        alert("No search results available to export.");
-        return;
-    }
-
-    const exportData = currentFilteredData.map(st => ({
-        'Sr No': st.index,
-        'PRN': st.prn,
-        'Student Name': st.name,
-        'Division': st.division,
-        'Batch': st.batch,
-        'Program': st.program,
-        'Student Mobile': st.studentMobile,
-        'Parent Mobile': st.parentMobile,
-        'Email ID': st.emailId
-    }));
-
-    const ws = XLSX.utils.json_to_sheet(exportData);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "SearchResults");
-    XLSX.writeFile(wb, "PCCOE_Student_Search_Results.xlsx");
+function openPhotoModal(url) {
+    document.getElementById('fullPhotoImg').src = url;
+    new bootstrap.Modal(document.getElementById('photoModal')).show();
 }
 </script>
-
 </body>
 </html>
