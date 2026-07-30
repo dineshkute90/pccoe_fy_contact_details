@@ -615,17 +615,21 @@
             <h1 class="login-title">Student Directory</h1>
             <p class="login-subtitle">PCCOE — Authorised Access Only</p>
             <div id="loginError" class="alert alert-danger d-none" role="alert"></div>
-            <div class="login-input-group">
-                <i class="fas fa-user input-icon"></i>
-                <input type="email" id="username" placeholder="Authorized Email (e.g., admin@pccoe.edu)" autocomplete="username" required>
-            </div>
-            <div class="login-input-group">
-                <i class="fas fa-lock input-icon"></i>
-                <input type="password" id="password" placeholder="Password" autocomplete="current-password" required>
-            </div>
-            <button class="login-btn" id="loginBtn" onclick="doLogin()">
-                <i class="fas fa-sign-in-alt" style="margin-right:6px"></i> Sign In
-            </button>
+            
+            <form id="loginForm" onsubmit="event.preventDefault(); doLogin();">
+                <div class="login-input-group">
+                    <i class="fas fa-user input-icon"></i>
+                    <input type="email" id="username" placeholder="Authorized Email (e.g., admin@pccoe.edu)" autocomplete="username" required>
+                </div>
+                <div class="login-input-group">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input type="password" id="password" placeholder="Password" autocomplete="current-password" required>
+                </div>
+                <button type="submit" class="login-btn" id="loginBtn">
+                    <i class="fas fa-sign-in-alt" style="margin-right:6px"></i> Sign In
+                </button>
+            </form>
+
             <div class="login-footer">Pimpri Chinchwad College of Engineering &nbsp;|&nbsp; Academic Year 2026-27</div>
         </div>
     </div>
@@ -714,7 +718,6 @@
                 </div>
             </div>
 
-            <!-- Disabled by default. Enabled only after quick search or multi-PRN search -->
             <button class="btn-action btn-export" id="exportBtn" onclick="exportSearchResults()" disabled>
                 <i class="fas fa-file-excel"></i> Export Results
             </button>
@@ -814,12 +817,29 @@ function doLogin() {
     const email = document.getElementById('username').value.trim();
     const pwd   = document.getElementById('password').value;
     const errDiv = document.getElementById('loginError');
+    const loginBtn = document.getElementById('loginBtn');
     
+    errDiv.classList.add('d-none');
+    errDiv.innerText = '';
+    
+    if(!email || !pwd) {
+        errDiv.innerText = "Please provide both email and password.";
+        errDiv.classList.remove('d-none');
+        return;
+    }
+
+    loginBtn.disabled = true;
+    loginBtn.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i> Signing In...`;
+
     auth.signInWithEmailAndPassword(email, pwd)
         .catch(error => {
             errDiv.classList.remove('d-none');
             errDiv.innerText = error.message;
             document.getElementById('password').value = '';
+        })
+        .finally(() => {
+            loginBtn.disabled = false;
+            loginBtn.innerHTML = `<i class="fas fa-sign-in-alt me-2"></i> Sign In`;
         });
 }
 
@@ -838,7 +858,6 @@ function logout() {
 async function fetchStudentsFromFirebase() {
     document.getElementById('dataStatus').innerText = 'Loading…';
     try {
-        // Fetch snapshot from Firestore sorted directly by PRN descending
         const snapshot = await db.collection('contacts').orderBy('PRN', 'desc').get();
         allStudents = [];
         let idx = 1;
@@ -904,49 +923,54 @@ function initDataTable(data) {
         tbody.appendChild(tr);
     });
 
-    // Initialize DataTables retaining current row ordering without forced sorting conflicts
     dataTable = $('#studentTable').DataTable({
-        pageLength: 10,
-        responsive: true,
-        order: [], // Preserve order coming directly from Firestore
-        columnDefs: [
-            { orderable: false, targets: [0, 7] } // Disable sorting on checkbox & photo columns
-        ]
+        pageLength: 25,
+        lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+        responsive: true
     });
 }
 
-        const isChecked = selectedStudents.has(student.emailId) ? 'checked' : '';
-        const imgTag = student.photoUrl 
-            ? `<img src="${student.photoUrl}" class="student-photo-thumb" onclick="viewPhoto('${student.photoUrl}')" alt="Thumb">` 
-            : `<span class="text-muted">No Photo</span>`;
+function handleRowCheckbox(cb) {
+    const email = cb.getAttribute('data-email');
+    const prn = cb.getAttribute('data-prn');
+    const row = document.getElementById(`row-${prn}`);
 
-        tr.innerHTML = `
-            <td><input type="checkbox" class="student-row-checkbox" data-email="${student.emailId}" data-prn="${student.prn}" ${isChecked} onchange="handleRowCheckbox(this)"></td>
-            <td>${student.index}</td>
-            <td><strong>${student.prn}</strong></td>
-            <td>${student.name}</td>
-            <td>${student.division}</td>
-            <td>${student.batch}</td>
-            <td>${student.program}</td>
-            <td class="text-center">${imgTag}</td>
-            <td>${student.studentMobile}</td>
-            <td>${student.parentMobile}</td>
-            <td><a href="mailto:${student.emailId}">${student.emailId}</a></td>
-        `;
-        tbody.appendChild(tr);
-    });
-
-    dataTable = $('#studentTable').DataTable({
-        pageLength: 10,
-        responsive: true,
-        order: [[1, 'asc']]
-    });
-
-    currentFilteredData = [...data];
-    updateExportButtonState();
+    if (cb.checked) {
+        if(email) selectedStudents.add(email);
+        if(row) row.classList.add('row-selected');
+    } else {
+        if(email) selectedStudents.delete(email);
+        if(row) row.classList.remove('row-selected');
+    }
+    updateSelectedCount();
 }
 
-// Single-field Quick Search
+function handleSelectAllCheckbox() {
+    const mainCb = document.getElementById('selectAllCheckbox');
+    const checkboxes = document.querySelectorAll('.student-row-checkbox');
+    checkboxes.forEach(cb => {
+        cb.checked = mainCb.checked;
+        handleRowCheckbox(cb);
+    });
+}
+
+function handleSelectAll() {
+    const warn = document.getElementById('selectAllWarning');
+    if (!isFilteredSearchActive) {
+        warn.classList.add('show');
+        setTimeout(() => warn.classList.remove('show'), 4000);
+        return;
+    }
+    warn.classList.remove('show');
+
+    currentFilteredData.forEach(s => {
+        if (s.emailId) selectedStudents.add(s.emailId);
+    });
+
+    initDataTable(currentFilteredData);
+    updateSelectedCount();
+}
+
 function searchTable() {
     const prn = document.getElementById('searchPRN').value.trim().toLowerCase();
     const name = document.getElementById('searchName').value.trim().toLowerCase();
@@ -957,7 +981,7 @@ function searchTable() {
         return;
     }
 
-    const filtered = allStudents.filter(s => {
+    currentFilteredData = allStudents.filter(s => {
         const matchesPRN = !prn || s.prn.toLowerCase().includes(prn);
         const matchesName = !name || s.name.toLowerCase().includes(name);
         const matchesDiv = !div || s.division.toLowerCase().includes(div);
@@ -965,208 +989,127 @@ function searchTable() {
     });
 
     isFilteredSearchActive = true;
-    currentFilteredData = filtered;
-    
-    document.getElementById('searchResults').innerText = filtered.length;
-    document.getElementById('exportCount').innerText = filtered.length;
-    
-    initDataTable(filtered);
+    document.getElementById('searchResults').innerText = currentFilteredData.length;
+    document.getElementById('exportCount').innerText = currentFilteredData.length;
     updateExportButtonState();
+    initDataTable(currentFilteredData);
 }
 
-// Multi-PRN Search
 function searchMultiplePRNs() {
-    const multiPrnVal = document.getElementById('multiPRNSearch').value.trim();
-    if (!multiPrnVal) {
+    const rawInput = document.getElementById('multiPRNSearch').value;
+    const prnList = rawInput.split(/[\s,]+/).map(p => p.trim().toLowerCase()).filter(p => p.length > 0);
+
+    if (prnList.length === 0) {
         clearSearch();
         return;
     }
 
-    const prnArray = multiPrnVal.split(/[\s,]+/).map(p => p.trim().toLowerCase()).filter(p => p !== '');
-    
-    const filtered = allStudents.filter(s => prnArray.includes(s.prn.toLowerCase()));
-
+    currentFilteredData = allStudents.filter(s => prnList.includes(s.prn.toLowerCase()));
     isFilteredSearchActive = true;
-    currentFilteredData = filtered;
-
-    document.getElementById('searchResults').innerText = filtered.length;
-    document.getElementById('exportCount').innerText = filtered.length;
-
-    initDataTable(filtered);
+    document.getElementById('searchResults').innerText = currentFilteredData.length;
+    document.getElementById('exportCount').innerText = currentFilteredData.length;
     updateExportButtonState();
+    initDataTable(currentFilteredData);
 }
 
-// Reset Search
 function clearSearch() {
     document.getElementById('searchPRN').value = '';
     document.getElementById('searchName').value = '';
     document.getElementById('searchDivision').value = '';
     document.getElementById('multiPRNSearch').value = '';
-
-    isFilteredSearchActive = false;
-    currentFilteredData = [...allStudents];
-    
     document.getElementById('searchResults').innerText = '—';
     document.getElementById('exportCount').innerText = '0';
     
-    document.getElementById('selectAllWarning').classList.remove('show');
-
-    initDataTable(allStudents);
+    isFilteredSearchActive = false;
+    currentFilteredData = [];
     updateExportButtonState();
-}
-
-// Helper to disable / enable Export Results button dynamically
-function updateExportButtonState() {
-    const exportBtn = document.getElementById('exportBtn');
-    if (isFilteredSearchActive && currentFilteredData.length > 0) {
-        exportBtn.removeAttribute('disabled');
-    } else {
-        exportBtn.setAttribute('disabled', 'true');
-    }
-}
-
-// Selection handling
-function handleRowCheckbox(checkbox) {
-    const email = checkbox.getAttribute('data-email');
-    const tr = checkbox.closest('tr');
-
-    if (checkbox.checked) {
-        if (email) selectedStudents.add(email);
-        tr.classList.add('row-selected');
-    } else {
-        if (email) selectedStudents.delete(email);
-        tr.classList.remove('row-selected');
-    }
-    updateSelectedCount();
-}
-
-function handleSelectAllCheckbox() {
-    const isChecked = document.getElementById('selectAllCheckbox').checked;
-    const checkboxes = document.querySelectorAll('.student-row-checkbox');
-
-    checkboxes.forEach(cb => {
-        cb.checked = isChecked;
-        handleRowCheckbox(cb);
-    });
-}
-
-function handleSelectAll() {
-    const warning = document.getElementById('selectAllWarning');
-    if (!isFilteredSearchActive) {
-        warning.classList.add('show');
-        return;
-    }
-    warning.classList.remove('show');
-
-    const checkboxes = document.querySelectorAll('.student-row-checkbox');
-    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-
-    checkboxes.forEach(cb => {
-        cb.checked = !allChecked;
-        handleRowCheckbox(cb);
-    });
-
-    const selectAllBtn = document.getElementById('selectAllBtn');
-    if (!allChecked) {
-        selectAllBtn.classList.add('active');
-    } else {
-        selectAllBtn.classList.remove('active');
-    }
+    initDataTable(allStudents);
 }
 
 function updateSelectedCount() {
     document.getElementById('selectedCount').innerText = selectedStudents.size;
 }
 
-// Dropdown Toggle
-function toggleEmailDropdown() {
-    const dropdown = document.getElementById('emailDropdown');
-    dropdown.classList.toggle('show');
+function updateExportButtonState() {
+    const exportBtn = document.getElementById('exportBtn');
+    exportBtn.disabled = !isFilteredSearchActive || currentFilteredData.length === 0;
 }
 
-// Close dropdown on outside click
-window.addEventListener('click', function(e) {
-    if (!e.target.closest('.email-dropdown-wrap')) {
-        const dropdown = document.getElementById('emailDropdown');
-        if (dropdown) dropdown.classList.remove('show');
-    }
-});
+function toggleEmailDropdown() {
+    document.getElementById('emailDropdown').classList.toggle('show');
+}
 
-// Drafts directly in Browser Email (Gmail Compose interface)
+window.onclick = function(event) {
+    if (!event.target.matches('.btn-email') && !event.target.closest('.email-dropdown-wrap')) {
+        const dropdowns = document.getElementsByClassName('email-dropdown-content');
+        for (let i = 0; i < dropdowns.length; i++) {
+            const openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
+    }
+}
+
 function sendEmailWithDraft(type) {
-    const emails = Array.from(selectedStudents).filter(e => e && e.trim() !== '');
-    if (emails.length === 0) {
-        alert("Please select at least one student or parent email from the list first.");
+    const recipients = Array.from(selectedStudents).join(',');
+    if (!recipients) {
+        alert("Please select at least one student recipient.");
         return;
     }
 
-    const bccList = emails.join(',');
     let subject = "";
     let body = "";
 
-    switch (type) {
+    switch(type) {
         case 'openDay':
             subject = "PCCOE - Open Day Schedule Notification";
-            body = "Dear Parent / Student,\n\nThis is to inform you regarding the upcoming Open Day schedule at PCCOE Applied Sciences & Humanities Department.\n\nKindly make sure to attend on time.\n\nWarm regards,\nDepartment of Applied Sciences & Humanities\nPCCOE, Pune";
+            body = "Dear Parent/Student,\n\nPlease note the upcoming Open Day schedule for the Department of Applied Sciences & Humanities.";
             break;
         case 'faSaMarks':
-            subject = "PCCOE - Update on Formative & Summative Assessment Marks";
-            body = "Dear Parent / Student,\n\nPlease review your updated FA & SA performance marks on the student portal.\n\nIn case of any discrepancies, contact your class teacher.\n\nRegards,\nAcademic Team, PCCOE";
+            subject = "PCCOE - FA & SA Marks Update";
+            body = "Dear Parent/Student,\n\nThe latest FA & SA marks have been published. Please review your performance record.";
             break;
         case 'nonReportedFa':
-            subject = "URGENT: Non-Reported Status for FA I & II";
-            body = "Dear Parent / Student,\n\nOur records indicate a 'Non-Reported' status for FA I / FA II assessments. Kindly meet the respective subject coordinator immediately.\n\nRegards,\nPCCOE Administration";
+            subject = "PCCOE - Non-reporting Notice for FA I & II";
+            body = "Dear Parent/Student,\n\nOur records indicate non-reporting for FA I & II examinations. Please contact your Class Teacher immediately.";
             break;
         case 'faSchedule':
-            subject = "PCCOE - Examination Schedule for FA I & II";
-            body = "Dear Students,\n\nThe timetable and schedule for FA I & II examinations have been published. Please inspect the notice board for details.\n\nBest wishes,\nExam Cell, PCCOE";
+            subject = "PCCOE - Schedule of FA I & II Examinations";
+            body = "Dear Parent/Student,\n\nPlease find the official schedule for FA I & II examinations attached/detailed below.";
             break;
-        case 'custom':
         default:
-            subject = "PCCOE Important Academic Notice";
-            body = "Dear Student / Parent,\n\n";
-            break;
+            subject = "PCCOE Academic Notice";
+            body = "Dear Student,\n\n";
     }
 
-    // Close options menu
-    const dropdown = document.getElementById('emailDropdown');
-    if (dropdown) dropdown.classList.remove('show');
-
-    // Launch Gmail compose tab directly in the browser
-    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&bcc=${encodeURIComponent(bccList)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.open(gmailUrl, '_blank');
+    window.location.href = `mailto:${recipients}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
-// Export Only Filtered Quick Search Results
 function exportSearchResults() {
-    if (!isFilteredSearchActive || currentFilteredData.length === 0) {
-        alert("Export is only enabled when active search results are present.");
-        return;
-    }
+    if (!currentFilteredData || currentFilteredData.length === 0) return;
 
-    const exportData = currentFilteredData.map(s => ({a
-        "Sr No": s.index,
-        "PRN": s.prn,
-        "Student Name": s.name,
-        "Division": s.division,
-        "Batch": s.batch,
-        "Program": s.program,
-        "Student Mobile": s.studentMobile,
-        "Parent Mobile": s.parentMobile,
-        "Email ID": s.emailId
+    const exportData = currentFilteredData.map(item => ({
+        "PRN": item.prn,
+        "Student Name": item.name,
+        "Division": item.division,
+        "Batch": item.batch,
+        "Program": item.program,
+        "Student Mobile": item.studentMobile,
+        "Parent Mobile": item.parentMobile,
+        "Email ID": item.emailId
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Search Results");
-    XLSX.writeFile(workbook, `PCCOE_Student_Search_Results.xlsx`);
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Filtered Students");
+    XLSX.writeFile(workbook, `PCCOE_Student_Filtered_Export.xlsx`);
 }
 
-// Photo modal viewer
 function viewPhoto(url) {
     document.getElementById('fullPhotoImg').src = url;
-    const modal = new bootstrap.Modal(document.getElementById('photoModal'));
-    modal.show();
+    const photoModal = new bootstrap.Modal(document.getElementById('photoModal'));
+    photoModal.show();
 }
 </script>
 </body>
