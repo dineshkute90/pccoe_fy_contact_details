@@ -110,7 +110,9 @@
             filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
         }
 
-        .login-card-body { padding: 0.5rem 2rem 2rem; }
+        .login-card-body {
+            padding: 0.5rem 2rem 2rem;
+        }
 
         .login-title {
             font-family: 'Crimson Pro', Georgia, serif;
@@ -407,6 +409,12 @@
             border: 1.5px solid #c5cae9;
         }
 
+        .btn-select-all.active {
+            background: var(--pccoe-blue);
+            color: white;
+            border-color: var(--pccoe-blue);
+        }
+
         .btn-email {
             background: linear-gradient(135deg, var(--pccoe-green), var(--pccoe-green-mid));
             color: white;
@@ -467,6 +475,7 @@
         }
 
         .email-dropdown-content .dd-item:hover { background: #f0f2ff; }
+        .email-dropdown-content .dd-item:not(:last-child) { border-bottom: 1px solid var(--border); }
 
         .data-table-wrap {
             background: var(--card-bg);
@@ -476,7 +485,7 @@
             overflow: hidden;
         }
 
-        #studentTable { font-size: 0.83rem; min-width: 1200px; }
+        #studentTable { font-size: 0.83rem; min-width: 1100px; }
 
         #studentTable thead th {
             background: linear-gradient(135deg, var(--pccoe-blue), var(--pccoe-blue-mid)) !important;
@@ -493,6 +502,7 @@
         #studentTable tbody tr { transition: background 0.15s; }
         #studentTable tbody tr:hover { background: #f0f2ff !important; }
         #studentTable tbody td { padding: 10px 12px; vertical-align: middle; border-color: var(--border); }
+        #studentTable tbody tr.row-selected { background: #e8eaf6 !important; }
 
         .student-photo-thumb {
             width: 40px; height: 40px;
@@ -500,7 +510,10 @@
             border-radius: 8px;
             cursor: pointer;
             border: 2px solid var(--border);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
+
+        .student-photo-thumb:hover { transform: scale(1.1); box-shadow: var(--shadow-sm); }
 
         .badge-count {
             display: inline-flex;
@@ -512,11 +525,54 @@
             padding: 2px 8px;
             font-size: 0.75rem;
             font-weight: 700;
+            min-width: 24px;
         }
 
-        .admin-edit-col {
-            display: none; /* Hidden by default; shown only if user is Admin */
+        .select-all-warning {
+            display: none;
+            background: #fff3e0;
+            border: 1px solid #ffe0b2;
+            border-radius: 8px;
+            padding: 8px 14px;
+            font-size: 0.82rem;
+            color: #e65100;
+            font-weight: 600;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
         }
+
+        .select-all-warning.show { display: flex; }
+
+        .dataTables_wrapper .dataTables_filter input {
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.83rem;
+        }
+
+        .dataTables_wrapper .dataTables_length select {
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 6px 32px 6px 12px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.83rem;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            border-radius: 6px !important;
+            font-weight: 600;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background: var(--pccoe-blue) !important;
+            border-color: var(--pccoe-blue) !important;
+            color: white !important;
+        }
+
+        .dataTables_wrapper { padding: 16px; }
+        div.dataTables_wrapper div.dataTables_info { font-size: 0.82rem; color: var(--text-muted); }
 
         .app-footer {
             text-align: center;
@@ -526,6 +582,25 @@
             border-radius: 12px;
             color: rgba(255,255,255,0.85);
             font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.03em;
+        }
+
+        #photoModal .modal-content { background: #0d1547; border: none; border-radius: 16px; overflow: hidden; }
+        #photoModal .modal-header { border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .photo-modal-img { max-width: 90vw; max-height: 80vh; border-radius: 8px; }
+
+        @media (max-width: 768px) {
+            .directory-header { 
+                display: flex;
+                flex-direction: column; 
+                text-align: center; 
+                gap: 16px;
+            }
+            .header-title h2, 
+            .header-title p {
+                font-size: 1.6rem;
+            }
         }
     </style>
 </head>
@@ -608,6 +683,47 @@
                 </button>
             </div>
         </div>
+
+        <div class="row mt-2">
+            <div class="col-md-10">
+                <textarea id="multiPRNSearch" class="form-control" rows="2" placeholder="Paste multiple PRNs (comma, space or new-line separated)…"></textarea>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button class="btn-action btn-multi-search w-100" onclick="searchMultiplePRNs()">
+                    <i class="fas fa-list-check"></i> Multi-PRN
+                </button>
+            </div>
+        </div>
+
+        <div class="action-bar">
+            <button class="btn-action btn-select-all" id="selectAllBtn" onclick="handleSelectAll()" title="Only works after searching">
+                <i class="fas fa-check-square"></i> Select All
+            </button>
+
+            <div class="email-dropdown-wrap">
+                <button class="btn-action btn-email" onclick="toggleEmailDropdown()">
+                    <i class="fas fa-envelope"></i> Send Email
+                    <span class="badge-count" id="selectedCount">0</span>
+                </button>
+                <div class="email-dropdown-content" id="emailDropdown">
+                    <div class="dd-item" onclick="sendEmailWithDraft('openDay')">📅 Open Day Schedule</div>
+                    <div class="dd-item" onclick="sendEmailWithDraft('faSaMarks')">📊 FA &amp; SA Marks</div>
+                    <div class="dd-item" onclick="sendEmailWithDraft('nonReportedFa')">⚠️ Non Reported in FA I &amp; II</div>
+                    <div class="dd-item" onclick="sendEmailWithDraft('faSchedule')">📝 Schedule of FA I &amp; II</div>
+                    <div class="dd-item" onclick="sendEmailWithDraft('custom')">✏️ Custom Email</div>
+                </div>
+            </div>
+
+            <!-- Disabled by default. Enabled only after quick search or multi-PRN search -->
+            <button class="btn-action btn-export" id="exportBtn" onclick="exportSearchResults()" disabled>
+                <i class="fas fa-file-excel"></i> Export Results
+            </button>
+        </div>
+
+        <div class="select-all-warning" id="selectAllWarning">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>"Select All" works only after performing a search. Please search first.</span>
+        </div>
     </div>
 
     <div class="data-table-wrap">
@@ -615,6 +731,7 @@
             <table id="studentTable" class="table table-striped" style="width:100%">
                 <thead>
                     <tr>
+                        <th><input type="checkbox" id="selectAllCheckbox" onchange="handleSelectAllCheckbox()"></th>
                         <th>#</th>
                         <th>PRN</th>
                         <th>Student Name</th>
@@ -625,7 +742,6 @@
                         <th>Student Mobile</th>
                         <th>Parent Mobile</th>
                         <th>Email ID</th>
-                        <th class="admin-edit-col text-center">Action</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -636,56 +752,15 @@
     <div class="app-footer">PCCOE Student Directory — Developed by Mr. Dinesh Kute</div>
 </div>
 
-<!-- EDIT STUDENT MODAL (ADMIN ONLY) -->
-<div class="modal fade" id="editStudentModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
+<div class="modal fade" id="photoModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title"><i class="fas fa-user-edit me-2"></i>Edit Student Information</h5>
+            <div class="modal-header border-0">
+                <h5 class="text-white"><i class="fas fa-image me-2"></i>Student Photo</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
-                <form id="editStudentForm">
-                    <input type="hidden" id="editDocId">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">PRN</label>
-                            <input type="text" id="editPRN" class="form-control" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">Student Name</label>
-                            <input type="text" id="editName" class="form-control" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-bold">Division</label>
-                            <input type="text" id="editDivision" class="form-control">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-bold">Batch</label>
-                            <input type="text" id="editBatch" class="form-control">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-bold">Program</label>
-                            <input type="text" id="editProgram" class="form-control">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">Student Mobile</label>
-                            <input type="text" id="editStudentMobile" class="form-control">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">Parent Mobile</label>
-                            <input type="text" id="editParentMobile" class="form-control">
-                        </div>
-                        <div class="col-md-12">
-                            <label class="form-label fw-bold">Email ID</label>
-                            <input type="email" id="editEmail" class="form-control">
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="saveStudentChanges()"><i class="fas fa-save me-1"></i> Save Changes</button>
+            <div class="modal-body text-center pb-4">
+                <img id="fullPhotoImg" class="photo-modal-img" alt="Student Photo">
             </div>
         </div>
     </div>
@@ -695,6 +770,8 @@
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -715,25 +792,16 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// 💡 ADMIN USERS CONFIGURATION: Add authorized admin emails here
-const ADMIN_EMAILS = ["dineshkute90@gmail.com", "admin@pccoe.edu"]; 
-
 let dataTable, allStudents = [];
-let isAdminUser = false;
+let selectedStudents = new Set();
+let isFilteredSearchActive = false;
+let currentFilteredData = [];
 
 // Dynamic Authentication State Observer
 auth.onAuthStateChanged((user) => {
     if (user) {
         document.getElementById('loginSection').style.display = 'none';
         document.getElementById('mainSection').style.display = 'block';
-
-        // Check if logged-in user is an admin
-        isAdminUser = ADMIN_EMAILS.includes(user.email.toLowerCase());
-        
-        // Toggle visibility of Edit Column based on Admin Role
-        const editCols = document.querySelectorAll('.admin-edit-col');
-        editCols.forEach(col => col.style.display = isAdminUser ? 'table-cell' : 'none');
-
         fetchStudentsFromFirebase();
     } else {
         document.getElementById('loginSection').style.display = 'flex';
@@ -759,6 +827,10 @@ function logout() {
     auth.signOut().then(() => {
         if(dataTable) dataTable.clear().draw();
         allStudents = [];
+        selectedStudents.clear();
+        updateSelectedCount();
+        isFilteredSearchActive = false;
+        updateExportButtonState();
     });
 }
 
@@ -766,14 +838,13 @@ function logout() {
 async function fetchStudentsFromFirebase() {
     document.getElementById('dataStatus').innerText = 'Loading…';
     try {
-        const snapshot = await db.collection('contacts').get();
+        const snapshot = await db.collection('contacts').orderBy('Student Name').get();
         allStudents = [];
         let idx = 1;
         
         snapshot.forEach((doc) => {
             let item = doc.data();
             allStudents.push({
-                docId: doc.id, // Firestore Document ID for updating
                 index: idx++,
                 prn: item.PRN || '',
                 name: item['Student Name'] || '',
@@ -806,21 +877,18 @@ function initDataTable(data) {
 
     data.forEach(student => {
         const tr = document.createElement('tr');
-        
+        tr.id = `row-${student.prn}`;
+        if (selectedStudents.has(student.emailId)) {
+            tr.classList.add('row-selected');
+        }
+
+        const isChecked = selectedStudents.has(student.emailId) ? 'checked' : '';
         const imgTag = student.photoUrl 
-            ? `<img src="${student.photoUrl}" class="student-photo-thumb" alt="Thumb">` 
+            ? `<img src="${student.photoUrl}" class="student-photo-thumb" onclick="viewPhoto('${student.photoUrl}')" alt="Thumb">` 
             : `<span class="text-muted">No Photo</span>`;
 
-        // Render Action/Edit button ONLY IF user is Admin
-        const editBtnHtml = isAdminUser ? `
-            <td class="admin-edit-col text-center">
-                <button class="btn btn-sm btn-outline-primary" onclick="openEditModal('${student.docId}')">
-                    <i class="fas fa-edit"></i> Edit
-                </button>
-            </td>
-        ` : '';
-
         tr.innerHTML = `
+            <td><input type="checkbox" class="student-row-checkbox" data-email="${student.emailId}" data-prn="${student.prn}" ${isChecked} onchange="handleRowCheckbox(this)"></td>
             <td>${student.index}</td>
             <td><strong>${student.prn}</strong></td>
             <td>${student.name}</td>
@@ -831,66 +899,241 @@ function initDataTable(data) {
             <td>${student.studentMobile}</td>
             <td>${student.parentMobile}</td>
             <td><a href="mailto:${student.emailId}">${student.emailId}</a></td>
-            ${editBtnHtml}
         `;
         tbody.appendChild(tr);
     });
 
     dataTable = $('#studentTable').DataTable({
-        pageLength: 25,
-        responsive: true
+        pageLength: 10,
+        responsive: true,
+        order: [[1, 'asc']]
+    });
+
+    currentFilteredData = [...data];
+    updateExportButtonState();
+}
+
+// Single-field Quick Search
+function searchTable() {
+    const prn = document.getElementById('searchPRN').value.trim().toLowerCase();
+    const name = document.getElementById('searchName').value.trim().toLowerCase();
+    const div = document.getElementById('searchDivision').value.trim().toLowerCase();
+
+    if (!prn && !name && !div) {
+        clearSearch();
+        return;
+    }
+
+    const filtered = allStudents.filter(s => {
+        const matchesPRN = !prn || s.prn.toLowerCase().includes(prn);
+        const matchesName = !name || s.name.toLowerCase().includes(name);
+        const matchesDiv = !div || s.division.toLowerCase().includes(div);
+        return matchesPRN && matchesName && matchesDiv;
+    });
+
+    isFilteredSearchActive = true;
+    currentFilteredData = filtered;
+    
+    document.getElementById('searchResults').innerText = filtered.length;
+    document.getElementById('exportCount').innerText = filtered.length;
+    
+    initDataTable(filtered);
+    updateExportButtonState();
+}
+
+// Multi-PRN Search
+function searchMultiplePRNs() {
+    const multiPrnVal = document.getElementById('multiPRNSearch').value.trim();
+    if (!multiPrnVal) {
+        clearSearch();
+        return;
+    }
+
+    const prnArray = multiPrnVal.split(/[\s,]+/).map(p => p.trim().toLowerCase()).filter(p => p !== '');
+    
+    const filtered = allStudents.filter(s => prnArray.includes(s.prn.toLowerCase()));
+
+    isFilteredSearchActive = true;
+    currentFilteredData = filtered;
+
+    document.getElementById('searchResults').innerText = filtered.length;
+    document.getElementById('exportCount').innerText = filtered.length;
+
+    initDataTable(filtered);
+    updateExportButtonState();
+}
+
+// Reset Search
+function clearSearch() {
+    document.getElementById('searchPRN').value = '';
+    document.getElementById('searchName').value = '';
+    document.getElementById('searchDivision').value = '';
+    document.getElementById('multiPRNSearch').value = '';
+
+    isFilteredSearchActive = false;
+    currentFilteredData = [...allStudents];
+    
+    document.getElementById('searchResults').innerText = '—';
+    document.getElementById('exportCount').innerText = '0';
+    
+    document.getElementById('selectAllWarning').classList.remove('show');
+
+    initDataTable(allStudents);
+    updateExportButtonState();
+}
+
+// Helper to disable / enable Export Results button dynamically
+function updateExportButtonState() {
+    const exportBtn = document.getElementById('exportBtn');
+    if (isFilteredSearchActive && currentFilteredData.length > 0) {
+        exportBtn.removeAttribute('disabled');
+    } else {
+        exportBtn.setAttribute('disabled', 'true');
+    }
+}
+
+// Selection handling
+function handleRowCheckbox(checkbox) {
+    const email = checkbox.getAttribute('data-email');
+    const tr = checkbox.closest('tr');
+
+    if (checkbox.checked) {
+        if (email) selectedStudents.add(email);
+        tr.classList.add('row-selected');
+    } else {
+        if (email) selectedStudents.delete(email);
+        tr.classList.remove('row-selected');
+    }
+    updateSelectedCount();
+}
+
+function handleSelectAllCheckbox() {
+    const isChecked = document.getElementById('selectAllCheckbox').checked;
+    const checkboxes = document.querySelectorAll('.student-row-checkbox');
+
+    checkboxes.forEach(cb => {
+        cb.checked = isChecked;
+        handleRowCheckbox(cb);
     });
 }
 
-// Open Modal with Pre-filled Student Details
-function openEditModal(docId) {
-    const student = allStudents.find(s => s.docId === docId);
-    if (!student) return;
+function handleSelectAll() {
+    const warning = document.getElementById('selectAllWarning');
+    if (!isFilteredSearchActive) {
+        warning.classList.add('show');
+        return;
+    }
+    warning.classList.remove('show');
 
-    document.getElementById('editDocId').value = student.docId;
-    document.getElementById('editPRN').value = student.prn;
-    document.getElementById('editName').value = student.name;
-    document.getElementById('editDivision').value = student.division;
-    document.getElementById('editBatch').value = student.batch;
-    document.getElementById('editProgram').value = student.program;
-    document.getElementById('editStudentMobile').value = student.studentMobile;
-    document.getElementById('editParentMobile').value = student.parentMobile;
-    document.getElementById('editEmail').value = student.emailId;
+    const checkboxes = document.querySelectorAll('.student-row-checkbox');
+    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
 
-    const modal = new bootstrap.Modal(document.getElementById('editStudentModal'));
-    modal.show();
+    checkboxes.forEach(cb => {
+        cb.checked = !allChecked;
+        handleRowCheckbox(cb);
+    });
+
+    const selectAllBtn = document.getElementById('selectAllBtn');
+    if (!allChecked) {
+        selectAllBtn.classList.add('active');
+    } else {
+        selectAllBtn.classList.remove('active');
+    }
 }
 
-// Save Updated Changes Back to Firestore
-async function saveStudentChanges() {
-    const docId = document.getElementById('editDocId').value;
-    
-    const updatedData = {
-        "PRN": document.getElementById('editPRN').value.trim(),
-        "Student Name": document.getElementById('editName').value.trim(),
-        "Division": document.getElementById('editDivision').value.trim(),
-        "Batch": document.getElementById('editBatch').value.trim(),
-        "Program": document.getElementById('editProgram').value.trim(),
-        "Student Mobile": document.getElementById('editStudentMobile').value.trim(),
-        "Parent Mobile": document.getElementById('editParentMobile').value.trim(),
-        "Email ID": document.getElementById('editEmail').value.trim()
-    };
+function updateSelectedCount() {
+    document.getElementById('selectedCount').innerText = selectedStudents.size;
+}
 
-    try {
-        await db.collection('contacts').doc(docId).update(updatedData);
-        alert("Student details updated successfully!");
+// Dropdown Toggle
+function toggleEmailDropdown() {
+    const dropdown = document.getElementById('emailDropdown');
+    dropdown.classList.toggle('show');
+}
 
-        // Hide Modal
-        const modalEl = document.getElementById('editStudentModal');
-        const modal = bootstrap.Modal.getInstance(modalEl);
-        modal.hide();
-
-        // Refresh Data
-        fetchStudentsFromFirebase();
-    } catch (error) {
-        console.error("Error updating record:", error);
-        alert("Failed to update student info: " + error.message);
+// Close dropdown on outside click
+window.addEventListener('click', function(e) {
+    if (!e.target.closest('.email-dropdown-wrap')) {
+        const dropdown = document.getElementById('emailDropdown');
+        if (dropdown) dropdown.classList.remove('show');
     }
+});
+
+// Drafts directly in Browser Email (Gmail Compose interface)
+function sendEmailWithDraft(type) {
+    const emails = Array.from(selectedStudents).filter(e => e && e.trim() !== '');
+    if (emails.length === 0) {
+        alert("Please select at least one student or parent email from the list first.");
+        return;
+    }
+
+    const bccList = emails.join(',');
+    let subject = "";
+    let body = "";
+
+    switch (type) {
+        case 'openDay':
+            subject = "PCCOE - Open Day Schedule Notification";
+            body = "Dear Parent / Student,\n\nThis is to inform you regarding the upcoming Open Day schedule at PCCOE Applied Sciences & Humanities Department.\n\nKindly make sure to attend on time.\n\nWarm regards,\nDepartment of Applied Sciences & Humanities\nPCCOE, Pune";
+            break;
+        case 'faSaMarks':
+            subject = "PCCOE - Update on Formative & Summative Assessment Marks";
+            body = "Dear Parent / Student,\n\nPlease review your updated FA & SA performance marks on the student portal.\n\nIn case of any discrepancies, contact your class teacher.\n\nRegards,\nAcademic Team, PCCOE";
+            break;
+        case 'nonReportedFa':
+            subject = "URGENT: Non-Reported Status for FA I & II";
+            body = "Dear Parent / Student,\n\nOur records indicate a 'Non-Reported' status for FA I / FA II assessments. Kindly meet the respective subject coordinator immediately.\n\nRegards,\nPCCOE Administration";
+            break;
+        case 'faSchedule':
+            subject = "PCCOE - Examination Schedule for FA I & II";
+            body = "Dear Students,\n\nThe timetable and schedule for FA I & II examinations have been published. Please inspect the notice board for details.\n\nBest wishes,\nExam Cell, PCCOE";
+            break;
+        case 'custom':
+        default:
+            subject = "PCCOE Important Academic Notice";
+            body = "Dear Student / Parent,\n\n";
+            break;
+    }
+
+    // Close options menu
+    const dropdown = document.getElementById('emailDropdown');
+    if (dropdown) dropdown.classList.remove('show');
+
+    // Launch Gmail compose tab directly in the browser
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&bcc=${encodeURIComponent(bccList)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.open(gmailUrl, '_blank');
+}
+
+// Export Only Filtered Quick Search Results
+function exportSearchResults() {
+    if (!isFilteredSearchActive || currentFilteredData.length === 0) {
+        alert("Export is only enabled when active search results are present.");
+        return;
+    }
+
+    const exportData = currentFilteredData.map(s => ({
+        "Sr No": s.index,
+        "PRN": s.prn,
+        "Student Name": s.name,
+        "Division": s.division,
+        "Batch": s.batch,
+        "Program": s.program,
+        "Student Mobile": s.studentMobile,
+        "Parent Mobile": s.parentMobile,
+        "Email ID": s.emailId
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Search Results");
+    XLSX.writeFile(workbook, `PCCOE_Student_Search_Results.xlsx`);
+}
+
+// Photo modal viewer
+function viewPhoto(url) {
+    document.getElementById('fullPhotoImg').src = url;
+    const modal = new bootstrap.Modal(document.getElementById('photoModal'));
+    modal.show();
 }
 </script>
 </body>
