@@ -854,7 +854,7 @@ function logout() {
     });
 }
 
-// Fetch Records Securely from Cloud Firestore
+// Fetch Records Securely from Cloud Firestore with Schema Resilience
 async function fetchStudentsFromFirebase() {
     document.getElementById('dataStatus').innerText = 'Loading…';
     try {
@@ -864,17 +864,19 @@ async function fetchStudentsFromFirebase() {
 
         snapshot.forEach((doc) => {
             let item = doc.data();
+            const emailValue = item['Email ID'] || item.Email || item.email || item.emailId || '';
+
             allStudents.push({
                 index: idx++,
                 prn: item.PRN || '',
-                name: item['Student Name'] || '',
+                name: item['Student Name'] || item.Name || '',
                 division: item.Division || '',
                 batch: item.Batch || '',
                 program: item.Program || '',
                 photoUrl: item.Photo || '',
-                studentMobile: item['Student Mobile'] || '',
-                parentMobile: item['Parent Mobile'] || '',
-                emailId: item['Email ID'] || ''
+                studentMobile: item['Student Mobile'] || item.StudentMobile || '',
+                parentMobile: item['Parent Mobile'] || item.ParentMobile || '',
+                emailId: emailValue.trim()
             });
         });
 
@@ -1051,10 +1053,12 @@ window.onclick = function(event) {
     }
 }
 
+// Fixed Send Email Trigger
 function sendEmailWithDraft(type) {
-    const recipients = Array.from(selectedStudents).join(',');
-    if (!recipients) {
-        alert("Please select at least one student recipient.");
+    const validEmails = Array.from(selectedStudents).filter(e => e && e.includes('@'));
+
+    if (validEmails.length === 0) {
+        alert("No valid recipient email addresses found for selected students.");
         return;
     }
 
@@ -1064,26 +1068,37 @@ function sendEmailWithDraft(type) {
     switch(type) {
         case 'openDay':
             subject = "PCCOE - Open Day Schedule Notification";
-            body = "Dear Parent/Student,\n\nPlease note the upcoming Open Day schedule for the Department of Applied Sciences & Humanities.";
+            body = "Dear Parent/Student,\n\nPlease note the upcoming Open Day schedule for the Department of Applied Sciences & Humanities.\n\nRegards,\nPCCOE Admin";
             break;
         case 'faSaMarks':
             subject = "PCCOE - FA & SA Marks Update";
-            body = "Dear Parent/Student,\n\nThe latest FA & SA marks have been published. Please review your performance record.";
+            body = "Dear Parent/Student,\n\nThe latest FA & SA marks have been published. Please review your performance record.\n\nRegards,\nPCCOE Admin";
             break;
         case 'nonReportedFa':
             subject = "PCCOE - Non-reporting Notice for FA I & II";
-            body = "Dear Parent/Student,\n\nOur records indicate non-reporting for FA I & II examinations. Please contact your Class Teacher immediately.";
+            body = "Dear Parent/Student,\n\nOur records indicate non-reporting for FA I & II examinations. Please contact your Class Teacher immediately.\n\nRegards,\nPCCOE Admin";
             break;
         case 'faSchedule':
             subject = "PCCOE - Schedule of FA I & II Examinations";
-            body = "Dear Parent/Student,\n\nPlease find the official schedule for FA I & II examinations attached/detailed below.";
+            body = "Dear Parent/Student,\n\nPlease find the official schedule for FA I & II examinations detailed below.\n\nRegards,\nPCCOE Admin";
             break;
         default:
             subject = "PCCOE Academic Notice";
             body = "Dear Student,\n\n";
     }
 
-    window.location.href = `mailto:${recipients}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const recipientString = validEmails.join(',');
+    const mailtoUrl = `mailto:${recipientString}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+    const dropdown = document.getElementById('emailDropdown');
+    if (dropdown) dropdown.classList.remove('show');
+
+    const mailAnchor = document.createElement('a');
+    mailAnchor.href = mailtoUrl;
+    mailAnchor.target = '_blank';
+    document.body.appendChild(mailAnchor);
+    mailAnchor.click();
+    document.body.removeChild(mailAnchor);
 }
 
 function exportSearchResults() {
