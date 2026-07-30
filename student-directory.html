@@ -765,8 +765,15 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/XLSX/0.18.5/xlsx.full.min.js"></script>
+<!-- Supabase Client JS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
+// --- SUPABASE CONFIGURATION ---
+const SUPABASE_URL = 'https://dvewbixgjjyotcbhdlnc.supabase.co'; // Replace with your Supabase Project URL
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2ZXdiaXhnamp5b3RjYmhkbG5jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzOTgyNDcsImV4cCI6MjEwMDk3NDI0N30.M138nudFENeCI-MgqDAiv6_le1ZA3cPivDbGOueiX14'; // Replace with your Supabase Anon Key
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 // --- GOOGLE SHEET CONFIGURATION ---
 const SHEET_ID = '1oTS6yoW429gUaPBABTtFXRPyBEp2RD5t_JJNzWVWNl4';
 const TAB_NAME = 'data';
@@ -778,8 +785,8 @@ let isFilteredSearchActive = false;
 let currentFilteredData = [];
 
 // App Initialization
-document.addEventListener('DOMContentLoaded', () => {
-    checkAuthState();
+document.addEventListener('DOMContentLoaded', async () => {
+    await checkAuthState();
     
     document.getElementById('username').addEventListener('keyup', (e) => { if(e.key === 'Enter') doLogin(); });
     document.getElementById('password').addEventListener('keyup', (e) => { if(e.key === 'Enter') doLogin(); });
@@ -792,9 +799,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-function checkAuthState() {
-    const isLoggedIn = localStorage.getItem('pccoe_logged_in') === 'true';
-    if (isLoggedIn) {
+async function checkAuthState() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
         document.getElementById('loginSection').style.display = 'none';
         document.getElementById('mainSection').style.display = 'block';
         fetchStudentsFromGoogleSheets();
@@ -804,24 +811,41 @@ function checkAuthState() {
     }
 }
 
-function doLogin() {
+async function doLogin() {
     const email = document.getElementById('username').value.trim();
-    const pwd   = document.getElementById('password').value;
+    const password = document.getElementById('password').value;
     const errDiv = document.getElementById('loginError');
+    const loginBtn = document.getElementById('loginBtn');
 
-    if (email === "mathsadmin@pccoepune.org" && pwd === "mathsadmin2026") {
-        errDiv.classList.add('d-none');
-        localStorage.setItem('pccoe_logged_in', 'true');
-        checkAuthState();
-    } else {
+    if (!email || !password) {
         errDiv.classList.remove('d-none');
-        errDiv.innerText = "Invalid credentials. Authorized email or password incorrect.";
+        errDiv.innerText = "Please provide both email and password.";
+        return;
+    }
+
+    loginBtn.disabled = true;
+    loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Signing in...';
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+    });
+
+    loginBtn.disabled = false;
+    loginBtn.innerHTML = '<i class="fas fa-sign-in-alt" style="margin-right:6px"></i> Sign In';
+
+    if (error) {
+        errDiv.classList.remove('d-none');
+        errDiv.innerText = error.message || "Invalid credentials. Authorized email or password incorrect.";
         document.getElementById('password').value = '';
+    } else {
+        errDiv.classList.add('d-none');
+        await checkAuthState();
     }
 }
 
-function logout() {
-    localStorage.removeItem('pccoe_logged_in');
+async function logout() {
+    await supabase.auth.signOut();
     if(dataTable) dataTable.clear().draw();
     allStudents = [];
     selectedStudents.clear();
@@ -829,7 +853,7 @@ function logout() {
     isFilteredSearchActive = false;
     currentFilteredData = [];
     updateExportButtonState();
-    checkAuthState();
+    await checkAuthState();
 }
 
 // Fetch Records from Google Sheet
@@ -892,12 +916,12 @@ function initDataTable(data) {
         const isChecked = selectedStudents.has(student.emailId) ? 'checked' : '';
         const imgTag = student.photoUrl 
             ? `<img src="${student.photoUrl}" class="student-photo-thumb" onclick="viewPhoto('${student.photoUrl}')" alt="Thumb">` 
-            : `<span class="text-muted">No Photo</span>`;
+            : 'N/A';
 
         tr.innerHTML = `
-            <td><input type="checkbox" class="student-row-cb" value="${student.emailId}" ${isChecked} onchange="toggleSelectStudent('${student.emailId}')"></td>
+            <td><input type="checkbox" class="row-checkbox" value="${student.emailId}" ${isChecked} onchange="toggleRowSelection(this, '${student.prn}')"></td>
             <td>${student.index}</td>
-            <td class="fw-bold">${student.prn}</td>
+            <td>${student.prn}</td>
             <td>${student.name}</td>
             <td>${student.division}</td>
             <td>${student.batch}</td>
@@ -905,70 +929,130 @@ function initDataTable(data) {
             <td>${imgTag}</td>
             <td>${student.studentMobile}</td>
             <td>${student.parentMobile}</td>
-            <td><a href="https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(student.emailId)}" target="_blank">${student.emailId}</a></td>
+            <td>${student.emailId}</td>
         `;
         tbody.appendChild(tr);
     });
 
     dataTable = $('#studentTable').DataTable({
         pageLength: 25,
-        lengthMenu: [10, 25, 50, 100],
-        order: [[1, 'asc']],
         responsive: true,
-        destroy: true
-    });
-
-    dataTable.on('draw', () => {
-        syncCheckboxStates();
+        destroy: true,
+        order: [[1, 'asc']]
     });
 }
 
-function syncCheckboxStates() {
-    document.querySelectorAll('.student-row-cb').forEach(cb => {
-        cb.checked = selectedStudents.has(cb.value);
+function viewPhoto(url) {
+    document.getElementById('fullPhotoImg').src = url;
+    const photoModal = new bootstrap.Modal(document.getElementById('photoModal'));
+    photoModal.show();
+}
+
+function toggleRowSelection(cb, prn) {
+    const row = document.getElementById(`row-${prn}`);
+    if (cb.checked) {
+        selectedStudents.add(cb.value);
+        if(row) row.classList.add('row-selected');
+    } else {
+        selectedStudents.delete(cb.value);
+        if(row) row.classList.remove('row-selected');
+    }
+    updateSelectedCount();
+}
+
+function updateSelectedCount() {
+    document.getElementById('selectedCount').innerText = selectedStudents.size;
+}
+
+function toggleEmailDropdown(e) {
+    e.stopPropagation();
+    document.getElementById('emailDropdown').classList.toggle('show');
+}
+
+function handleSelectAll() {
+    if (!isFilteredSearchActive) {
+        const warn = document.getElementById('selectAllWarning');
+        warn.classList.add('show');
+        setTimeout(() => warn.classList.remove('show'), 4000);
+        return;
+    }
+
+    currentFilteredData.forEach(st => {
+        if(st.emailId) selectedStudents.add(st.emailId);
     });
+
+    document.querySelectorAll('.row-checkbox').forEach(cb => {
+        cb.checked = true;
+        const tr = cb.closest('tr');
+        if(tr) tr.classList.add('row-selected');
+    });
+
+    document.getElementById('selectAllCheckbox').checked = true;
+    updateSelectedCount();
+}
+
+function handleSelectAllCheckbox() {
+    const mainCb = document.getElementById('selectAllCheckbox');
+    const targetData = isFilteredSearchActive ? currentFilteredData : allStudents;
+
+    targetData.forEach(st => {
+        if (mainCb.checked) {
+            if(st.emailId) selectedStudents.add(st.emailId);
+        } else {
+            if(st.emailId) selectedStudents.delete(st.emailId);
+        }
+    });
+
+    document.querySelectorAll('.row-checkbox').forEach(cb => {
+        cb.checked = mainCb.checked;
+        const tr = cb.closest('tr');
+        if (tr) {
+            if(mainCb.checked) tr.classList.add('row-selected');
+            else tr.classList.remove('row-selected');
+        }
+    });
+
+    updateSelectedCount();
 }
 
 function searchTable() {
-    const prnVal = document.getElementById('searchPRN').value.trim().toLowerCase();
-    const nameVal = document.getElementById('searchName').value.trim().toLowerCase();
-    const divVal = document.getElementById('searchDivision').value.trim().toLowerCase();
+    const prnVal = document.getElementById('searchPRN').value.toLowerCase().trim();
+    const nameVal = document.getElementById('searchName').value.toLowerCase().trim();
+    const divVal = document.getElementById('searchDivision').value.toLowerCase().trim();
 
     if (!prnVal && !nameVal && !divVal) {
         clearSearch();
         return;
     }
 
-    currentFilteredData = allStudents.filter(s => {
-        const matchPRN = !prnVal || String(s.prn).toLowerCase().includes(prnVal);
-        const matchName = !nameVal || String(s.name).toLowerCase().includes(nameVal);
-        const matchDiv = !divVal || String(s.division).toLowerCase().includes(divVal);
-        return matchPRN && matchName && matchDiv;
+    currentFilteredData = allStudents.filter(st => {
+        const matchesPRN = prnVal ? st.prn.toLowerCase().includes(prnVal) : true;
+        const matchesName = nameVal ? st.name.toLowerCase().includes(nameVal) : true;
+        const matchesDiv = divVal ? st.division.toLowerCase().includes(divVal) : true;
+        return matchesPRN && matchesName && matchesDiv;
     });
 
     isFilteredSearchActive = true;
     document.getElementById('searchResults').innerText = currentFilteredData.length;
     initDataTable(currentFilteredData);
     updateExportButtonState();
-    document.getElementById('selectAllWarning').classList.remove('show');
 }
 
 function searchMultiplePRNs() {
     const rawInput = document.getElementById('multiPRNSearch').value;
-    if (!rawInput.trim()) {
+    const prnArray = rawInput.split(/[\s,]+/).map(p => p.trim().toLowerCase()).filter(Boolean);
+
+    if (prnArray.length === 0) {
         clearSearch();
         return;
     }
 
-    const prnList = rawInput.split(/[\s,\n]+/).map(p => p.trim().toLowerCase()).filter(p => p.length > 0);
-
-    currentFilteredData = allStudents.filter(s => prnList.includes(String(s.prn).toLowerCase()));
+    currentFilteredData = allStudents.filter(st => prnArray.includes(st.prn.toLowerCase()));
 
     isFilteredSearchActive = true;
     document.getElementById('searchResults').innerText = currentFilteredData.length;
     initDataTable(currentFilteredData);
     updateExportButtonState();
-    document.getElementById('selectAllWarning').classList.remove('show');
 }
 
 function clearSearch() {
@@ -980,217 +1064,84 @@ function clearSearch() {
     isFilteredSearchActive = false;
     currentFilteredData = [];
     document.getElementById('searchResults').innerText = '—';
+    document.getElementById('selectAllCheckbox').checked = false;
+
     initDataTable(allStudents);
     updateExportButtonState();
-    document.getElementById('selectAllWarning').classList.remove('show');
-}
-
-function handleSelectAll() {
-    if (!isFilteredSearchActive) {
-        document.getElementById('selectAllWarning').classList.add('show');
-        return;
-    }
-    document.getElementById('selectAllWarning').classList.remove('show');
-
-    const dataset = currentFilteredData.length > 0 ? currentFilteredData : allStudents;
-    const allSelected = dataset.every(s => selectedStudents.has(s.emailId));
-
-    dataset.forEach(s => {
-        if (s.emailId) {
-            if (allSelected) {
-                selectedStudents.delete(s.emailId);
-            } else {
-                selectedStudents.add(s.emailId);
-            }
-        }
-    });
-
-    syncCheckboxStates();
-    updateSelectedCount();
-}
-
-function handleSelectAllCheckbox() {
-    const isChecked = document.getElementById('selectAllCheckbox').checked;
-    const dataset = isFilteredSearchActive ? currentFilteredData : allStudents;
-
-    dataset.forEach(s => {
-        if (s.emailId) {
-            if (isChecked) {
-                selectedStudents.add(s.emailId);
-            } else {
-                selectedStudents.delete(s.emailId);
-            }
-        }
-    });
-
-    syncCheckboxStates();
-    updateSelectedCount();
-}
-
-function toggleSelectStudent(email) {
-    if (!email) return;
-    if (selectedStudents.has(email)) {
-        selectedStudents.delete(email);
-    } else {
-        selectedStudents.add(email);
-    }
-    updateSelectedCount();
-}
-
-function updateSelectedCount() {
-    document.getElementById('selectedCount').innerText = selectedStudents.size;
-}
-
-function toggleEmailDropdown(e) {
-    if (e) e.stopPropagation();
-    document.getElementById('emailDropdown').classList.toggle('show');
-}
-
-/* ──────── GMAIL WEB REDIRECT SYSTEM ──────── */
-
-function sendEmailWithDraft(type) {
-    document.getElementById('emailDropdown').classList.remove('show');
-    
-    // Filter out empty or invalid email entries
-    const validEmails = Array.from(selectedStudents).filter(email => email && email.trim() !== '');
-
-    if (validEmails.length === 0) {
-        alert("Please select at least one student with a valid email address.");
-        return;
-    }
-
-    const bccList = validEmails.join(',');
-    let subject = "";
-    let body = "";
-
-    switch(type) {
-        case 'openDay':
-            subject = "PCCOE — Open Day Schedule Notification";
-            body = "Dear Student/Parent,\n\nPlease find the schedule for the upcoming Open Day attached.\n\nRegards,\nDepartment of Applied Sciences & Humanities\nPCCOE";
-            break;
-        case 'faSaMarks':
-            subject = "PCCOE — FA & SA Marks Update";
-            body = "Dear Student/Parent,\n\nYour FA & SA marks have been updated in the portal. Please verify.\n\nRegards,\nPCCOE";
-            break;
-        case 'nonReportedFa':
-            subject = "URGENT: Non-Reported Status in FA I & II";
-            body = "Dear Student/Parent,\n\nOur records indicate non-reporting for FA I & II. Contact your class teacher immediately.\n\nRegards,\nPCCOE";
-            break;
-        case 'faSchedule':
-            subject = "PCCOE — Schedule for FA I & II";
-            body = "Dear Student,\n\nThe timetable for FA I & II is announced. Please prepare accordingly.\n\nRegards,\nPCCOE";
-            break;
-        case 'custom':
-        default:
-            subject = "Notice from PCCOE";
-            body = "Dear Student,\n\n";
-            break;
-    }
-
-    // Direct Web Gmail Compose URL
-    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&bcc=${encodeURIComponent(bccList)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-    // Fallback if URL exceeds standard Web browser GET length (~2000 chars)
-    if (gmailUrl.length > 2000) {
-        if (navigator.clipboard) {
-            navigator.clipboard.writeText(bccList).then(() => {
-                alert(`You have selected ${validEmails.length} recipients, which exceeds Gmail's browser URL limit.\n\nAll email addresses have been COPIED to your clipboard!\n\nGmail will now open, please paste (Ctrl+V) into the BCC field.`);
-                const shortGmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-                window.open(shortGmailUrl, '_blank');
-            }).catch(() => {
-                alert(`Too many recipients (${validEmails.length}) for single web link creation. Please select fewer students at a time.`);
-            });
-        } else {
-            alert(`Selected list is too large for web link creation (${validEmails.length} recipients). Please reduce your selection size.`);
-        }
-        return;
-    }
-
-    // Opens Gmail composer directly in a new tab
-    window.open(gmailUrl, '_blank');
-}
-
-/* ──────── EXPORT SYSTEM ──────── */
-
-function exportSearchResults() {
-    let dataToExport = [];
-
-    if (isFilteredSearchActive && currentFilteredData.length > 0) {
-        dataToExport = currentFilteredData;
-    } else if (dataTable) {
-        const dtData = dataTable.rows({ search: 'applied' }).data();
-        dtData.each(function (row) {
-            const prn = $(row[2]).text() || row[2];
-            const match = allStudents.find(s => String(s.prn).trim() === String(prn).trim());
-            if (match) {
-                dataToExport.push(match);
-            }
-        });
-    }
-
-    if (dataToExport.length === 0) {
-        alert("No search results available to export. Please search first.");
-        return;
-    }
-
-    const exportData = dataToExport.map((s, idx) => ({
-        "Sr. No.": idx + 1,
-        "PRN": s.prn,
-        "Student Name": s.name,
-        "Division": s.division,
-        "Batch": s.batch,
-        "Program": s.program,
-        "Student Mobile": s.studentMobile,
-        "Parent Mobile": s.parentMobile,
-        "Email ID": s.emailId
-    }));
-
-    try {
-        const worksheet = XLSX.utils.json_to_sheet(exportData);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Search Results");
-
-        const fileName = `PCCOE_Student_Search_Results_${new Date().toISOString().slice(0, 10)}.xlsx`;
-        XLSX.writeFile(workbook, fileName);
-    } catch (err) {
-        console.error("XLSX export error, using CSV fallback:", err);
-        exportToCSV(exportData);
-    }
-}
-
-function exportToCSV(data) {
-    if(!data || !data.length) return;
-    const headers = Object.keys(data[0]).join(",");
-    const rows = data.map(row => Object.values(row).map(val => `"${val}"`).join(","));
-    const csvContent = "data:text/csv;charset=utf-8," + [headers, ...rows].join("\n");
-    
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `PCCOE_Student_Search_Results.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
 }
 
 function updateExportButtonState() {
-    const exportBtn = document.getElementById('exportBtn');
-    const countDisplay = document.getElementById('exportCount');
-    
-    if (isFilteredSearchActive) {
-        if (exportBtn) exportBtn.removeAttribute('disabled');
-        if (countDisplay) countDisplay.innerText = currentFilteredData.length;
+    const btn = document.getElementById('exportBtn');
+    if (isFilteredSearchActive && currentFilteredData.length > 0) {
+        btn.disabled = false;
+        document.getElementById('exportCount').innerText = currentFilteredData.length;
     } else {
-        if (exportBtn) exportBtn.setAttribute('disabled', 'true');
-        if (countDisplay) countDisplay.innerText = '0';
+        btn.disabled = true;
+        document.getElementById('exportCount').innerText = '0';
     }
 }
 
-function viewPhoto(url) {
-    document.getElementById('fullPhotoImg').src = url;
-    const modal = new bootstrap.Modal(document.getElementById('photoModal'));
-    modal.show();
+function sendEmailWithDraft(type) {
+    if (selectedStudents.size === 0) {
+        alert("Please select at least one student to send an email.");
+        return;
+    }
+
+    const emails = Array.from(selectedStudents).join(',');
+    let subject = '';
+    let body = '';
+
+    switch(type) {
+        case 'openDay':
+            subject = 'Open Day Schedule Notice';
+            body = 'Dear Student/Parent,\n\nPlease find the details regarding the upcoming Open Day schedule.\n\nRegards,\nPCCOE Admin';
+            break;
+        case 'faSaMarks':
+            subject = 'FA & SA Marks Notification';
+            body = 'Dear Student/Parent,\n\nThe Formative and Summative Assessment marks have been published.\n\nRegards,\nPCCOE Admin';
+            break;
+        case 'nonReportedFa':
+            subject = 'Important Notice: Non-Reporting in FA I & II';
+            body = 'Dear Student/Parent,\n\nOur records indicate non-reporting for FA I & II. Please contact the department office immediately.\n\nRegards,\nPCCOE Admin';
+            break;
+        case 'faSchedule':
+            subject = 'Schedule of FA I & II';
+            body = 'Dear Student/Parent,\n\nPlease check the schedule for FA I & II examinations attached herewith.\n\nRegards,\nPCCOE Admin';
+            break;
+        case 'custom':
+        default:
+            subject = 'PCCOE Department Notification';
+            body = 'Dear Student/Parent,\n\n\n\nRegards,\nPCCOE Admin';
+            break;
+    }
+
+    window.open(`mailto:?bcc=${encodeURIComponent(emails)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+}
+
+function exportSearchResults() {
+    if (!isFilteredSearchActive || currentFilteredData.length === 0) {
+        alert("No search results available to export.");
+        return;
+    }
+
+    const exportData = currentFilteredData.map(st => ({
+        'Sr No': st.index,
+        'PRN': st.prn,
+        'Student Name': st.name,
+        'Division': st.division,
+        'Batch': st.batch,
+        'Program': st.program,
+        'Student Mobile': st.studentMobile,
+        'Parent Mobile': st.parentMobile,
+        'Email ID': st.emailId
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "SearchResults");
+    XLSX.writeFile(wb, "PCCOE_Student_Search_Results.xlsx");
 }
 </script>
+
 </body>
 </html>
