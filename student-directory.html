@@ -1074,7 +1074,14 @@ function sendEmailWithDraft(type) {
             break;
         case 'nonReportedFa':
             subject = "URGENT: Non-Reported Status in FA I & II";
-            body = "Dear Student/Parent,\n\nOur records indicate non-reporting for FA I & II. Contact your class teacher immediately.\n\nRegards,\nPCCOE";
+            const body = `Dear Student,
+
+As per our records, you were absent for both the FA I and FA II examinations. Consequently, you will be awarded zero marks for these assessments as per the examination policy.
+
+You are requested to meet the Course Coordinator/Course Teacher immediately to discuss the matter and complete any necessary formalities.
+
+Regards,
+Course Teacher`;
             break;
         case 'faSchedule':
             subject = "PCCOE — Schedule for FA I & II";
