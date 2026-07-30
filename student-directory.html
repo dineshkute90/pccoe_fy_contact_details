@@ -714,7 +714,7 @@
                 </div>
             </div>
 
-            <!-- Disabled by default. Enabled only after quick search or multi-PRN search -->
+            <!-- Enabled after quick search or multi-PRN search -->
             <button class="btn-action btn-export" id="exportBtn" onclick="exportSearchResults()" disabled>
                 <i class="fas fa-file-excel"></i> Export Results
             </button>
@@ -1059,6 +1059,7 @@ window.onclick = function(event) {
     }
 }
 
+// Redirect directly to Gmail Web Client Draft compose page
 function sendEmailWithDraft(type) {
     if (selectedStudents.size === 0) {
         alert("Please select at least one student email.");
@@ -1092,14 +1093,32 @@ function sendEmailWithDraft(type) {
             break;
     }
 
-    const mailtoUrl = `mailto:?bcc=${encodeURIComponent(bccList)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.open(mailtoUrl, '_blank');
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&tf=1&bcc=${encodeURIComponent(bccList)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.open(gmailUrl, '_blank');
 }
 
+// Export Search Results Fix
 function exportSearchResults() {
-    if (!currentFilteredData || currentFilteredData.length === 0) return;
+    let dataToExport = [];
 
-    const exportData = currentFilteredData.map(s => ({
+    if (isFilteredSearchActive && currentFilteredData.length > 0) {
+        dataToExport = currentFilteredData;
+    } else if (dataTable) {
+        // Fallback to active DataTable rows if available
+        const dtRows = dataTable.rows({ search: 'applied' }).data();
+        dtRows.each(function (rowData) {
+            const prn = rowData[2].replace(/<[^>]*>?/gm, ''); // strip HTML tags
+            const found = allStudents.find(s => String(s.prn) === prn);
+            if (found) dataToExport.push(found);
+        });
+    }
+
+    if (dataToExport.length === 0) {
+        alert("No search results to export. Please perform a search first.");
+        return;
+    }
+
+    const exportData = dataToExport.map(s => ({
         "Sr. No.": s.index,
         "PRN": s.prn,
         "Student Name": s.name,
