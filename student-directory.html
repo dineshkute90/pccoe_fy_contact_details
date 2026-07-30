@@ -2,1139 +2,256 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>PCCOE Student Contact Search</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maths Admin Portal</title>
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&family=Crimson+Pro:ital,wght=0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    
     <style>
-        :root {
-            --pccoe-blue: #1a237e;
-            --pccoe-blue-mid: #283593;
-            --pccoe-blue-light: #3949ab;
-            --pccoe-red: #d32f2f;
-            --pccoe-green: #1b5e20;
-            --pccoe-green-mid: #2e7d32;
-            --pccoe-gold: #f9a825;
-            --pccoe-gold-light: #fdd835;
-            --surface: #f0f2f8;
-            --card-bg: #ffffff;
-            --text-main: #1a1f3a;
-            --text-muted: #5c6484;
-            --border: #dde1f0;
-            --shadow-sm: 0 2px 8px rgba(26,35,126,0.08);
-            --shadow-md: 0 6px 24px rgba(26,35,126,0.13);
-            --shadow-lg: 0 16px 48px rgba(26,35,126,0.18);
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
         body {
-            background: var(--surface);
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            color: var(--text-main);
-            min-height: 100vh;
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
-        /* ───────── LOGIN PAGE ───────── */
-        #loginSection {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #0d1547 0%, #1a237e 45%, #283593 75%, #0a3d0a 100%);
-            position: relative;
-            overflow: hidden;
-            padding: 20px;
-        }
-
-        #loginSection::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background:
-                radial-gradient(ellipse 60% 60% at 20% 20%, rgba(255,255,255,0.04) 0%, transparent 70%),
-                radial-gradient(ellipse 40% 40% at 80% 80%, rgba(249,168,37,0.08) 0%, transparent 70%);
-            pointer-events: none;
-        }
-
-        #loginSection::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background-image:
-                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-            background-size: 60px 60px;
-            pointer-events: none;
-        }
-
         .login-card {
-            background: rgba(255,255,255,0.97);
-            border-radius: 20px;
-            width: 100%;
-            max-width: 420px;
-            padding: 0;
-            box-shadow: var(--shadow-lg), 0 0 0 1px rgba(255,255,255,0.15);
-            position: relative;
-            z-index: 1;
-            overflow: hidden;
-            animation: cardIn 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
+            max-width: 400px;
+            margin: 80px auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: none;
         }
-
-        @keyframes cardIn {
-            from { opacity: 0; transform: translateY(30px) scale(0.95); }
-            to   { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        .login-card-header {
-            background: linear-gradient(135deg, var(--pccoe-blue), var(--pccoe-blue-mid));
-            padding: 2rem 2rem 1.5rem;
+        .login-header {
+            background: #0d6efd;
+            color: white;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            padding: 25px;
             text-align: center;
-            position: relative;
         }
-
-        .login-card-header::after {
-            content: '';
-            position: absolute;
-            bottom: -1px; left: 0; right: 0;
-            height: 30px;
-            background: rgba(255,255,255,0.97);
-            border-radius: 50% 50% 0 0 / 30px;
+        .login-body {
+            padding: 30px;
         }
-
-        .login-logo {
-            height: 80px;
-            object-fit: contain;
-            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
-        }
-
-        .login-card-body {
-            padding: 0.5rem 2rem 2rem;
-        }
-
-        .login-title {
-            font-family: 'Crimson Pro', Georgia, serif;
-            font-size: 1.7rem;
-            font-weight: 600;
-            color: var(--pccoe-blue);
-            text-align: center;
-            margin-bottom: 0.2rem;
-        }
-
-        .login-subtitle {
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            margin-bottom: 1.5rem;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-        }
-
         .login-input-group {
             position: relative;
-            margin-bottom: 1rem;
+            margin-bottom: 20px;
         }
-
-        .login-input-group .input-icon {
+        .login-input-group i {
             position: absolute;
-            left: 14px;
+            left: 15px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--pccoe-blue-light);
-            font-size: 0.9rem;
-            z-index: 2;
+            color: #6c757d;
         }
-
         .login-input-group input {
-            width: 100%;
-            padding: 12px 14px 12px 40px;
-            border: 2px solid var(--border);
-            border-radius: 10px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 0.9rem;
-            color: var(--text-main);
-            transition: border-color 0.2s, box-shadow 0.2s;
-            background: #f8f9ff;
+            padding-left: 45px;
+            height: 48px;
+            border-radius: 8px;
         }
-
-        .login-input-group input:focus {
-            outline: none;
-            border-color: var(--pccoe-blue-light);
-            box-shadow: 0 0 0 3px rgba(57,73,171,0.15);
-            background: white;
-        }
-
         .login-btn {
             width: 100%;
-            padding: 13px;
-            background: linear-gradient(135deg, var(--pccoe-green), var(--pccoe-green-mid));
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 0.95rem;
-            font-weight: 700;
-            letter-spacing: 0.03em;
-            cursor: pointer;
-            transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
-            box-shadow: 0 4px 16px rgba(27,94,32,0.3);
-            margin-top: 0.5rem;
-        }
-
-        .login-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(27,94,32,0.4);
-        }
-
-        .login-btn:active { transform: translateY(0); }
-
-        .login-footer {
-            text-align: center;
-            margin-top: 1.2rem;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        #loginError {
+            height: 48px;
             border-radius: 8px;
-            font-size: 0.85rem;
-            margin-bottom: 1rem;
-            padding: 10px 14px;
-        }
-
-        /* ───────── MAIN APP ───────── */
-        #mainSection {
-            display: none;
-            width: 100%;
-            max-width: 1440px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .directory-header {
-            background: linear-gradient(135deg, #0d1547, #1a237e 50%, #283593);
-            color: white;
-            padding: 1.2rem 1.5rem;
-            border-radius: 16px;
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            align-items: center;
-            gap: 12px;
-            box-shadow: var(--shadow-md);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .directory-header::before {
-            content: '';
-            position: absolute;
-            top: -40px; right: -40px;
-            width: 200px; height: 200px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.04);
-            pointer-events: none;
-        }
-
-        .header-logo { 
-            height: 64px; 
-            object-fit: contain;
-            justify-self: start;
-        }
-
-        .header-title {
-            text-align: center;
-            justify-self: center;
-        }
-
-        .header-title h2 {
-            font-family: 'Crimson Pro', Georgia, serif;
-            font-size: 2.2rem;
             font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .header-title p {
-            font-family: 'Crimson Pro', Georgia, serif;
-            font-size: 1.4rem;
-            font-weight: 400;
-            letter-spacing: 0.02em;
-            margin-bottom: 0;
-            opacity: 1;
-        }
-
-        .logout-btn {
-            background: rgba(255,255,255,0.12);
-            border: 1.5px solid rgba(255,255,255,0.25);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 8px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-            justify-self: end;
-        }
-
-        .logout-btn:hover { background: rgba(255,255,255,0.22); }
-
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 14px;
-            margin: 18px 0;
-        }
-
-        @media (max-width: 768px) {
-            .stats-row { grid-template-columns: repeat(2, 1fr); }
-        }
-
-        .stat-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 16px 20px;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border);
-            position: relative;
-            overflow: hidden;
-            text-align: center;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 3px;
-        }
-
-        .stat-card:nth-child(1)::before { background: var(--pccoe-blue-light); }
-        .stat-card:nth-child(2)::before { background: var(--pccoe-green-mid); }
-        .stat-card:nth-child(3)::before { background: var(--pccoe-gold); }
-        .stat-card:nth-child(4)::before { background: var(--pccoe-red); }
-
-        .stat-value {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--pccoe-blue);
-            line-height: 1;
-        }
-
-        .stat-label {
-            font-size: 0.72rem;
-            color: var(--text-muted);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            margin-top: 4px;
-        }
-
-        .search-box {
-            background: var(--card-bg);
-            padding: 1.4rem 1.5rem;
-            border-radius: 14px;
-            margin-bottom: 18px;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border);
-        }
-
-        .search-box .section-label {
-            font-size: 0.72rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            margin-bottom: 10px;
-        }
-
-        .form-control {
-            border: 2px solid var(--border);
-            border-radius: 9px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 0.85rem;
-            padding: 10px 14px;
-            color: var(--text-main);
-            background: #f8f9ff;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .form-control:focus {
-            border-color: var(--pccoe-blue-light);
-            box-shadow: 0 0 0 3px rgba(57,73,171,0.12);
-            background: white;
-            outline: none;
-        }
-
-        .action-bar {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 14px;
-            padding-top: 14px;
-            border-top: 1px solid var(--border);
-        }
-
-        .btn-action {
-            padding: 9px 18px;
-            border-radius: 8px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 0.83rem;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-        }
-
-        .btn-action:hover { transform: translateY(-1px); }
-        .btn-action:active { transform: translateY(0); }
-        
-        .btn-action:disabled, button:disabled { 
-            background: #cccccc !important; 
-            color: #666666 !important; 
-            box-shadow: none !important; 
-            cursor: not-allowed; 
-            transform: none !important; 
-            opacity: 0.65; 
-        }
-
-        .btn-select-all {
-            background: #e8eaf6;
-            color: var(--pccoe-blue);
-            border: 1.5px solid #c5cae9;
-        }
-
-        .btn-select-all.active {
-            background: var(--pccoe-blue);
-            color: white;
-            border-color: var(--pccoe-blue);
-        }
-
-        .btn-email {
-            background: linear-gradient(135deg, var(--pccoe-green), var(--pccoe-green-mid));
-            color: white;
-            box-shadow: 0 3px 10px rgba(27,94,32,0.25);
-        }
-
-        .btn-export {
-            background: linear-gradient(135deg, #e65100, #f57c00);
-            color: white;
-            box-shadow: 0 3px 10px rgba(230,81,0,0.25);
-        }
-
-        .btn-search {
-            background: linear-gradient(135deg, var(--pccoe-blue), var(--pccoe-blue-light));
-            color: white;
-            box-shadow: 0 3px 10px rgba(26,35,126,0.25);
-        }
-
-        .btn-clear {
-            background: #f0f0f0;
-            color: #555;
-            border: 1.5px solid #ddd;
-        }
-
-        .btn-multi-search {
-            background: linear-gradient(135deg, #00695c, #00897b);
-            color: white;
-            box-shadow: 0 3px 10px rgba(0,105,92,0.25);
-        }
-
-        .email-dropdown-wrap { position: relative; }
-
-        .email-dropdown-content {
-            display: none;
-            position: absolute;
-            top: calc(100% + 8px);
-            left: 0;
-            background: white;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            box-shadow: var(--shadow-md);
-            z-index: 1000;
-            min-width: 240px;
-            overflow: hidden;
-        }
-
-        .email-dropdown-content.show { display: block; }
-
-        .email-dropdown-content .dd-item {
-            padding: 11px 16px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: background 0.15s;
-        }
-
-        .email-dropdown-content .dd-item:hover { background: #f0f2ff; }
-        .email-dropdown-content .dd-item:not(:last-child) { border-bottom: 1px solid var(--border); }
-
-        .data-table-wrap {
-            background: var(--card-bg);
-            border-radius: 14px;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border);
-            overflow: hidden;
-        }
-
-        #studentTable { font-size: 0.83rem; min-width: 1100px; }
-
-        #studentTable thead th {
-            background: linear-gradient(135deg, var(--pccoe-blue), var(--pccoe-blue-mid)) !important;
-            color: white !important;
-            font-weight: 700;
-            font-size: 0.78rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding: 13px 12px;
-            white-space: nowrap;
-            border: none !important;
-        }
-
-        #studentTable tbody tr { transition: background 0.15s; }
-        #studentTable tbody tr:hover { background: #f0f2ff !important; }
-        #studentTable tbody td { padding: 10px 12px; vertical-align: middle; border-color: var(--border); }
-        #studentTable tbody tr.row-selected { background: #e8eaf6 !important; }
-
-        .student-photo-thumb {
-            width: 40px; height: 40px;
-            object-fit: cover;
-            border-radius: 8px;
-            cursor: pointer;
-            border: 2px solid var(--border);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .student-photo-thumb:hover { transform: scale(1.1); box-shadow: var(--shadow-sm); }
-
-        .badge-count {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255,255,255,0.25);
-            color: white;
-            border-radius: 20px;
-            padding: 2px 8px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            min-width: 24px;
-        }
-
-        .select-all-warning {
-            display: none;
-            background: #fff3e0;
-            border: 1px solid #ffe0b2;
-            border-radius: 8px;
-            padding: 8px 14px;
-            font-size: 0.82rem;
-            color: #e65100;
-            font-weight: 600;
-            align-items: center;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .select-all-warning.show { display: flex; }
-
-        .dataTables_wrapper .dataTables_filter input {
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            padding: 6px 10px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 0.83rem;
-        }
-
-        .dataTables_wrapper .dataTables_length select {
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            padding: 6px 32px 6px 12px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 0.83rem;
-        }
-
-        .dataTables_wrapper .dataTables_paginate .paginate_button {
-            border-radius: 6px !important;
-            font-weight: 600;
-        }
-
-        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
-            background: var(--pccoe-blue) !important;
-            border-color: var(--pccoe-blue) !important;
-            color: white !important;
-        }
-
-        .dataTables_wrapper { padding: 16px; }
-        div.dataTables_wrapper div.dataTables_info { font-size: 0.82rem; color: var(--text-muted); }
-
-        .app-footer {
-            text-align: center;
-            padding: 14px;
-            margin-top: 18px;
-            background: linear-gradient(135deg, var(--pccoe-blue), var(--pccoe-blue-mid));
-            border-radius: 12px;
-            color: rgba(255,255,255,0.85);
-            font-size: 0.8rem;
-            font-weight: 500;
-            letter-spacing: 0.03em;
-        }
-
-        #photoModal .modal-content { background: #0d1547; border: none; border-radius: 16px; overflow: hidden; }
-        #photoModal .modal-header { border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .photo-modal-img { max-width: 90vw; max-height: 80vh; border-radius: 8px; }
-
-        @media (max-width: 768px) {
-            .directory-header { 
-                display: flex;
-                flex-direction: column; 
-                text-align: center; 
-                gap: 16px;
-            }
-            .header-title h2, 
-            .header-title p {
-                font-size: 1.6rem;
-            }
         }
     </style>
 </head>
 <body>
 
-<div id="loginSection">
-    <div class="login-card">
-        <div class="login-card-header">
-            <img src="https://raw.githubusercontent.com/dineshkute90/pccoe_fy_contact_details/main/pccoe_logo.png" class="login-logo" alt="PCCOE Logo">
-        </div>
-        <div class="login-card-body">
-            <h1 class="login-title">Student Directory</h1>
-            <p class="login-subtitle">PCCOE — Authorised Access Only</p>
-            <div id="loginError" class="alert alert-danger d-none" role="alert"></div>
-            <div class="login-input-group">
-                <i class="fas fa-user input-icon"></i>
-                <input type="email" id="username" placeholder="Authorized Email (e.g., admin@pccoe.edu)" autocomplete="username" required>
+    <!-- LOGIN CONTAINER -->
+    <div id="login-container">
+        <div class="card login-card">
+            <div class="login-header">
+                <i class="fas fa-user-shield fa-3x mb-2"></i>
+                <h4 class="mb-0">Admin Portal</h4>
             </div>
-            <div class="login-input-group">
-                <i class="fas fa-lock input-icon"></i>
-                <input type="password" id="password" placeholder="Password" autocomplete="current-password" required>
+            <div class="login-body">
+                <div id="loginError" class="alert alert-danger d-none" role="alert"></div>
+                
+                <!-- Wrap in a form to handle submission & Enter key correctly -->
+                <form id="loginForm" onsubmit="doLogin(event)">
+                    <div class="login-input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="email" class="form-control" id="username" placeholder="Authorized Email" required>
+                    </div>
+                    <div class="login-input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" class="form-control" id="password" placeholder="Password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary login-btn" id="loginBtn">
+                        <i class="fas fa-sign-in-alt me-1"></i> Sign In
+                    </button>
+                </form>
             </div>
-            <button class="login-btn" id="loginBtn" onclick="doLogin()">
-                <i class="fas fa-sign-in-alt" style="margin-right:6px"></i> Sign In
-            </button>
-            <div class="login-footer">Pimpri Chinchwad College of Engineering &nbsp;|&nbsp; Academic Year 2026-27</div>
-        </div>
-    </div>
-</div>
-
-<div id="mainSection">
-    <div class="directory-header">
-        <img src="https://raw.githubusercontent.com/dineshkute90/pccoe_fy_contact_details/main/pccoe_logo.png" class="header-logo" alt="PCCOE">
-        <div class="header-title">
-            <h2>PCCOE Student Directory</h2>
-            <p>Department of Applied Sciences &amp; Humanities &nbsp;|&nbsp; Academic Year 2026-27</p>
-        </div>
-        <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt me-1"></i> Logout</button>
-    </div>
-
-    <div class="stats-row">
-        <div class="stat-card">
-            <div class="stat-value" id="totalStudents">0</div>
-            <div class="stat-label">Total Students</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value" id="dataStatus" style="font-size:1rem;padding-top:4px">Loading…</div>
-            <div class="stat-label">Data Status</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value" id="searchResults">—</div>
-            <div class="stat-label">Search Results</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value" id="exportCount">0</div>
-            <div class="stat-label">Export Ready</div>
         </div>
     </div>
 
-    <div class="search-box">
-        <div class="section-label"><i class="fas fa-search me-1"></i> Quick Search</div>
-        <div class="row g-2">
-            <div class="col-md-3">
-                <input type="text" id="searchPRN" class="form-control" placeholder="Search by PRN">
+    <!-- MAIN DASHBOARD (Initially Hidden) -->
+    <div id="app-container" class="d-none">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary px-4">
+            <a class="navbar-brand font-weight-bold" href="#">Maths Admin Dashboard</a>
+            <div class="ms-auto">
+                <span id="userEmail" class="text-light me-3"></span>
+                <button class="btn btn-outline-light btn-sm" onclick="doLogout()">Logout</button>
             </div>
-            <div class="col-md-3">
-                <input type="text" id="searchName" class="form-control" placeholder="Search by Name">
-            </div>
-            <div class="col-md-2">
-                <input type="text" id="searchDivision" class="form-control" placeholder="Division">
-            </div>
-            <div class="col-md-2">
-                <button class="btn-action btn-search w-100" onclick="searchTable()">
-                    <i class="fas fa-search"></i> Search
-                </button>
-            </div>
-            <div class="col-md-2">
-                <button class="btn-action btn-clear w-100" onclick="clearSearch()">
-                    <i class="fas fa-times"></i> Clear
-                </button>
-            </div>
-        </div>
+        </nav>
 
-        <div class="row mt-2">
-            <div class="col-md-10">
-                <textarea id="multiPRNSearch" class="form-control" rows="2" placeholder="Paste multiple PRNs (comma, space or new-line separated)…"></textarea>
-            </div>
-            <div class="col-md-2 d-flex align-items-end">
-                <button class="btn-action btn-multi-search w-100" onclick="searchMultiplePRNs()">
-                    <i class="fas fa-list-check"></i> Multi-PRN
-                </button>
-            </div>
-        </div>
-
-        <div class="action-bar">
-            <button class="btn-action btn-select-all" id="selectAllBtn" onclick="handleSelectAll()" title="Only works after searching">
-                <i class="fas fa-check-square"></i> Select All
-            </button>
-
-            <div class="email-dropdown-wrap">
-                <button class="btn-action btn-email" onclick="toggleEmailDropdown()">
-                    <i class="fas fa-envelope"></i> Send Email
-                    <span class="badge-count" id="selectedCount">0</span>
-                </button>
-                <div class="email-dropdown-content" id="emailDropdown">
-                    <div class="dd-item" onclick="sendEmailWithDraft('openDay')">📅 Open Day Schedule</div>
-                    <div class="dd-item" onclick="sendEmailWithDraft('faSaMarks')">📊 FA &amp; SA Marks</div>
-                    <div class="dd-item" onclick="sendEmailWithDraft('nonReportedFa')">⚠️ Non Reported in FA I &amp; II</div>
-                    <div class="dd-item" onclick="sendEmailWithDraft('faSchedule')">📝 Schedule of FA I &amp; II</div>
-                    <div class="dd-item" onclick="sendEmailWithDraft('custom')">✏️ Custom Email</div>
+        <div class="container-fluid mt-4 px-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="studentsTable" class="table table-striped table-hover align-middle width-100" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>PRN</th>
+                                    <th>Name</th>
+                                    <th>Class</th>
+                                    <th>Division</th>
+                                    <th>Batch</th>
+                                    <th>Roll No</th>
+                                    <th>Email</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                <!-- Dynamic Rows -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-
-            <!-- Disabled by default. Enabled only after quick search or multi-PRN search -->
-            <button class="btn-action btn-export" id="exportBtn" onclick="exportSearchResults()" disabled>
-                <i class="fas fa-file-excel"></i> Export Results
-            </button>
-        </div>
-
-        <div class="select-all-warning" id="selectAllWarning">
-            <i class="fas fa-exclamation-triangle"></i>
-            <span>"Select All" works only after performing a search. Please search first.</span>
         </div>
     </div>
 
-    <div class="data-table-wrap">
-        <div style="overflow-x:auto">
-            <table id="studentTable" class="table table-striped" style="width:100%">
-                <thead>
-                    <tr>
-                        <th><input type="checkbox" id="selectAllCheckbox" onchange="handleSelectAllCheckbox()"></th>
-                        <th>#</th>
-                        <th>PRN</th>
-                        <th>Student Name</th>
-                        <th>Division</th>
-                        <th>Batch</th>
-                        <th>Program</th>
-                        <th>Photo</th>
-                        <th>Student Mobile</th>
-                        <th>Parent Mobile</th>
-                        <th>Email ID</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-    </div>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
-    <div class="app-footer">PCCOE Student Directory — Developed by Mr. Dinesh Kute</div>
-</div>
+    <!-- jQuery & DataTables JS -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
-<div class="modal fade" id="photoModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
-        <div class="modal-content">
-            <div class="modal-header border-0">
-                <h5 class="text-white"><i class="fas fa-image me-2"></i>Student Photo</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body text-center pb-4">
-                <img id="fullPhotoImg" class="photo-modal-img" alt="Student Photo">
-            </div>
-        </div>
-    </div>
-</div>
+    <script>
+        // --- 1. FIREBASE CONFIGURATION ---
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
 
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.database();
 
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+        let dataTableInstance = null;
 
-<script>
-const firebaseConfig = {
-    apiKey: "AIzaSyBJPGhOYeSN0pl2dOgnJv_Fhh0913DyrMw",
-    authDomain: "pccoe-student-directory.firebaseapp.com",
-    projectId: "pccoe-student-directory",
-    storageBucket: "pccoe-student-directory.firebasestorage.app",
-    messagingSenderId: "280539910883",
-    appId: "1:280539910883:web:460b3b7f681fb1dd4b2bd6"
-};
+        // --- 2. AUTH STATE LISTENER ---
+        auth.onAuthStateChanged(user => {
+            const loginContainer = document.getElementById('login-container');
+            const appContainer = document.getElementById('app-container');
 
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
+            if (user) {
+                // User is signed in
+                loginContainer.classList.add('d-none');
+                appContainer.classList.remove('d-none');
+                document.getElementById('userEmail').innerText = user.email;
 
-let dataTable, allStudents = [];
-let selectedStudents = new Set();
-let isFilteredSearchActive = false;
-let currentFilteredData = [];
+                // Load Data
+                loadStudentData();
+            } else {
+                // User is signed out
+                loginContainer.classList.remove('d-none');
+                appContainer.classList.add('d-none');
 
-// Dynamic Authentication State Observer
-auth.onAuthStateChanged((user) => {
-    if (user) {
-        document.getElementById('loginSection').style.display = 'none';
-        document.getElementById('mainSection').style.display = 'block';
-        fetchStudentsFromFirebase();
-    } else {
-        document.getElementById('loginSection').style.display = 'flex';
-        document.getElementById('mainSection').style.display = 'none';
-    }
-});
-
-// Firebase Sign-in
-function doLogin() {
-    const email = document.getElementById('username').value.trim();
-    const pwd   = document.getElementById('password').value;
-    const errDiv = document.getElementById('loginError');
-    
-    auth.signInWithEmailAndPassword(email, pwd)
-        .catch(error => {
-            errDiv.classList.remove('d-none');
-            errDiv.innerText = error.message;
-            document.getElementById('password').value = '';
-        });
-}
-
-function logout() {
-    auth.signOut().then(() => {
-        if(dataTable) dataTable.clear().draw();
-        allStudents = [];
-        selectedStudents.clear();
-        updateSelectedCount();
-        isFilteredSearchActive = false;
-        updateExportButtonState();
-    });
-}
-
-// Fetch Records Securely from Cloud Firestore
-async function fetchStudentsFromFirebase() {
-    document.getElementById('dataStatus').innerText = 'Loading…';
-    try {
-        const snapshot = await db.collection('contacts').orderBy('Student Name').get();
-        allStudents = [];
-        let idx = 1;
-        
-        snapshot.forEach((doc) => {
-            let item = doc.data();
-            allStudents.push({
-                index: idx++,
-                prn: item.PRN || '',
-                name: item['Student Name'] || '',
-                division: item.Division || '',
-                batch: item.Batch || '',
-                program: item.Program || '',
-                photoUrl: item.Photo || '',
-                studentMobile: item['Student Mobile'] || '',
-                parentMobile: item['Parent Mobile'] || '',
-                emailId: item['Email ID'] || ''
-            });
+                // Destroy DataTable on logout to reset state
+                if (dataTableInstance) {
+                    dataTableInstance.destroy();
+                    dataTableInstance = null;
+                }
+            }
         });
 
-        document.getElementById('totalStudents').innerText = allStudents.length;
-        document.getElementById('dataStatus').innerText = 'Connected';
-        initDataTable(allStudents);
-    } catch (error) {
-        console.error("Error loading data:", error);
-        document.getElementById('dataStatus').innerText = 'Error';
-    }
-}
+        // --- 3. LOGIN HANDLER ---
+        function doLogin(event) {
+            if (event) event.preventDefault();
 
-function initDataTable(data) {
-    if (dataTable) {
-        dataTable.destroy();
-    }
-    
-    const tbody = document.querySelector('#studentTable tbody');
-    tbody.innerHTML = '';
+            const email = document.getElementById('username').value.trim();
+            const pwd = document.getElementById('password').value;
+            const errDiv = document.getElementById('loginError');
+            const loginBtn = document.getElementById('loginBtn');
 
-    data.forEach(student => {
-        const tr = document.createElement('tr');
-        tr.id = `row-${student.prn}`;
-        if (selectedStudents.has(student.emailId)) {
-            tr.classList.add('row-selected');
+            errDiv.classList.add('d-none');
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Signing In...';
+
+            auth.signInWithEmailAndPassword(email, pwd)
+                .catch(error => {
+                    errDiv.classList.remove('d-none');
+                    errDiv.innerText = error.message;
+                })
+                .finally(() => {
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = '<i class="fas fa-sign-in-alt me-1"></i> Sign In';
+                });
         }
 
-        const isChecked = selectedStudents.has(student.emailId) ? 'checked' : '';
-        const imgTag = student.photoUrl 
-            ? `<img src="${student.photoUrl}" class="student-photo-thumb" onclick="viewPhoto('${student.photoUrl}')" alt="Thumb">` 
-            : `<span class="text-muted">No Photo</span>`;
+        // --- 4. LOGOUT HANDLER ---
+        function doLogout() {
+            auth.signOut();
+        }
 
-        tr.innerHTML = `
-            <td><input type="checkbox" class="student-row-checkbox" data-email="${student.emailId}" data-prn="${student.prn}" ${isChecked} onchange="handleRowCheckbox(this)"></td>
-            <td>${student.index}</td>
-            <td><strong>${student.prn}</strong></td>
-            <td>${student.name}</td>
-            <td>${student.division}</td>
-            <td>${student.batch}</td>
-            <td>${student.program}</td>
-            <td class="text-center">${imgTag}</td>
-            <td>${student.studentMobile}</td>
-            <td>${student.parentMobile}</td>
-            <td><a href="mailto:${student.emailId}">${student.emailId}</a></td>
-        `;
-        tbody.appendChild(tr);
-    });
+        // --- 5. FETCH & RENDER DATA ---
+        function loadStudentData() {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
 
-    dataTable = $('#studentTable').DataTable({
-        pageLength: 10,
-        responsive: true,
-        order: [[1, 'asc']]
-    });
+            db.ref('students').once('value')
+                .then(snapshot => {
+                    if (snapshot.exists()) {
+                        snapshot.forEach(childSnapshot => {
+                            const student = childSnapshot.val();
+                            const tr = document.createElement('tr');
 
-    currentFilteredData = [...data];
-    updateExportButtonState();
-}
+                            // Corrected template literal string below
+                            tr.innerHTML = `
+                                <td>${student.prn || '-'}</td>
+                                <td>${student.name || '-'}</td>
+                                <td>${student.class || '-'}</td>
+                                <td>${student.division || '-'}</td>
+                                <td>${student.batch || '-'}</td>
+                                <td>${student.rollNo || '-'}</td>
+                                <td><a href="mailto:${student.emailId || ''}">${student.emailId || '-'}</a></td>
+                            `;
+                            tableBody.appendChild(tr);
+                        });
+                    }
+                    initDataTable();
+                })
+                .catch(error => {
+                    console.error("Error fetching data:", error);
+                });
+        }
 
-// Single-field Quick Search
-function searchTable() {
-    const prn = document.getElementById('searchPRN').value.trim().toLowerCase();
-    const name = document.getElementById('searchName').value.trim().toLowerCase();
-    const div = document.getElementById('searchDivision').value.trim().toLowerCase();
-
-    if (!prn && !name && !div) {
-        clearSearch();
-        return;
-    }
-
-    const filtered = allStudents.filter(s => {
-        const matchesPRN = !prn || s.prn.toLowerCase().includes(prn);
-        const matchesName = !name || s.name.toLowerCase().includes(name);
-        const matchesDiv = !div || s.division.toLowerCase().includes(div);
-        return matchesPRN && matchesName && matchesDiv;
-    });
-
-    isFilteredSearchActive = true;
-    currentFilteredData = filtered;
-    
-    document.getElementById('searchResults').innerText = filtered.length;
-    document.getElementById('exportCount').innerText = filtered.length;
-    
-    initDataTable(filtered);
-    updateExportButtonState();
-}
-
-// Multi-PRN Search
-function searchMultiplePRNs() {
-    const multiPrnVal = document.getElementById('multiPRNSearch').value.trim();
-    if (!multiPrnVal) {
-        clearSearch();
-        return;
-    }
-
-    const prnArray = multiPrnVal.split(/[\s,]+/).map(p => p.trim().toLowerCase()).filter(p => p !== '');
-    
-    const filtered = allStudents.filter(s => prnArray.includes(s.prn.toLowerCase()));
-
-    isFilteredSearchActive = true;
-    currentFilteredData = filtered;
-
-    document.getElementById('searchResults').innerText = filtered.length;
-    document.getElementById('exportCount').innerText = filtered.length;
-
-    initDataTable(filtered);
-    updateExportButtonState();
-}
-
-// Reset Search
-function clearSearch() {
-    document.getElementById('searchPRN').value = '';
-    document.getElementById('searchName').value = '';
-    document.getElementById('searchDivision').value = '';
-    document.getElementById('multiPRNSearch').value = '';
-
-    isFilteredSearchActive = false;
-    currentFilteredData = [...allStudents];
-    
-    document.getElementById('searchResults').innerText = '—';
-    document.getElementById('exportCount').innerText = '0';
-    
-    document.getElementById('selectAllWarning').classList.remove('show');
-
-    initDataTable(allStudents);
-    updateExportButtonState();
-}
-
-// Helper to disable / enable Export Results button dynamically
-function updateExportButtonState() {
-    const exportBtn = document.getElementById('exportBtn');
-    if (isFilteredSearchActive && currentFilteredData.length > 0) {
-        exportBtn.removeAttribute('disabled');
-    } else {
-        exportBtn.setAttribute('disabled', 'true');
-    }
-}
-
-// Selection handling
-function handleRowCheckbox(checkbox) {
-    const email = checkbox.getAttribute('data-email');
-    const tr = checkbox.closest('tr');
-
-    if (checkbox.checked) {
-        if (email) selectedStudents.add(email);
-        tr.classList.add('row-selected');
-    } else {
-        if (email) selectedStudents.delete(email);
-        tr.classList.remove('row-selected');
-    }
-    updateSelectedCount();
-}
-
-function handleSelectAllCheckbox() {
-    const isChecked = document.getElementById('selectAllCheckbox').checked;
-    const checkboxes = document.querySelectorAll('.student-row-checkbox');
-
-    checkboxes.forEach(cb => {
-        cb.checked = isChecked;
-        handleRowCheckbox(cb);
-    });
-}
-
-function handleSelectAll() {
-    const warning = document.getElementById('selectAllWarning');
-    if (!isFilteredSearchActive) {
-        warning.classList.add('show');
-        return;
-    }
-    warning.classList.remove('show');
-
-    const checkboxes = document.querySelectorAll('.student-row-checkbox');
-    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-
-    checkboxes.forEach(cb => {
-        cb.checked = !allChecked;
-        handleRowCheckbox(cb);
-    });
-
-    const selectAllBtn = document.getElementById('selectAllBtn');
-    if (!allChecked) {
-        selectAllBtn.classList.add('active');
-    } else {
-        selectAllBtn.classList.remove('active');
-    }
-}
-
-function updateSelectedCount() {
-    document.getElementById('selectedCount').innerText = selectedStudents.size;
-}
-
-// Dropdown Toggle
-function toggleEmailDropdown() {
-    const dropdown = document.getElementById('emailDropdown');
-    dropdown.classList.toggle('show');
-}
-
-// Close dropdown on outside click
-window.addEventListener('click', function(e) {
-    if (!e.target.closest('.email-dropdown-wrap')) {
-        const dropdown = document.getElementById('emailDropdown');
-        if (dropdown) dropdown.classList.remove('show');
-    }
-});
-
-// Drafts directly in Browser Email (Gmail Compose interface)
-function sendEmailWithDraft(type) {
-    const emails = Array.from(selectedStudents).filter(e => e && e.trim() !== '');
-    if (emails.length === 0) {
-        alert("Please select at least one student or parent email from the list first.");
-        return;
-    }
-
-    const bccList = emails.join(',');
-    let subject = "";
-    let body = "";
-
-    switch (type) {
-        case 'openDay':
-            subject = "PCCOE - Open Day Schedule Notification";
-            body = "Dear Parent / Student,\n\nThis is to inform you regarding the upcoming Open Day schedule at PCCOE Applied Sciences & Humanities Department.\n\nKindly make sure to attend on time.\n\nWarm regards,\nDepartment of Applied Sciences & Humanities\nPCCOE, Pune";
-            break;
-        case 'faSaMarks':
-            subject = "PCCOE - Update on Formative & Summative Assessment Marks";
-            body = "Dear Parent / Student,\n\nPlease review your updated FA & SA performance marks on the student portal.\n\nIn case of any discrepancies, contact your class teacher.\n\nRegards,\nAcademic Team, PCCOE";
-            break;
-        case 'nonReportedFa':
-            subject = "URGENT: Non-Reported Status for FA I & II";
-            body = "Dear Parent / Student,\n\nOur records indicate a 'Non-Reported' status for FA I / FA II assessments. Kindly meet the respective subject coordinator immediately.\n\nRegards,\nPCCOE Administration";
-            break;
-        case 'faSchedule':
-            subject = "PCCOE - Examination Schedule for FA I & II";
-            body = "Dear Students,\n\nThe timetable and schedule for FA I & II examinations have been published. Please inspect the notice board for details.\n\nBest wishes,\nExam Cell, PCCOE";
-            break;
-        case 'custom':
-        default:
-            subject = "PCCOE Important Academic Notice";
-            body = "Dear Student / Parent,\n\n";
-            break;
-    }
-
-    // Close options menu
-    const dropdown = document.getElementById('emailDropdown');
-    if (dropdown) dropdown.classList.remove('show');
-
-    // Launch Gmail compose tab directly in the browser
-    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&bcc=${encodeURIComponent(bccList)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.open(gmailUrl, '_blank');
-}
-
-// Export Only Filtered Quick Search Results
-function exportSearchResults() {
-    if (!isFilteredSearchActive || currentFilteredData.length === 0) {
-        alert("Export is only enabled when active search results are present.");
-        return;
-    }
-
-    const exportData = currentFilteredData.map(s => ({a
-        "Sr No": s.index,
-        "PRN": s.prn,
-        "Student Name": s.name,
-        "Division": s.division,
-        "Batch": s.batch,
-        "Program": s.program,
-        "Student Mobile": s.studentMobile,
-        "Parent Mobile": s.parentMobile,
-        "Email ID": s.emailId
-    }));
-
-    const worksheet = XLSX.utils.json_to_sheet(exportData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Search Results");
-    XLSX.writeFile(workbook, `PCCOE_Student_Search_Results.xlsx`);
-}
-
-// Photo modal viewer
-function viewPhoto(url) {
-    document.getElementById('fullPhotoImg').src = url;
-    const modal = new bootstrap.Modal(document.getElementById('photoModal'));
-    modal.show();
-}
-</script>
+        // --- 6. DATATABLE INITIALIZATION ---
+        function initDataTable() {
+            if (dataTableInstance) {
+                dataTableInstance.destroy();
+            }
+            dataTableInstance = $('#studentsTable').DataTable({
+                responsive: true,
+                pageLength: 10,
+                lengthMenu: [10, 25, 50, 100],
+                order: [[1, 'asc']]
+            });
+        }
+    </script>
 </body>
 </html>
