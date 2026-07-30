@@ -714,6 +714,7 @@
                 </div>
             </div>
 
+            <!-- Disabled by default. Enabled only after quick search or multi-PRN search -->
             <button class="btn-action btn-export" id="exportBtn" onclick="exportSearchResults()" disabled>
                 <i class="fas fa-file-excel"></i> Export Results
             </button>
@@ -897,103 +898,72 @@ function initDataTable(data) {
             <td class="text-center">${imgTag}</td>
             <td>${student.studentMobile}</td>
             <td>${student.parentMobile}</td>
-            <td>${student.emailId}</td>
+            <td><a href="mailto:${student.emailId}">${student.emailId}</a></td>
         `;
         tbody.appendChild(tr);
     });
 
     dataTable = $('#studentTable').DataTable({
-        pageLength: 25,
+        pageLength: 10,
         responsive: true,
-        destroy: true
-    });
-}
-
-function handleRowCheckbox(cb) {
-    const email = cb.getAttribute('data-email');
-    if (cb.checked) {
-        if(email) selectedStudents.add(email);
-        cb.closest('tr').classList.add('row-selected');
-    } else {
-        if(email) selectedStudents.delete(email);
-        cb.closest('tr').classList.remove('row-selected');
-    }
-    updateSelectedCount();
-}
-
-function handleSelectAllCheckbox() {
-    const mainCb = document.getElementById('selectAllCheckbox');
-    const checkboxes = document.querySelectorAll('.student-row-checkbox');
-    checkboxes.forEach(cb => {
-        cb.checked = mainCb.checked;
-        handleRowCheckbox(cb);
-    });
-}
-
-function handleSelectAll() {
-    if (!isFilteredSearchActive) {
-        document.getElementById('selectAllWarning').classList.add('show');
-        setTimeout(() => document.getElementById('selectAllWarning').classList.remove('show'), 4000);
-        return;
-    }
-    
-    currentFilteredData.forEach(s => {
-        if(s.emailId) selectedStudents.add(s.emailId);
+        order: [[1, 'asc']]
     });
 
-    const checkboxes = document.querySelectorAll('.student-row-checkbox');
-    checkboxes.forEach(cb => {
-        cb.checked = true;
-        cb.closest('tr').classList.add('row-selected');
-    });
-
-    updateSelectedCount();
+    currentFilteredData = [...data];
+    updateExportButtonState();
 }
 
-function updateSelectedCount() {
-    document.getElementById('selectedCount').innerText = selectedStudents.size;
-    document.getElementById('exportCount').innerText = isFilteredSearchActive ? currentFilteredData.length : 0;
-}
-
+// Single-field Quick Search
 function searchTable() {
-    const prnVal = document.getElementById('searchPRN').value.toLowerCase().trim();
-    const nameVal = document.getElementById('searchName').value.toLowerCase().trim();
-    const divVal = document.getElementById('searchDivision').value.toLowerCase().trim();
+    const prn = document.getElementById('searchPRN').value.trim().toLowerCase();
+    const name = document.getElementById('searchName').value.trim().toLowerCase();
+    const div = document.getElementById('searchDivision').value.trim().toLowerCase();
 
-    if (!prnVal && !nameVal && !divVal) {
+    if (!prn && !name && !div) {
         clearSearch();
         return;
     }
 
-    currentFilteredData = allStudents.filter(s => {
-        const matchesPRN = !prnVal || s.prn.toLowerCase().includes(prnVal);
-        const matchesName = !nameVal || s.name.toLowerCase().includes(nameVal);
-        const matchesDiv = !divVal || s.division.toLowerCase() === divVal;
+    const filtered = allStudents.filter(s => {
+        const matchesPRN = !prn || s.prn.toLowerCase().includes(prn);
+        const matchesName = !name || s.name.toLowerCase().includes(name);
+        const matchesDiv = !div || s.division.toLowerCase().includes(div);
         return matchesPRN && matchesName && matchesDiv;
     });
 
     isFilteredSearchActive = true;
-    document.getElementById('searchResults').innerText = currentFilteredData.length;
-    initDataTable(currentFilteredData);
+    currentFilteredData = filtered;
+    
+    document.getElementById('searchResults').innerText = filtered.length;
+    document.getElementById('exportCount').innerText = filtered.length;
+    
+    initDataTable(filtered);
     updateExportButtonState();
-    updateSelectedCount();
 }
 
+// Multi-PRN Search
 function searchMultiplePRNs() {
-    const rawVal = document.getElementById('multiPRNSearch').value;
-    if (!rawVal.trim()) return;
+    const multiPrnVal = document.getElementById('multiPRNSearch').value.trim();
+    if (!multiPrnVal) {
+        clearSearch();
+        return;
+    }
 
-    const prns = rawVal.split(/[\n,\s]+/).map(p => p.trim().toLowerCase()).filter(Boolean);
+    const prnArray = multiPrnVal.split(/[\s,]+/).map(p => p.trim().toLowerCase()).filter(p => p !== '');
+    
+    const filtered = allStudents.filter(s => prnArray.includes(s.prn.toLowerCase()));
 
-    currentFilteredData = allStudents.filter(s => prns.includes(s.prn.toLowerCase()));
     isFilteredSearchActive = true;
+    currentFilteredData = filtered;
 
-    document.getElementById('searchResults').innerText = currentFilteredData.length;
-    initDataTable(currentFilteredData);
+    document.getElementById('searchResults').innerText = filtered.length;
+    document.getElementById('exportCount').innerText = filtered.length;
+
+    initDataTable(filtered);
     updateExportButtonState();
-    updateSelectedCount();
 }
 
+// Reset Search
 function clearSearch() {
     document.getElementById('searchPRN').value = '';
     document.getElementById('searchName').value = '';
@@ -1001,84 +971,148 @@ function clearSearch() {
     document.getElementById('multiPRNSearch').value = '';
 
     isFilteredSearchActive = false;
-    currentFilteredData = [];
-    document.getElementById('searchResults').innerText = '—';
+    currentFilteredData = [...allStudents];
     
+    document.getElementById('searchResults').innerText = '—';
+    document.getElementById('exportCount').innerText = '0';
+    
+    document.getElementById('selectAllWarning').classList.remove('show');
+
     initDataTable(allStudents);
     updateExportButtonState();
+}
+
+// Helper to disable / enable Export Results button dynamically
+function updateExportButtonState() {
+    const exportBtn = document.getElementById('exportBtn');
+    if (isFilteredSearchActive && currentFilteredData.length > 0) {
+        exportBtn.removeAttribute('disabled');
+    } else {
+        exportBtn.setAttribute('disabled', 'true');
+    }
+}
+
+// Selection handling
+function handleRowCheckbox(checkbox) {
+    const email = checkbox.getAttribute('data-email');
+    const tr = checkbox.closest('tr');
+
+    if (checkbox.checked) {
+        if (email) selectedStudents.add(email);
+        tr.classList.add('row-selected');
+    } else {
+        if (email) selectedStudents.delete(email);
+        tr.classList.remove('row-selected');
+    }
     updateSelectedCount();
 }
 
-function updateExportButtonState() {
-    const exportBtn = document.getElementById('exportBtn');
-    exportBtn.disabled = !isFilteredSearchActive || currentFilteredData.length === 0;
+function handleSelectAllCheckbox() {
+    const isChecked = document.getElementById('selectAllCheckbox').checked;
+    const checkboxes = document.querySelectorAll('.student-row-checkbox');
+
+    checkboxes.forEach(cb => {
+        cb.checked = isChecked;
+        handleRowCheckbox(cb);
+    });
 }
 
-function viewPhoto(url) {
-    document.getElementById('fullPhotoImg').src = url;
-    const photoModal = new bootstrap.Modal(document.getElementById('photoModal'));
-    photoModal.show();
-}
+function handleSelectAll() {
+    const warning = document.getElementById('selectAllWarning');
+    if (!isFilteredSearchActive) {
+        warning.classList.add('show');
+        return;
+    }
+    warning.classList.remove('show');
 
-/* ───────── EMAIL FUNCTIONALITY ───────── */
-function toggleEmailDropdown() {
-    document.getElementById('emailDropdown').classList.toggle('show');
-}
+    const checkboxes = document.querySelectorAll('.student-row-checkbox');
+    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
 
-// Hide email dropdown on outer click
-window.onclick = function(e) {
-    if (!e.target.matches('.btn-email') && !e.target.closest('.btn-email')) {
-        const dropdown = document.getElementById('emailDropdown');
-        if (dropdown && dropdown.classList.contains('show')) {
-            dropdown.classList.remove('show');
-        }
+    checkboxes.forEach(cb => {
+        cb.checked = !allChecked;
+        handleRowCheckbox(cb);
+    });
+
+    const selectAllBtn = document.getElementById('selectAllBtn');
+    if (!allChecked) {
+        selectAllBtn.classList.add('active');
+    } else {
+        selectAllBtn.classList.remove('active');
     }
 }
 
+function updateSelectedCount() {
+    document.getElementById('selectedCount').innerText = selectedStudents.size;
+}
+
+// Dropdown Toggle
+function toggleEmailDropdown() {
+    const dropdown = document.getElementById('emailDropdown');
+    dropdown.classList.toggle('show');
+}
+
+// Close dropdown on outside click
+window.addEventListener('click', function(e) {
+    if (!e.target.closest('.email-dropdown-wrap')) {
+        const dropdown = document.getElementById('emailDropdown');
+        if (dropdown) dropdown.classList.remove('show');
+    }
+});
+
+// Drafts directly in Browser Email (Gmail Compose interface)
 function sendEmailWithDraft(type) {
-    if (selectedStudents.size === 0) {
-        alert("Please select at least one student recipient first.");
+    const emails = Array.from(selectedStudents).filter(e => e && e.trim() !== '');
+    if (emails.length === 0) {
+        alert("Please select at least one student or parent email from the list first.");
         return;
     }
 
-    const recipientList = Array.from(selectedStudents).filter(Boolean).join(',');
-
+    const bccList = emails.join(',');
     let subject = "";
     let body = "";
 
-    switch(type) {
+    switch (type) {
         case 'openDay':
-            subject = "PCCOE: Open Day Schedule Notice";
-            body = "Dear Student/Parent,\n\nPlease take note of the upcoming Open Day Schedule. Detailed interactions and discussions regarding performance will be conducted as per the department layout.\n\nRegards,\nDepartment of Applied Sciences & Humanities\nPCCOE";
+            subject = "PCCOE - Open Day Schedule Notification";
+            body = "Dear Parent / Student,\n\nThis is to inform you regarding the upcoming Open Day schedule at PCCOE Applied Sciences & Humanities Department.\n\nKindly make sure to attend on time.\n\nWarm regards,\nDepartment of Applied Sciences & Humanities\nPCCOE, Pune";
             break;
         case 'faSaMarks':
-            subject = "PCCOE: FA & SA Performance Update";
-            body = "Dear Student/Parent,\n\nThe Formative Assessment (FA) and Summative Assessment (SA) marks have been compiled. Kindly reach out to your respective class coordinator to review the detailed score updates.\n\nRegards,\nPCCOE";
+            subject = "PCCOE - Update on Formative & Summative Assessment Marks";
+            body = "Dear Parent / Student,\n\nPlease review your updated FA & SA performance marks on the student portal.\n\nIn case of any discrepancies, contact your class teacher.\n\nRegards,\nAcademic Team, PCCOE";
             break;
         case 'nonReportedFa':
-            subject = "URGENT: Non-Reporting Status in FA I & II";
-            body = "Dear Student,\n\nOur records show your status as Non-Reported for Formative Assessment (FA) I & II. Please contact the department academic coordinator immediately to clarify your status.\n\nRegards,\nDepartment of Applied Sciences & Humanities";
+            subject = "URGENT: Non-Reported Status for FA I & II";
+            body = "Dear Parent / Student,\n\nOur records indicate a 'Non-Reported' status for FA I / FA II assessments. Kindly meet the respective subject coordinator immediately.\n\nRegards,\nPCCOE Administration";
             break;
         case 'faSchedule':
-            subject = "PCCOE: Examination Schedule for FA I & II";
-            body = "Dear Student,\n\nThe schedule for Formative Assessment (FA) I & II is officially published. Please make sure to check the notice board/portal for timing and venue arrangements.\n\nRegards,\nPCCOE";
+            subject = "PCCOE - Examination Schedule for FA I & II";
+            body = "Dear Students,\n\nThe timetable and schedule for FA I & II examinations have been published. Please inspect the notice board for details.\n\nBest wishes,\nExam Cell, PCCOE";
             break;
         case 'custom':
-            subject = "Notice from PCCOE";
-            body = "Dear Student,\n\n";
+        default:
+            subject = "PCCOE Important Academic Notice";
+            body = "Dear Student / Parent,\n\n";
             break;
     }
 
-    // Opens default desktop client (e.g. Outlook, Apple Mail) using BCC for recipient privacy
-    const mailtoUrl = `mailto:?bcc=${encodeURIComponent(recipientList)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailtoUrl;
+    // Close options menu
+    const dropdown = document.getElementById('emailDropdown');
+    if (dropdown) dropdown.classList.remove('show');
+
+    // Launch Gmail compose tab directly in the browser
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&bcc=${encodeURIComponent(bccList)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.open(gmailUrl, '_blank');
 }
 
+// Export Only Filtered Quick Search Results
 function exportSearchResults() {
-    if (!currentFilteredData || currentFilteredData.length === 0) return;
+    if (!isFilteredSearchActive || currentFilteredData.length === 0) {
+        alert("Export is only enabled when active search results are present.");
+        return;
+    }
 
-    const exportData = currentFilteredData.map((s, i) => ({
-        "Sr No": i + 1,
+    const exportData = currentFilteredData.map(s => ({a
+        "Sr No": s.index,
         "PRN": s.prn,
         "Student Name": s.name,
         "Division": s.division,
@@ -1091,10 +1125,16 @@ function exportSearchResults() {
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Filtered Students");
-    XLSX.writeFile(workbook, `PCCOE_Student_Filtered_Export.xlsx`);
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Search Results");
+    XLSX.writeFile(workbook, `PCCOE_Student_Search_Results.xlsx`);
+}
+
+// Photo modal viewer
+function viewPhoto(url) {
+    document.getElementById('fullPhotoImg').src = url;
+    const modal = new bootstrap.Modal(document.getElementById('photoModal'));
+    modal.show();
 }
 </script>
-
 </body>
 </html>
