@@ -1066,11 +1066,11 @@ function sendEmailWithDraft(type) {
     switch(type) {
         case 'openDay':
             subject = "PCCOE — Open Day Schedule Notification";
-            body = "Dear Student/Parent,\n\nPlease find the schedule for the upcoming Open Day attached.\n\nRegards,\nDepartment of Applied Sciences & Humanities\nPCCOE";
+            body = "Dear Student,\n\nPlease find the attached Open Day schedule for the course mentioned below. Kindly refer to the schedule and attend accordingly.\n\nRegards,\nCourse Teacher";
             break;
         case 'faSaMarks':
             subject = "PCCOE — FA & SA Marks Update";
-            body = "Dear Student/Parent,\n\nYour FA & SA marks have been updated in the portal. Please verify.\n\nRegards,\nPCCOE";
+            body = "Dear Student,\n\nKindly verify your final FA & SA marks. If you have any queries or discrepancies, please meet your course teacher immediately.\n\nRegards,\nCourse Teacher";
             break;
         case 'nonReportedFa':
             subject = "URGENT: Non-Reported Status in FA I & II";
@@ -1078,7 +1078,7 @@ function sendEmailWithDraft(type) {
             break;
         case 'faSchedule':
             subject = "PCCOE — Schedule for FA I & II";
-            body = "Dear Student,\n\nThe timetable for FA I & II is announced. Please prepare accordingly.\n\nRegards,\nPCCOE";
+            body = "Dear Student,\n\nPlease find the attached timetable for the FA I & FA II examinations. Kindly review the schedule carefully and prepare accordingly.\n\nRegards,\nCourse Teacher";
             break;
         case 'custom':
         default:
