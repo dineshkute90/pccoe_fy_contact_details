@@ -409,12 +409,6 @@
             border: 1.5px solid #c5cae9;
         }
 
-        .btn-select-all.active {
-            background: var(--pccoe-blue);
-            color: white;
-            border-color: var(--pccoe-blue);
-        }
-
         .btn-email {
             background: linear-gradient(135deg, var(--pccoe-green), var(--pccoe-green-mid));
             color: white;
@@ -701,7 +695,7 @@
             </button>
 
             <div class="email-dropdown-wrap">
-                <button class="btn-action btn-email" onclick="toggleEmailDropdown()">
+                <button class="btn-action btn-email" onclick="toggleEmailDropdown(event)">
                     <i class="fas fa-envelope"></i> Send Email
                     <span class="badge-count" id="selectedCount">0</span>
                 </button>
@@ -714,7 +708,6 @@
                 </div>
             </div>
 
-            <!-- Enabled after quick search or multi-PRN search -->
             <button class="btn-action btn-export" id="exportBtn" onclick="exportSearchResults()" disabled>
                 <i class="fas fa-file-excel"></i> Export Results
             </button>
@@ -791,7 +784,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('username').addEventListener('keyup', (e) => { if(e.key === 'Enter') doLogin(); });
     document.getElementById('password').addEventListener('keyup', (e) => { if(e.key === 'Enter') doLogin(); });
 
-    // Close dropdown on outside click
+    // Close dropdown when clicking outside
     window.addEventListener('click', (e) => {
         if (!e.target.closest('.email-dropdown-wrap')) {
             document.getElementById('emailDropdown').classList.remove('show');
@@ -866,7 +859,7 @@ async function fetchStudentsFromGoogleSheets() {
                         photoUrl: item.Photo || item.photoUrl || '',
                         studentMobile: item['Student Mobile'] || item.studentMobile || '',
                         parentMobile: item['Parent Mobile'] || item.parentMobile || '',
-                        emailId: item['Email ID'] || item.emailId || ''
+                        emailId: (item['Email ID'] || item.emailId || '').trim()
                     });
                 });
 
@@ -925,7 +918,6 @@ function initDataTable(data) {
         destroy: true
     });
 
-    // Sync state after table redraw
     dataTable.on('draw', () => {
         syncCheckboxStates();
     });
@@ -1049,62 +1041,88 @@ function updateSelectedCount() {
     document.getElementById('selectedCount').innerText = selectedStudents.size;
 }
 
-function toggleEmailDropdown() {
+function toggleEmailDropdown(e) {
+    if (e) e.stopPropagation();
     document.getElementById('emailDropdown').classList.toggle('show');
 }
 
+/* ──────── UPDATED EMAIL SYSTEM ──────── */
+
 function sendEmailWithDraft(type) {
     document.getElementById('emailDropdown').classList.remove('show');
-    if (selectedStudents.size === 0) {
-        alert("Please select at least one student to send an email.");
+    
+    // Filter out empty or invalid email entries
+    const validEmails = Array.from(selectedStudents).filter(email => email && email.trim() !== '');
+
+    if (validEmails.length === 0) {
+        alert("Please select at least one student with a valid email address.");
         return;
     }
 
-    const bccList = Array.from(selectedStudents).join(',');
+    const bccList = validEmails.join(',');
     let subject = "";
     let body = "";
 
     switch(type) {
         case 'openDay':
             subject = "PCCOE — Open Day Schedule Notification";
-            body = "Dear Student/Parent,\n\nPlease find the schedule for the upcoming Open Day attached.\n\nRegards,\nDepartment of Applied Sciences & Humanities\nPCCOE";
+            body = "Dear Student/Parent,\r\n\r\nPlease find the schedule for the upcoming Open Day attached.\r\n\r\nRegards,\r\nDepartment of Applied Sciences & Humanities\r\nPCCOE";
             break;
         case 'faSaMarks':
             subject = "PCCOE — FA & SA Marks Update";
-            body = "Dear Student/Parent,\n\nYour FA & SA marks have been updated in the portal. Please verify.\n\nRegards,\nPCCOE";
+            body = "Dear Student/Parent,\r\n\r\nYour FA & SA marks have been updated in the portal. Please verify.\r\n\r\nRegards,\r\nPCCOE";
             break;
         case 'nonReportedFa':
             subject = "URGENT: Non-Reported Status in FA I & II";
-            body = "Dear Student/Parent,\n\nOur records indicate non-reporting for FA I & II. Contact your class teacher immediately.\n\nRegards,\nPCCOE";
+            body = "Dear Student/Parent,\r\n\r\nOur records indicate non-reporting for FA I & II. Contact your class teacher immediately.\r\n\r\nRegards,\r\nPCCOE";
             break;
         case 'faSchedule':
             subject = "PCCOE — Schedule for FA I & II";
-            body = "Dear Student,\n\nThe timetable for FA I & II is announced. Please prepare accordingly.\n\nRegards,\nPCCOE";
+            body = "Dear Student,\r\n\r\nThe timetable for FA I & II is announced. Please prepare accordingly.\r\n\r\nRegards,\r\nPCCOE";
             break;
         case 'custom':
+        default:
             subject = "Notice from PCCOE";
-            body = "Dear Student,\n\n";
+            body = "Dear Student,\r\n\r\n";
             break;
     }
 
     const mailtoUrl = `mailto:?bcc=${encodeURIComponent(bccList)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailtoUrl;
+
+    // Safety fallback: standard mailto links break if URL exceeds ~2000 characters
+    if (mailtoUrl.length > 2000) {
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(bccList).then(() => {
+                alert(`You have selected ${validEmails.length} recipients, which exceeds the browser URL email limit.\n\nAll ${validEmails.length} email addresses have been COPIED to your clipboard!\n\nPlease open your mail application and paste (Ctrl+V) into the BCC field.`);
+            }).catch(() => {
+                alert(`Too many recipients (${validEmails.length}) for direct mail application link. Please select fewer students at a time.`);
+            });
+        } else {
+            alert(`Selected list is too large for mail client integration (${validEmails.length} recipients). Please reduce your selection size.`);
+        }
+        return;
+    }
+
+    // Dynamic clean link execution
+    const mailLink = document.createElement('a');
+    mailLink.href = mailtoUrl;
+    mailLink.style.display = 'none';
+    document.body.appendChild(mailLink);
+    mailLink.click();
+    document.body.removeChild(mailLink);
 }
 
-/* ──────── EXPORT SYSTEM FIX ──────── */
+/* ──────── EXPORT SYSTEM ──────── */
 
 function exportSearchResults() {
     let dataToExport = [];
 
-    // 1. If custom Quick Search or Multi-PRN is active, export filtered set
     if (isFilteredSearchActive && currentFilteredData.length > 0) {
         dataToExport = currentFilteredData;
-    } 
-    // 2. Fallback: Parse current visible rows in DataTables
-    else if (dataTable) {
+    } else if (dataTable) {
         const dtData = dataTable.rows({ search: 'applied' }).data();
         dtData.each(function (row) {
-            const prn = $(row[2]).text() || row[2]; // Strip any embedded HTML
+            const prn = $(row[2]).text() || row[2];
             const match = allStudents.find(s => String(s.prn).trim() === String(prn).trim());
             if (match) {
                 dataToExport.push(match);
